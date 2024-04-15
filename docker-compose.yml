@@ -69,6 +69,7 @@ services:
   issuer:
     image: ghcr.io/cre8/wallet/issuer
     build:
+      context: .
       dockerfile: docker/node.Dockerfile
       args:
         - PROJECT=issuer
@@ -78,6 +79,7 @@ services:
   verifier:
     image: ghcr.io/cre8/wallet/verifier
     build:
+      context: .
       dockerfile: docker/node.Dockerfile
       args:
         - PROJECT=verifier
@@ -91,6 +93,7 @@ services:
     env_file:
       - .env
     build:
+      context: .
       dockerfile: docker/node.Dockerfile
       args:
         - PROJECT=backend
@@ -100,6 +103,7 @@ services:
   holder:
     image: ghcr.io/cre8/wallet/holder
     build:
+      context: .
       dockerfile: docker/browser.Dockerfile
       args:
         - SUB_PROJECT=pwa
