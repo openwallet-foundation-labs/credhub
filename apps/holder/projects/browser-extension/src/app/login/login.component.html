@@ -1,0 +1,23 @@
+<div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="16px">
+  <img src="assets/images/icon.png" alt="Logo" class="logo" />
+  <form
+    [formGroup]="form"
+    (submit)="login()"
+    fxLayout="column"
+    fxLayoutAlign="start space-between"
+    fxLayoutGap="32px"
+  >
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="form.invalid"
+    >
+      Login
+    </button>
+    <mat-form-field style="display: none">
+      <mat-label>Endpoint</mat-label>
+      <input matInput formControlName="endpoint" />
+    </mat-form-field>
+  </form>
+</div>

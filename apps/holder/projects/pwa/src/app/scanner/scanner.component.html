@@ -1,0 +1,29 @@
+<div [ngSwitch]="status">
+  <div *ngSwitchCase="'scanning'">
+    <button
+      id="menu"
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      aria-label="Example icon-button with a menu"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="getCredential()">
+        <mat-icon>download</mat-icon>
+        <span>Issue Demo</span>
+      </button>
+      <button mat-menu-item (click)="presentCredential()">
+        <mat-icon>upload</mat-icon>
+        <span>Present Demo</span>
+      </button>
+    </mat-menu>
+    <div id="reader"></div>
+  </div>
+  <div *ngSwitchCase="'showRequest'">
+    <app-issuance-request [url]="url" *ngIf="url"></app-issuance-request>
+  </div>
+  <div *ngSwitchCase="'showVerificationRequest'">
+    <app-verify-request [url]="url" *ngIf="url"></app-verify-request>
+  </div>
+</div>

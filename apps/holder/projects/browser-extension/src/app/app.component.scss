@@ -1,0 +1,17 @@
+.mat-toolbar {
+  background-color: #D7E3FF;
+  padding: 10px 40px;
+  height: 84px;
+}
+
+.content {
+  height: calc(100vh - 84px);
+  overflow: auto;
+  width: 100%;
+}
+
+
+.info {
+  font-size: 14px;
+}
+

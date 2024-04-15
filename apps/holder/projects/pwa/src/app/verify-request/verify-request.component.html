@@ -1,0 +1,34 @@
+<mat-card *ngIf="response">
+  <mat-card-header>
+    <img
+      mat-card-avatar
+      *ngIf="response.rp.logo"
+      [src]="response.rp.logo"
+      alt="logo of the relying party"
+    />
+    <mat-card-title>Verify Request by {{ response.rp.name }}</mat-card-title>
+    <mat-card-subtitle>No option to verify identity yet</mat-card-subtitle>
+  </mat-card-header>
+  <form [formGroup]="form" (submit)="submit()">
+    <mat-card-content>
+      <h2>{{ response.purpose }}</h2>
+
+      @for (request of response.requests; track request) {
+        <h3>{{ request.purpose }}</h3>
+        <mat-selection-list [formControlName]="request.id" [multiple]="false">
+          @for (option of request.credentials; track option) {
+            <mat-list-option [value]="option.jti">{{
+              option.vct
+            }}</mat-list-option>
+          }
+        </mat-selection-list>
+      }
+    </mat-card-content>
+    <mat-card-actions flexLayout="row" fxLayoutAlign="space-between center">
+      <button mat-button color="warn" (click)="cancel()">Cancel</button>
+      <button mat-flat-button color="primary" [disabled]="form.invalid">
+        Send
+      </button>
+    </mat-card-actions>
+  </form>
+</mat-card>

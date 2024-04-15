@@ -1,0 +1,24 @@
+<div fxLayout="column" fxLayoutGap="16px" fxLayoutAlign="start center">
+  <p>Issue yourself a eID for demo purposes</p>
+  <button mat-button (click)="issueRequest()">Issue Request</button>
+  <p>Generate a verify request for demo purposes</p>
+  <button mat-button (click)="verifyRequest()">Verify Request</button>
+  <!-- <button mat-raised-button (click)="scanner.scan()">Scan</button> -->
+  <mat-form-field>
+    <mat-label>Url</mat-label>
+    <input matInput [formControl]="urlField" />
+  </mat-form-field>
+  <mat-list>
+    @for (result of scanner.results; track result) {
+      <mat-list-item (click)="process(result)">
+        <mat-icon matListItemIcon>{{
+          result.action === 'issue' ? 'call_received' : 'call_made'
+        }}</mat-icon>
+        <span matListItemTitle>{{
+          result.credentials[0].display![0].name
+        }}</span>
+        <span matListItemLine>{{ result.relyingParty }}</span>
+      </mat-list-item>
+    }
+  </mat-list>
+</div>

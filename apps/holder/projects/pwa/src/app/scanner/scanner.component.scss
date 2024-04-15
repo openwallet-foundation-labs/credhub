@@ -1,0 +1,13 @@
+#reader {
+  width: 100vw !important;
+  height: 60vh !important;
+  object-fit: cover;
+}
+
+#menu {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 100;
+  color: #fff;
+}

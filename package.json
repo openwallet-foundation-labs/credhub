@@ -1,0 +1,21 @@
+{
+  "name": "wallet",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "pnpm run -r build",
+    "clean": "pnpm run -r clean && rm -rf node_modules",
+    "lint": "pnpm run -r lint"
+  },
+  "keywords": [],
+  "author": "Mirko Mollik <mirko.mollik@fit.fraunhofer.de>",
+  "license": "Apache-2.0",
+  "pnpm": {
+    "overrides": {
+      "@sphereon/ssi-types": "^0.22.0"
+    }
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.6.4"
+  }
+}

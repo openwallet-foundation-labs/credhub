@@ -1,0 +1,64 @@
+stages:
+  - build
+
+# This 'image' specifies a Docker image with Node.js. You can choose any image
+# that suits your project's needs, or use an official Node.js image.
+image: node:latest
+
+# Define the cache options to speed up builds
+cache:
+  paths:
+    - node_modules/
+
+
+build_holder:
+  stage: build
+  tags:
+    - asprunner  
+  image: 
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/browser.Dockerfile --destination registry.gitlab.cc-asp.fraunhofer.de/ssi-wallet/wallet/holder --build-arg SUB_PROJECT=pwa --build-arg PROJECT=holder
+  only:
+    - main
+
+build_backend:
+  stage: build
+  tags:
+    - asprunner  
+  image: 
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/node.Dockerfile --destination registry.gitlab.cc-asp.fraunhofer.de/ssi-wallet/wallet/backend --build-arg PROJECT=backend
+  only:
+    - main
+
+build_issuer:
+  stage: build
+  tags:
+    - asprunner  
+  image: 
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/node.Dockerfile --destination registry.gitlab.cc-asp.fraunhofer.de/ssi-wallet/wallet/issuer --build-arg PROJECT=issuer
+  only:
+    - main
+
+build_verifier:
+  stage: build
+  tags:
+    - asprunner  
+  image: 
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/node.Dockerfile --destination registry.gitlab.cc-asp.fraunhofer.de/ssi-wallet/wallet/verifier --build-arg PROJECT=verifier
+  only:
+    - main

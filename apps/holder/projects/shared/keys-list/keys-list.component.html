@@ -1,0 +1,6 @@
+<mat-list>
+  @for(key of keys; track key) {
+  <mat-list-item>{{ key.id }}</mat-list-item>
+  }
+</mat-list>
+<button mat-raised-button color="primary" (click)="addKey()">Add Key</button>

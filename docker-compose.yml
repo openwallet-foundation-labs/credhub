@@ -1,0 +1,112 @@
+version: '3.7'
+
+services:
+  # postgres-keycloak:
+  #   restart: unless-stopped
+  #   image: 'postgres:14.4'
+  #   healthcheck:
+  #     test: ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', 'root']
+  #     timeout: 45s
+  #     interval: 10s
+  #     retries: 10
+  #   volumes:
+  #     - keycloak-db:/var/lib/postgresql/data
+  #     #- ./sql:/docker-entrypoint-initdb.d/:ro # turn it on, if you need run init DB
+  #   environment:
+  #     POSTGRES_USER: $KC_POSTGRES_USER
+  #     POSTGRES_PASSWORD: $KC_POSTGRES_PASSWORD
+  #     POSTGRES_DB: $KC_POSTGRES_DB
+  #     POSTGRES_HOST: $KC_POSTGRES_HOST
+
+  # keycloak:
+  #   restart: unless-stopped
+  #   build:
+  #     dockerfile: ./docker/keycloak.Dockerfile
+  #     args:
+  #       KEYCLOAK_VERSION: 24.0.0
+  #   command:
+  #     [
+  #       'start',
+  #       '--optimized',
+  #       '--spi-theme-static-max-age=-1',
+  #       '--spi-theme-cache-themes=false',
+  #       '--spi-theme-cache-templates=false',
+  #     ]
+  #   depends_on:
+  #     - 'postgres-keycloak'
+  #   environment:
+  #     JAVA_OPTS_APPEND: -Dkeycloak.profile.feature.upload_scripts=enabled
+  #     KC_DB_URL: jdbc:postgresql://postgres-keycloak/$KC_POSTGRES_DB?user=$KC_POSTGRES_USER&password=$KC_POSTGRES_PASSWORD
+  #     KC_HEALTH_ENABLED: 'true'
+  #     KC_HTTP_ENABLED: 'true'
+  #     KC_METRICS_ENABLED: 'true'
+  #     KC_HOSTNAME_URL: $KEYCLOAK_HOSTNAME_URL
+  #     KEYCLOAK_ADMIN: $KEYCLOAK_ADMIN
+  #     KEYCLOAK_ADMIN_PASSWORD: $KEYCLOAK_ADMIN_PASSWORD
+  #   # volumes:
+  #   # - ./keywind/theme:/opt/keycloak/themes
+  #   ports:
+  #     - '8080:8080'
+
+  db:
+    image: 'postgres:14.4'
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', 'root']
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    volumes:
+      - nestjs-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: $DB_USERNAME
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_HOST: $DB_HOST
+    ports:
+      - '5432:5432'
+
+  issuer:
+    image: ghcr.io/cre8/wallet/issuer
+    build:
+      dockerfile: docker/node.Dockerfile
+      args:
+        - PROJECT=issuer
+    ports:
+      - '3001:3000'
+
+  verifier:
+    image: ghcr.io/cre8/wallet/verifier
+    build:
+      dockerfile: docker/node.Dockerfile
+      args:
+        - PROJECT=verifier
+    ports:
+      - '3002:3000'
+
+  backend:
+    image: ghcr.io/cre8/wallet/backend
+    depends_on:
+      - db
+    env_file:
+      - .env
+    build:
+      dockerfile: docker/node.Dockerfile
+      args:
+        - PROJECT=backend
+    ports:
+      - '3000:3000'
+
+  holder:
+    image: ghcr.io/cre8/wallet/holder
+    build:
+      dockerfile: docker/browser.Dockerfile
+      args:
+        - SUB_PROJECT=pwa
+        - PROJECT=holder
+    ports:
+      - 80:80
+
+volumes:
+  keycloak-db:
+  nestjs-db:
