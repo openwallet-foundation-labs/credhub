@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .then((response) => response.blob())
       .then((blob) => {
         const reader = new FileReader();
-        reader.onloadend = function () {
+        reader.onloadend = () => {
           sendResponse({ imageData: reader.result });
         };
         reader.readAsDataURL(blob);

@@ -18,7 +18,7 @@ import { Oid4vciService } from './oid4vci.service';
 export class Oid4vciController {
   constructor(private readonly oid4vciService: Oid4vciService) {}
 
-  @ApiOperation({ summary: 'parse a URL' })
+  @ApiOperation({ summary: 'parse a URL, returns the included information' })
   @Post('parse')
   @ApiCreatedResponse({ description: 'URL parsed', type: Oid4vciParseRepsonse })
   parse(@Body() value: Oid4vciParseRequest): Promise<Oid4vciParseRepsonse> {

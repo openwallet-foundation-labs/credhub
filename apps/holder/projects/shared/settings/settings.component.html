@@ -1,1 +1,6 @@
-<button mat-button (click)="authService.logout()">Logout</button>
+<div fxLayout="column" fxLayoutGap="16px">
+  <mat-slide-toggle [formControl]="automateControl"
+    >Automate issuance and verify process</mat-slide-toggle
+  >
+  <button mat-button (click)="authService.logout()">Logout</button>
+</div>

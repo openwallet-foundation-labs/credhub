@@ -1,8 +1,8 @@
 <div fxLayout="column" fxLayoutGap="16px" fxLayoutAlign="start center">
   <p>Issue yourself a eID for demo purposes</p>
-  <button mat-button (click)="issueRequest()">Issue Request</button>
+  <button mat-button (click)="getCredential()">Issue Request</button>
   <p>Generate a verify request for demo purposes</p>
-  <button mat-button (click)="verifyRequest()">Verify Request</button>
+  <button mat-button (click)="presentCredential()">Verify Request</button>
   <!-- <button mat-raised-button (click)="scanner.scan()">Scan</button> -->
   <mat-form-field>
     <mat-label>Url</mat-label>

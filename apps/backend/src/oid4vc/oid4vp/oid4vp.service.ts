@@ -39,6 +39,10 @@ export class Oid4vpService {
     this.sdjwt = new SDJwtVcInstance({ hasher: digest });
   }
 
+  process(url: string, user: string) {
+    throw new Error('Method not implemented.');
+  }
+
   async parse(url: string, user: string): Promise<Oid4vpParseRepsonse> {
     const sessionId = uuid();
     const op = await this.getOp(user);

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
@@ -24,7 +24,7 @@ import { environment } from '../../environments/environment';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   form: FormGroup = new FormGroup({
     // we can not pass the value during runtime. If it's stored in the localstorage on the start, it's fine.
     endpoint: new FormControl(environment.backendUrl, Validators.required),
@@ -35,8 +35,14 @@ export class LoginComponent {
     private router: Router
   ) {}
 
+  ngOnInit(): void {
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate(['/credentials']);
+    }
+  }
+
   async login() {
     await this.authService.login();
-    this.router.navigate(['/']);
+    this.router.navigate(['/credentials']);
   }
 }

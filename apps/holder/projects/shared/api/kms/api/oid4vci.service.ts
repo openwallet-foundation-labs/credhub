@@ -164,7 +164,7 @@ export class Oid4vciApiService {
     }
 
     /**
-     * parse a URL
+     * parse a URL, returns the included information
      * @param oid4vciParseRequest 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.

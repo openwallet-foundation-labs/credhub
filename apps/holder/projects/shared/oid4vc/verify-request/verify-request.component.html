@@ -1,4 +1,4 @@
-<mat-card *ngIf="response">
+<mat-card *ngIf="response && !auto">
   <mat-card-header>
     <img
       mat-card-avatar
@@ -32,3 +32,27 @@
     </mat-card-actions>
   </form>
 </mat-card>
+
+<div
+  *ngIf="status === 'done'"
+  fxLayout="column"
+  fxLayoutAlign="space-around center"
+  fxLayoutGap="16px"
+>
+  <div class="success-animation">
+    <svg
+      class="checkmark"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 52 52"
+    >
+      <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+      <path
+        class="checkmark__check"
+        fill="none"
+        d="M14.1 27.2l7.1 7.2 16.7-16.8"
+      />
+    </svg>
+  </div>
+  <span>Credentials successfully presented</span>
+  <a mat-button routerLink="/">Credential overview</a>
+</div>

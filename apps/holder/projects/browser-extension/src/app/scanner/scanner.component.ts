@@ -5,11 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FlexLayoutModule } from 'ng-flex-layout';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-scanner',
@@ -20,7 +20,6 @@ import { firstValueFrom } from 'rxjs';
     MatButtonModule,
     FlexLayoutModule,
     MatInputModule,
-    MatDialogModule,
     MatIconModule,
     ReactiveFormsModule,
   ],
@@ -32,12 +31,10 @@ export class ScannerComponent implements OnInit {
 
   constructor(
     public scanner: ScannerService,
-    private dialog: MatDialog,
     private httpClient: HttpClient
   ) {}
 
   ngOnInit(): void {
-    // reset the results
     this.scanner.results = [];
     this.urlField = new FormControl('');
     this.urlField.valueChanges.subscribe((value) => {
@@ -51,27 +48,25 @@ export class ScannerComponent implements OnInit {
     });
   }
   process(result: ResultScan) {
-    this.dialog
-      .open(AcceptRequestComponent, {
-        data: result,
-        width: '400px',
-      })
-      .afterClosed()
-      .subscribe((result) => {
-        console.log(result);
-      });
+    this.scanner.accept(result);
   }
 
-  async verifyRequest() {
+  async presentCredential() {
     const response = await firstValueFrom(
-      this.httpClient.post<{ url: string }>('http://localhost:3001/request', {})
+      this.httpClient.post<{ uri: string }>(
+        `${environment.demoVerifier}/request`,
+        {}
+      )
     );
-    this.urlField.patchValue(response.url);
+    this.urlField.patchValue(response.uri);
   }
 
-  async issueRequest() {
+  async getCredential() {
     const response = await firstValueFrom(
-      this.httpClient.post<{ uri: string }>('http://localhost:3000/request', {})
+      this.httpClient.post<{ uri: string }>(
+        `${environment.demoIssuer}/request`,
+        {}
+      )
     );
     this.urlField.patchValue(response.uri);
   }

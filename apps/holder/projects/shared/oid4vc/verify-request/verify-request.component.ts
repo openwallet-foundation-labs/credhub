@@ -1,8 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import {
-  Oid4vcpApiService,
-  Oid4vpParseRepsonse,
-} from '../../../../shared/api/kms';
+import { Oid4vcpApiService, Oid4vpParseRepsonse } from '../../api/kms';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -16,7 +13,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { SettingsService } from '../../settings/settings.service';
 
 @Component({
   selector: 'app-verify-request',
@@ -29,6 +27,7 @@ import { Router, RouterModule } from '@angular/router';
     MatSnackBarModule,
     MatListModule,
     ReactiveFormsModule,
+    RouterLink,
   ],
   templateUrl: './verify-request.component.html',
   styleUrl: './verify-request.component.scss',
@@ -37,12 +36,18 @@ export class VerifyRequestComponent implements OnInit {
   @Input() url!: string;
   response?: Oid4vpParseRepsonse;
   form = new FormGroup({});
+  auto: boolean;
+
+  status?: 'select' | 'done';
 
   constructor(
     private oid4vpApiService: Oid4vcpApiService,
     private router: Router,
-    private snackBar: MatSnackBar
-  ) {}
+    private snackBar: MatSnackBar,
+    private settingsService: SettingsService
+  ) {
+    this.auto = this.settingsService.getAuto();
+  }
 
   async ngOnInit(): Promise<void> {
     this.response = await firstValueFrom(
@@ -51,10 +56,19 @@ export class VerifyRequestComponent implements OnInit {
       })
     );
     for (const request of this.response.requests) {
+      if (request.credentials.length === 0) {
+        throw new Error(
+          `No matching credentials for request ${request.purpose}`
+        );
+      }
+      const value = this.auto ? [request.credentials[0].jti] : '';
       this.form.addControl(
         request.id,
-        new FormControl('', Validators.required)
+        new FormControl(value, Validators.required)
       );
+    }
+    if (this.auto) {
+      this.submit();
     }
   }
 
@@ -69,11 +83,12 @@ export class VerifyRequestComponent implements OnInit {
         (this.response as Oid4vpParseRepsonse).sessionId,
         values
       )
-    ).then(() =>
-      this.router
-        .navigate(['/'])
-        .then(() => this.snackBar.open('Submitted', '', { duration: 3000 }))
-    );
+    ).then(() => {
+      this.status = 'done';
+      // this.router
+      //   .navigate(['/'])
+      //   .then(() => this.snackBar.open('Submitted', '', { duration: 3000 }))
+    });
   }
 
   cancel() {

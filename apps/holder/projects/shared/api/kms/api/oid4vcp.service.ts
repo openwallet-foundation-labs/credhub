@@ -149,7 +149,7 @@ export class Oid4vcpApiService {
             }
         }
 
-        let localVarPath = `/oid4vp/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        let localVarPath = `/oid4vp/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/delete`;
         return this.httpClient.request<any>('delete', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -229,7 +229,7 @@ export class Oid4vcpApiService {
             }
         }
 
-        let localVarPath = `/oid4vp`;
+        let localVarPath = `/oid4vp/parse`;
         return this.httpClient.request<Oid4vpParseRepsonse>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -313,7 +313,7 @@ export class Oid4vcpApiService {
             }
         }
 
-        let localVarPath = `/oid4vp/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        let localVarPath = `/oid4vp/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/submit`;
         return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,

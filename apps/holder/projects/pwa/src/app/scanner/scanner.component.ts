@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CameraDevice, Html5Qrcode, Html5QrcodeResult } from 'html5-qrcode';
+import { CameraDevice, Html5Qrcode } from 'html5-qrcode';
 import { Html5QrcodeError } from 'html5-qrcode/esm/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,10 +7,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { IssuanceRequestComponent } from '../issuance-request/issuance-request.component';
-import { VerifyRequestComponent } from '../verify-request/verify-request.component';
+import { IssuanceRequestComponent } from '../../../../shared/oid4vc/issuance-request/issuance-request.component';
+import { VerifyRequestComponent } from '../../../../shared/oid4vc/verify-request/verify-request.component';
 import { ActivatedRoute } from '@angular/router';
-import { environment } from '../../../../browser-extension/src/environments/environment';
+import { environment } from '../../environments/environment';
 
 type Status = 'scanning' | 'showRequest' | 'showVerificationRequest';
 
@@ -103,9 +103,8 @@ export class ScannerComponent implements OnInit {
     await this.startCamera();
   }
 
-  onScanSuccess(decodedText: string, decodedResult: Html5QrcodeResult) {
+  onScanSuccess(decodedText: string) {
     // handle the scanned code as you like, for example:
-    console.log(`Code matched = ${decodedText}`, decodedResult);
     if (decodedText.startsWith('openid-credential-offer://')) {
       this.showRequest(decodedText, 'receive');
       //TODO: when we scanned it, redirect to another side. There is no need to stay on the scanner page. In this case, the user has already choosen the correct qr code and not a list of it.

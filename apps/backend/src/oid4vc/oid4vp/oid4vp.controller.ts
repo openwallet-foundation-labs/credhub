@@ -27,7 +27,7 @@ export class Oid4vpController {
   constructor(private readonly oid4vciService: Oid4vpService) {}
 
   @ApiOperation({ summary: 'parse a URL' })
-  @Post()
+  @Post('parse')
   @ApiCreatedResponse({ description: 'URL parsed', type: Oid4vpParseRepsonse })
   parse(
     @Body() value: Oid4vpParseRequest,
@@ -37,7 +37,7 @@ export class Oid4vpController {
   }
 
   @ApiOperation({ summary: 'submit a response' })
-  @Post(':id')
+  @Post(':id/submit')
   submit(
     @Param('id') id: string,
     @Body() value: SubmissionRequest,
@@ -47,7 +47,7 @@ export class Oid4vpController {
   }
 
   @ApiOperation({ summary: 'decline a request' })
-  @Delete(':id')
+  @Delete(':id/delete')
   decline(@Param('id') id: string, @AuthenticatedUser() user: KeycloakUser) {
     return this.oid4vciService.decline(id, user.sub);
   }

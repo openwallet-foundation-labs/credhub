@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { authConfig } from '../../pwa/src/app/authConfig';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -50,6 +51,9 @@ export class AuthService {
     //     console.warn('OAuthEvent Object:', event);
     //   }
     // });
+
+    //TODO: allow the user to add a custom login url during the login process.
+    this.oauthService.configure(authConfig);
 
     // THe following cross-tab communication of fresh access tokens works usually in practice,
     // but if you need more robust handling the community has come up with ways to extend logic
@@ -176,6 +180,7 @@ export class AuthService {
   }
 
   public login(targetUrl?: string) {
+    //TODO: check if config has to be loaded here or in the constructor.
     // Note: before version 9.1.0 of the library you needed to
     // call encodeURIComponent on the argument to the method.
     this.oauthService.initLoginFlow(targetUrl || this.router.url);

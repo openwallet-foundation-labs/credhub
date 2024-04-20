@@ -3,8 +3,12 @@ import { OpenID4VCIClient } from '@sphereon/oid4vci-client';
 import {
   CredentialSupported,
   CredentialsSupportedDisplay,
+  MetadataDisplay,
 } from '@sphereon/oid4vci-common';
-import { Oid4vciApiService, Oid4vcpApiService } from '../api/kms';
+import {
+  Oid4vciApiService,
+  Oid4vcpApiService,
+} from '../../../../shared/api/kms';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 
@@ -41,7 +45,7 @@ export class ScannerService {
           action: 'issue',
           credentials: result.credentials as CredentialSupported[],
           sessionId: result.sessionId,
-          relyingParty: result.relyingParty,
+          relyingParty: (result.issuer[0] as MetadataDisplay).name as string,
         });
       });
     } else {
@@ -49,15 +53,20 @@ export class ScannerService {
         this.oid4vpApiService.oid4vpControllerParse({ url })
       );
       console.log(result);
+      await this.oid4vpApiService.oid4vpControllerSubmit(result.sessionId, {});
+      // show success animation
     }
   }
 
   async accept(data: ResultScan) {
-    const result = await firstValueFrom<{ id: string }>(
-      this.oid4vciApiService.oid4vciControllerAccept(data.sessionId as string)
-    );
-
-    this.router.navigate(['/credentials', result.id]);
+    if (data.action === 'issue') {
+      const result = await firstValueFrom<{ id: string }>(
+        this.oid4vciApiService.oid4vciControllerAccept(data.sessionId as string)
+      );
+      this.router.navigate(['/credentials', result.id]);
+    } else {
+      // firstValueFrom(this.oid4vpApiService.)
+    }
   }
 
   getNames(credentials: CredentialSupported[]) {
