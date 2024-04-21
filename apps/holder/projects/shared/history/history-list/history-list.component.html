@@ -1,4 +1,9 @@
-<h3>History</h3>
+<div fxLayout="row" fxLayoutAlign="space-between center">
+  <h3>History</h3>
+  <button mat-icon-button (click)="clear()">
+    <mat-icon>clear</mat-icon>
+  </button>
+</div>
 <mat-nav-list>
   @for (history of values; track history) {
     <a mat-list-item [routerLink]="history.id">

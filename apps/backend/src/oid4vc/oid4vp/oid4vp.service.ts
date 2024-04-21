@@ -20,6 +20,7 @@ import { v4 as uuid } from 'uuid';
 import { Oid4vpParseRepsonse } from './dto/parse-response.dto';
 import { SubmissionRequest } from './dto/submission-request.dto';
 import { HistoryService } from 'src/history/history.service';
+import { Oid4vpParseRequest } from './dto/parse-request.dto';
 
 interface Session {
   user: string;
@@ -42,12 +43,15 @@ export class Oid4vpService {
     this.sdjwt = new SDJwtVcInstance({ hasher: digest });
   }
 
-  async parse(url: string, user: string): Promise<Oid4vpParseRepsonse> {
+  async parse(
+    data: Oid4vpParseRequest,
+    user: string
+  ): Promise<Oid4vpParseRepsonse> {
     const sessionId = uuid();
     const op = await this.getOp(user);
 
     //parse the uri
-    const parsedAuthReqURI = await op.parseAuthorizationRequestURI(url);
+    const parsedAuthReqURI = await op.parseAuthorizationRequestURI(data.url);
     const verifiedAuthReqWithJWT: VerifiedAuthorizationRequest =
       await op.verifyAuthorizationRequest(
         parsedAuthReqURI.requestObjectJwt as string
@@ -58,7 +62,9 @@ export class Oid4vpService {
           .client_metadata as RPRegistrationMetadataPayload
       ).client_name ?? verifiedAuthReqWithJWT.issuer;
     const logo = verifiedAuthReqWithJWT.registrationMetadataPayload.logo_uri;
-    await this.historyService.add(sessionId, user, issuer, logo, url);
+    if (!data.noSession) {
+      await this.historyService.add(sessionId, user, issuer, logo, data.url);
+    }
 
     // get all credentials from the client, required for the presentation exchange
     const credentials = (await this.credentialsService.findAll(user)).map(
@@ -81,15 +87,17 @@ export class Oid4vpService {
       throw new Error('No matching credentials found');
     }
 
-    // store the session
-    this.sessions.set(sessionId, {
-      user,
-      verifiedAuthReqWithJWT,
-      created: new Date(),
-      pex,
-      op,
-      pd: pds[0],
-    });
+    if (!data.noSession) {
+      // store the session
+      this.sessions.set(sessionId, {
+        user,
+        verifiedAuthReqWithJWT,
+        created: new Date(),
+        pex,
+        op,
+        pd: pds[0],
+      });
+    }
     // select the credentials for the presentation
     const result = await pex.selectVerifiableCredentialsForSubmission(
       pds[0].definition

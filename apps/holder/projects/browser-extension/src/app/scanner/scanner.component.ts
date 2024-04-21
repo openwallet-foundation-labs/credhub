@@ -10,10 +10,14 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { IssuanceRequestComponent } from '../../../../shared/oid4vc/issuance-request/issuance-request.component';
+import { VerifyRequestComponent } from '../../../../shared/oid4vc/verify-request/verify-request.component';
 
 @Component({
   selector: 'app-scanner',
   standalone: true,
+  templateUrl: './scanner.component.html',
+  styleUrl: './scanner.component.scss',
   imports: [
     CommonModule,
     MatListModule,
@@ -22,12 +26,15 @@ import { environment } from '../../environments/environment';
     MatInputModule,
     MatIconModule,
     ReactiveFormsModule,
+    IssuanceRequestComponent,
+    VerifyRequestComponent,
   ],
-  templateUrl: './scanner.component.html',
-  styleUrl: './scanner.component.scss',
 })
 export class ScannerComponent implements OnInit {
   urlField!: FormControl;
+
+  action?: 'issue' | 'verify' | undefined;
+  url?: string;
 
   constructor(
     public scanner: ScannerService,
@@ -48,7 +55,12 @@ export class ScannerComponent implements OnInit {
     });
   }
   process(result: ResultScan) {
-    this.scanner.accept(result);
+    this.url = result.url;
+    if (result.action === 'issue') {
+      this.action = 'issue';
+    } else {
+      this.action = 'verify';
+    }
   }
 
   async presentCredential() {

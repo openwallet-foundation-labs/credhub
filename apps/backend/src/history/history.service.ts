@@ -38,4 +38,8 @@ export class HistoryService {
   setStatus(id: string, status: 'accepted' | 'declined') {
     return this.historyRepository.update({ id }, { status });
   }
+
+  delete(sub: string) {
+    return this.historyRepository.delete({ user: sub });
+  }
 }

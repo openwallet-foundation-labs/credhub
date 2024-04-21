@@ -33,7 +33,7 @@ export class Oid4vpController {
     @Body() value: Oid4vpParseRequest,
     @AuthenticatedUser() user: KeycloakUser
   ): Promise<Oid4vpParseRepsonse> {
-    return this.oid4vciService.parse(value.url, user.sub);
+    return this.oid4vciService.parse(value, user.sub);
   }
 
   @ApiOperation({ summary: 'submit a response' })

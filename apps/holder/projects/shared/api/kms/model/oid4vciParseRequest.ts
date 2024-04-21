@@ -13,5 +13,6 @@
 
 export interface Oid4vciParseRequest { 
     url: string;
+    noSession?: boolean;
 }
 

@@ -10,14 +10,15 @@ import {
   Oid4vcpApiService,
 } from '../../../../shared/api/kms';
 import { firstValueFrom } from 'rxjs';
-import { Router } from '@angular/router';
 
 export interface ResultScan {
   action: 'issue' | 'verify';
   client?: OpenID4VCIClient;
+  url: string;
   sessionId?: string;
   relyingParty: string;
-  credentials: CredentialSupported[];
+  credentials?: CredentialSupported[];
+  purpose?: string;
 }
 
 @Injectable({
@@ -29,8 +30,7 @@ export class ScannerService {
   constructor(
     private zone: NgZone,
     private oid4vciApiService: Oid4vciApiService,
-    private oid4vpApiService: Oid4vcpApiService,
-    private router: Router
+    private oid4vpApiService: Oid4vcpApiService
   ) {}
 
   async parse(url: string) {
@@ -38,11 +38,13 @@ export class ScannerService {
       const result = await firstValueFrom(
         this.oid4vciApiService.oid4vciControllerParse({
           url,
+          noSession: true,
         })
       );
       this.zone.run(() => {
         this.results.push({
           action: 'issue',
+          url,
           credentials: result.credentials as CredentialSupported[],
           sessionId: result.sessionId,
           relyingParty: (result.issuer[0] as MetadataDisplay).name as string,
@@ -50,22 +52,17 @@ export class ScannerService {
       });
     } else {
       const result = await firstValueFrom(
-        this.oid4vpApiService.oid4vpControllerParse({ url })
+        this.oid4vpApiService.oid4vpControllerParse({ url, noSession: true })
       );
-      console.log(result);
-      await this.oid4vpApiService.oid4vpControllerSubmit(result.sessionId, {});
-      // show success animation
-    }
-  }
-
-  async accept(data: ResultScan) {
-    if (data.action === 'issue') {
-      const result = await firstValueFrom<{ id: string }>(
-        this.oid4vciApiService.oid4vciControllerAccept(data.sessionId as string)
-      );
-      this.router.navigate(['/credentials', result.id]);
-    } else {
-      // firstValueFrom(this.oid4vpApiService.)
+      this.zone.run(() => {
+        this.results.push({
+          action: 'verify',
+          url,
+          sessionId: result.sessionId,
+          purpose: result.purpose,
+          relyingParty: result.rp.name,
+        });
+      });
     }
   }
 

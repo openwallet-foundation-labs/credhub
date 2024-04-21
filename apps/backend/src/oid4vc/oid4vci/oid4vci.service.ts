@@ -16,6 +16,7 @@ import { KeyResponse } from 'src/keys/dto/key-response.dto';
 import { KeysService } from 'src/keys/keys.service';
 import { v4 as uuid } from 'uuid';
 import { Oid4vciParseRepsonse } from './dto/parse-response.dto';
+import { Oid4vciParseRequest } from './dto/parse-request.dto';
 
 type Session = {
   //instead of storing the client, we could also generate it on demand. In this case we need to store the uri
@@ -39,13 +40,12 @@ export class Oid4vciService {
     this.sdjwt = new SDJwtVcInstance({ hasher: digest });
   }
 
-  async parse(data: string): Promise<Oid4vciParseRepsonse> {
-    if (data.startsWith('openid-credential-offer')) {
+  async parse(data: Oid4vciParseRequest): Promise<Oid4vciParseRepsonse> {
+    if (data.url.startsWith('openid-credential-offer')) {
       const client = await OpenID4VCIClient.fromURI({
-        uri: data,
+        uri: data.url,
         retrieveServerMetadata: true,
       });
-      console.log(client);
       // get the credential offer
       const metadata = await client.retrieveServerMetadata();
       const supportedCredentials = metadata.credentialIssuerMetadata
@@ -59,14 +59,16 @@ export class Oid4vciService {
           }
         );
       const id = uuid();
-      this.sessions.set(id, {
-        client,
-        relyingParty: client.getIssuer(),
-        credentials,
-        //allows use to remove the session after a certain time
-        created: new Date(),
-        issuer: metadata.credentialIssuerMetadata.display[0],
-      });
+      if (!data.noSession) {
+        this.sessions.set(id, {
+          client,
+          relyingParty: client.getIssuer(),
+          credentials,
+          //allows use to remove the session after a certain time
+          created: new Date(),
+          issuer: metadata.credentialIssuerMetadata.display[0],
+        });
+      }
       return {
         sessionId: id,
         credentials,

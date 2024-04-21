@@ -150,7 +150,6 @@ export class KeysService {
       where: { id: kid, user },
     });
     const jwk = await importJWK<JoseKeyLike>(key.privateKey, 'ES256');
-    console.log(kbJwt.payload);
     const jwt = await new SignJWT({ ...kbJwt.payload, aud })
       .setProtectedHeader({ typ: kbJwt.header.typ, alg: 'ES256', kid })
       .sign(jwk);

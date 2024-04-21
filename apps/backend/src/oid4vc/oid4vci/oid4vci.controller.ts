@@ -22,7 +22,7 @@ export class Oid4vciController {
   @Post('parse')
   @ApiCreatedResponse({ description: 'URL parsed', type: Oid4vciParseRepsonse })
   parse(@Body() value: Oid4vciParseRequest): Promise<Oid4vciParseRepsonse> {
-    return this.oid4vciService.parse(value.url);
+    return this.oid4vciService.parse(value);
   }
 
   @ApiOperation({ summary: 'accept a credential' })

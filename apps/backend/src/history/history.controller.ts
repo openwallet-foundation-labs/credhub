@@ -1,5 +1,5 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
-import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Delete, Get, Param, UseGuards } from '@nestjs/common';
+import { ApiOAuth2, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { AuthGuard, AuthenticatedUser } from 'nest-keycloak-connect';
 import { HistoryService } from './history.service';
 import { KeycloakUser } from 'src/auth/user';
@@ -21,5 +21,11 @@ export class HistoryController {
   @Get(':id')
   getOne(@AuthenticatedUser() user: KeycloakUser, @Param('id') id: string) {
     return this.historyService.getOne(id, user.sub);
+  }
+
+  @ApiOperation({ summary: 'delete all entries' })
+  @Delete()
+  async delete(@AuthenticatedUser() user: KeycloakUser) {
+    await this.historyService.delete(user.sub);
   }
 }
