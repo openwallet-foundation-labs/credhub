@@ -27,10 +27,8 @@ RUN mkdir -p /etc/nginx && \
     echo '        root /usr/share/nginx/html;' >> /etc/nginx/nginx.conf && \
     echo '        index index.html;' >> /etc/nginx/nginx.conf && \
     echo '        location / {' >> /etc/nginx/nginx.conf && \
-    echo '            try_files $uri $uri/ /index.html;' >> /etc/nginx/nginx.conf && \
+    echo '            try_files $uri $uri/ /index.html =404;' >> /etc/nginx/nginx.conf && \
     echo '        }' >> /etc/nginx/nginx.conf && \
     echo '    }' >> /etc/nginx/nginx.conf && \
     echo '}' >> /etc/nginx/nginx.conf
 COPY --from=build /usr/src/app/apps/${PROJECT}/dist/${SUB_PROJECT}/browser .
-# remove all map files since we do not want them in production
-# RUN rm -f *.map
