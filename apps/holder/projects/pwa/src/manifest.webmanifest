@@ -11,14 +11,14 @@
   "screenshots": [
     {
       "src": "assets/screenshot/main.png",
-      "sizes": "750x1334",
+      "sizes": "1082x2402",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Home screen of the credentials"
     },
     {
       "src": "assets/screenshot/main-wide.png",
-      "sizes": "1536x1476",
+      "sizes": "2879x2152",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Home screen of the credentials"
