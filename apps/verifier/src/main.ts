@@ -36,7 +36,8 @@ const { privateKey, publicKey } = await getKeys();
 
 const clientId = 'client';
 const clientName = 'Verifier';
-const logo_uri = '';
+const logo_uri =
+  'https://upload.wikimedia.org/wikipedia/de/thumb/e/ee/Fraunhofer-Gesellschaft_2009_logo.svg/2560px-Fraunhofer-Gesellschaft_2009_logo.svg.png';
 const did = encodeDidJWK(publicKey as JWK);
 const kid = did;
 

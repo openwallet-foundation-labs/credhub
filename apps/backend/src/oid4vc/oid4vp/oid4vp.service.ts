@@ -11,6 +11,7 @@ import {
   SupportedVersion,
   VPTokenLocation,
   type VerifiedAuthorizationRequest,
+  RPRegistrationMetadataPayload,
 } from '@sphereon/did-auth-siop';
 import { SdJwtDecodedVerifiableCredentialWithKbJwtInput } from '@sphereon/pex';
 import { CredentialsService } from 'src/credentials/credentials.service';
@@ -18,6 +19,7 @@ import { KeysService } from 'src/keys/keys.service';
 import { v4 as uuid } from 'uuid';
 import { Oid4vpParseRepsonse } from './dto/parse-response.dto';
 import { SubmissionRequest } from './dto/submission-request.dto';
+import { HistoryService } from 'src/history/history.service';
 
 interface Session {
   user: string;
@@ -34,13 +36,10 @@ export class Oid4vpService {
 
   constructor(
     private credentialsService: CredentialsService,
-    private keysService: KeysService
+    private keysService: KeysService,
+    private historyService: HistoryService
   ) {
     this.sdjwt = new SDJwtVcInstance({ hasher: digest });
-  }
-
-  process(url: string, user: string) {
-    throw new Error('Method not implemented.');
   }
 
   async parse(url: string, user: string): Promise<Oid4vpParseRepsonse> {
@@ -53,6 +52,13 @@ export class Oid4vpService {
       await op.verifyAuthorizationRequest(
         parsedAuthReqURI.requestObjectJwt as string
       );
+    const issuer =
+      (
+        verifiedAuthReqWithJWT.authorizationRequestPayload
+          .client_metadata as RPRegistrationMetadataPayload
+      ).client_name ?? verifiedAuthReqWithJWT.issuer;
+    const logo = verifiedAuthReqWithJWT.registrationMetadataPayload.logo_uri;
+    await this.historyService.add(sessionId, user, issuer, logo, url);
 
     // get all credentials from the client, required for the presentation exchange
     const credentials = (await this.credentialsService.findAll(user)).map(
@@ -113,8 +119,7 @@ export class Oid4vpService {
     return {
       rp: {
         name: verifiedAuthReqWithJWT.registrationMetadataPayload.client_name,
-        logo: verifiedAuthReqWithJWT.registrationMetadataPayload
-          .client_logo_uri,
+        logo: verifiedAuthReqWithJWT.registrationMetadataPayload.logo_uri,
       },
       purpose: pds[0].definition.purpose,
       requests,
@@ -144,7 +149,8 @@ export class Oid4vpService {
       ).kbJwt;
       args.selectedCredentials[0];
       //TODO: set the correct value for aud
-      const aud = 'Audience';
+      const aud =
+        session.verifiedAuthReqWithJWT.authorizationRequest.payload.client_id;
       const cnf = args.presentation.decodedPayload.cnf;
       const kid = this.keysService.decodeDidJWK(cnf.kid).kid as string;
       const signwedKbJwt = await this.keysService.signkbJwt(
@@ -194,9 +200,8 @@ export class Oid4vpService {
     const res = await session.op
       .submitAuthorizationResponse(authenticationResponseWithJWT)
       .catch(() => '');
-    console.log(res);
+    await this.historyService.setStatus(sessionId, 'accepted');
     this.sessions.delete(sessionId);
-    //TODO: save that the user accepted the request and the data was sent successfully
   }
 
   /**
@@ -204,12 +209,13 @@ export class Oid4vpService {
    * @param id
    * @param user
    */
-  decline(id: string, user: string) {
+  async decline(id: string, user: string) {
     //TODO: document that the user declined it
     const session = this.sessions.get(id);
     if (!session || session.user !== user) {
       throw new ConflictException('Session not found');
     }
+    await this.historyService.setStatus(id, 'declined');
     this.sessions.delete(id);
   }
 

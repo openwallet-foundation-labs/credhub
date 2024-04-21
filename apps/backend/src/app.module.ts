@@ -6,6 +6,7 @@ import { CredentialsModule } from './credentials/credentials.module';
 import { DB_VALIDATION_SCHEMA, DbModule } from './db/db.module';
 import { KeysModule } from './keys/keys.module';
 import { Oid4vcModule } from './oid4vc/oid4vc.module';
+import { HistoryModule } from './history/history.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { Oid4vcModule } from './oid4vc/oid4vc.module';
     KeysModule,
     CredentialsModule,
     Oid4vcModule,
+    HistoryModule,
   ],
 })
 export class AppModule {}

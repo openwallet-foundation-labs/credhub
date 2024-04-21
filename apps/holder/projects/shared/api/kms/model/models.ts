@@ -2,6 +2,7 @@ export * from './createCredentialDto';
 export * from './createKey';
 export * from './cred';
 export * from './credential';
+export * from './history';
 export * from './keyResponse';
 export * from './keyType';
 export * from './oid4vciParseRepsonse';

@@ -1,0 +1,18 @@
+<h3>History</h3>
+<mat-nav-list>
+  @for (history of values; track history) {
+    <a mat-list-item [routerLink]="history.id">
+      <!-- <img matListAvatar [src]="history.relyingPartyLogo" alt="logo" /> -->
+      <mat-icon
+        matListItemIcon
+        [ngClass]="{
+          success: history.status === 'accepted',
+          declined: history.status === 'declined'
+        }"
+        >call_made</mat-icon
+      >
+      <h3 matListItemTitle>{{ history.relyingParty }}</h3>
+      <p matListItemLine>{{ history.created_at | date: 'medium' }}</p>
+    </a>
+  }
+</mat-nav-list>

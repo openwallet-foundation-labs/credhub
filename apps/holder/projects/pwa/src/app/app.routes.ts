@@ -2,10 +2,11 @@ import { Routes } from '@angular/router';
 import { authGuard } from '../../../shared/auth/auth.guard';
 import { CredentialsListComponent } from '../../../shared/credentials/credentials-list/credentials-list.component';
 import { CredentialsShowComponent } from '../../../shared/credentials/credentials-show/credentials-show.component';
-import { KeysListComponent } from '../../../shared/keys-list/keys-list.component';
 import { SettingsComponent } from '../../../shared/settings/settings.component';
 import { ScannerComponent } from './scanner/scanner.component';
 import { LoginComponent } from '../../../shared/login/login.component';
+import { HistoryListComponent } from '../../../shared/history/history-list/history-list.component';
+import { HistoryShowComponent } from '../../../shared/history/history-show/history-show.component';
 
 export const routes: Routes = [
   {
@@ -22,16 +23,20 @@ export const routes: Routes = [
         component: ScannerComponent,
       },
       {
-        path: 'keys',
-        component: KeysListComponent,
-      },
-      {
         path: 'credentials',
         component: CredentialsListComponent,
       },
       {
         path: 'credentials/:id',
         component: CredentialsShowComponent,
+      },
+      {
+        path: 'history',
+        component: HistoryListComponent,
+      },
+      {
+        path: 'history/:id',
+        component: HistoryShowComponent,
       },
       {
         path: 'settings',

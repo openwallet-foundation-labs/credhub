@@ -85,13 +85,15 @@ export class VerifyRequestComponent implements OnInit {
       )
     ).then(() => {
       this.status = 'done';
-      // this.router
-      //   .navigate(['/'])
-      //   .then(() => this.snackBar.open('Submitted', '', { duration: 3000 }))
     });
   }
 
-  cancel() {
+  async cancel() {
+    await firstValueFrom(
+      this.oid4vpApiService.oid4vpControllerDecline(
+        (this.response as Oid4vpParseRepsonse).sessionId
+      )
+    );
     this.router.navigate(['/']);
     this.snackBar.open('Cancelled', '', { duration: 3000 });
   }

@@ -1,4 +1,16 @@
 {
   "files.eol": "\n",
-  "cSpell.words": ["keycloak", "sphereon"]
+  "cSpell.words": ["keycloak", "sphereon"],
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "database": "nestjs",
+      "username": "csalkfenvcda",
+      "password": "hwafkjhea",
+      "name": "Wallet-DB"
+    }
+  ]
 }
