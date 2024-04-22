@@ -32,3 +32,5 @@ RUN mkdir -p /etc/nginx && \
     echo '    }' >> /etc/nginx/nginx.conf && \
     echo '}' >> /etc/nginx/nginx.conf
 COPY --from=build /usr/src/app/apps/${PROJECT}/dist/${SUB_PROJECT}/browser .
+# copy the 3rd party licenses
+COPY --from=build /usr/src/app/apps/${PROJECT}/dist/${SUB_PROJECT}/3rdpartylicenses.txt .

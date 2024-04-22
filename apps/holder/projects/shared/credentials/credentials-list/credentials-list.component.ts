@@ -11,6 +11,11 @@ import {
 } from '@sphereon/oid4vci-common';
 import { RouterLink } from '@angular/router';
 import { FlexLayoutModule } from 'ng-flex-layout';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 export interface CredentialList extends Credential {
   display: CredentialsSupportedDisplay;
@@ -27,6 +32,11 @@ export interface CredentialList extends Credential {
     MatCardModule,
     CredentialsShowComponent,
     FlexLayoutModule,
+    MatIconModule,
+    MatMenuModule,
+    MatButtonModule,
+    ReactiveFormsModule,
+    MatInputModule,
   ],
   templateUrl: './credentials-list.component.html',
   styleUrl: './credentials-list.component.scss',
@@ -34,13 +44,27 @@ export interface CredentialList extends Credential {
 export class CredentialsListComponent implements OnInit {
   credentials: CredentialList[] = [];
 
+  search: FormControl = new FormControl('');
+
   render: 'image' | 'card' = 'card';
 
   constructor(private credentialsApiService: CredentialsApiService) {}
 
   async ngOnInit(): Promise<void> {
-    this.credentials = await firstValueFrom(
+    const credentials: CredentialList[] = await firstValueFrom(
       this.credentialsApiService.credentialsControllerFindAll()
     );
+    this.search.valueChanges.subscribe((value: string) => {
+      if (!value) {
+        this.credentials = credentials;
+        return;
+      }
+      this.credentials = credentials.filter((credential) => {
+        return credential.display.name
+          .toLowerCase()
+          .includes(value.toLowerCase());
+      });
+    });
+    this.credentials = credentials;
   }
 }

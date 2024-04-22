@@ -1,6 +1,6 @@
 import { KeyObject } from 'node:crypto';
 import { ES256, digest, generateSalt } from '@sd-jwt/crypto-nodejs';
-import { SDJwtVcInstance, type SdJwtVcPayload } from '@sd-jwt/sd-jwt-vc';
+import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import {
   Alg,
   type CNonceState,
@@ -24,13 +24,13 @@ import expressListRoutes from 'express-list-routes';
 import * as jose from 'jose';
 import { JWK } from 'jose';
 import { v4 } from 'uuid';
-import { getJWK } from './did.js';
-import { encodeDidJWK } from './did.js';
 import { getKeys } from './keys.js';
 import { disclosureFrame, metadata } from './metadata.js';
 import { expressSupport } from './server.js';
 
 const { privateKey, publicKey } = await getKeys();
+
+const privateKeyLike = await jose.importJWK(privateKey);
 
 // get the signer and verifier. Only ES256 is supported for now.
 const signer = await ES256.getSigner(privateKey);
@@ -40,26 +40,24 @@ const verifier = await ES256.getVerifier(publicKey);
 const sdjwt = new SDJwtVcInstance({
   signer,
   verifier,
-  signAlg: 'EdDSA',
+  signAlg: 'ES256',
   hasher: digest,
   hashAlg: 'SHA-256',
   saltGenerator: generateSalt,
 });
 
-const issuer = encodeDidJWK(publicKey as JWK);
-
 const credentialDataSupplier: CredentialDataSupplier = async (args) => {
-  const claims = {
-    prename: 'Mirko',
-    surname: 'Mollik',
-  };
-  //TODO: add values from the request. They should be added when the request was created
+  const jwt = jose.decodeJwt(args.credentialRequest.proof?.jwt as string);
   const credential: SdJwtDecodedVerifiableCredentialPayload = {
     iat: new Date().getTime(),
-    iss: issuer,
+    iss: args.credentialOffer.credential_offer.credential_issuer,
     vct: (args.credentialRequest as CredentialRequestSdJwtVc).vct,
     jti: v4(),
-    ...claims,
+    ...args.credentialDataSupplierInput.credentialSubject,
+    // validate this https://github.com/Sphereon-Opensource/OID4VCI/blob/dc70d5282479b18bcd691f99f88d6cd4ad15131f/packages/issuer/lib/VcIssuer.ts#L307
+    // cnf: {
+    //   jwk: jwt.jwk,
+    // },
   };
   return Promise.resolve({
     credential,
@@ -75,11 +73,9 @@ const credentialDataSupplier: CredentialDataSupplier = async (args) => {
  */
 const signerCallback = async (jwt: Jwt, kid?: string): Promise<string> => {
   //TODO: use the kid to select the correct key
-  const privateKey = (await jose.generateKeyPair(Alg.ES256))
-    .privateKey as KeyObject;
   return new jose.SignJWT({ ...jwt.payload })
-    .setProtectedHeader({ ...jwt.header, alg: Alg.ES256 })
-    .sign(privateKey);
+    .setProtectedHeader({ ...jwt.header, alg: Alg.ES256, kid: privateKey.kid })
+    .sign(privateKeyLike);
 };
 
 /**
@@ -93,21 +89,12 @@ async function jwtVerifyCallback(args: {
 }): Promise<JwtVerifyResult<DIDDocument>> {
   //verify the jwt
   const decoded = jose.decodeProtectedHeader(args.jwt);
-  const publicKey = await getJWK(decoded.kid as string);
+  const publicKey = await jose.importJWK(decoded.jwk as JWK);
   const result = await jose.jwtVerify(args.jwt, publicKey);
-  const kid = result.protectedHeader.kid ?? (args.kid as string);
-  const did = kid.split('#')[0];
-  //TODO: do we need to extend the did document with more information? Like this is not the transformed did:jwk transformation to a did document since the key is missing.
-  const didDocument: DIDDocument = {
-    '@context': 'https://www.w3.org/ns/did/v1',
-    id: did,
-  };
   const alg = result.protectedHeader.alg;
   return {
     alg,
-    kid,
-    did,
-    didDocument,
+    jwk: result.protectedHeader.jwk as JWK,
     jwt: {
       header: result.protectedHeader,
       payload: result.payload,
@@ -128,7 +115,8 @@ const credentialSignerCallback: CredentialSignerCallback<DIDDocument> = async (
   // biome-ignore lint/suspicious/noExplicitAny: correct type passing is not implemented in the lib
   return sdjwt.issue<any>(
     args.credential as SdJwtDecodedVerifiableCredentialPayload,
-    disclosureFrame
+    disclosureFrame,
+    { header: { kid: privateKey.kid } }
   );
 };
 
@@ -161,7 +149,10 @@ const vcIssuerServer = new OID4VCIServer(expressSupport, {
  */
 vcIssuerServer.router.post('/request', async (req, res) => {
   //TODO: in production this route should be protected with a middleware that checks the authorization header!
-  const credentialSubject = req.body.credentialSubject ?? {};
+  const credentialSubject = req.body.credentialSubject ?? {
+    prename: 'Max',
+    surname: 'Mustermann',
+  };
   const response = await vcIssuer.createCredentialOfferURI({
     credentials: [metadata.credentials_supported[0].id as string],
     grants: {
@@ -177,6 +168,27 @@ vcIssuerServer.router.post('/request', async (req, res) => {
   });
   //we are returning the response to the client
   res.send(response);
+});
+
+interface IssuerMetadata {
+  issuer: string;
+  jwks_uri?: string;
+  jwks?: {
+    keys: JWK[];
+  };
+}
+
+/**
+ * Returns the issuers metadata.
+ */
+expressSupport.express.get('/.well-known/jwt-vc-issuer', async (req, res) => {
+  const metadata: IssuerMetadata = {
+    issuer: process.env.ISSUER_BASE_URL as string,
+    jwks: {
+      keys: [publicKey as JWK],
+    },
+  };
+  res.send(metadata);
 });
 
 // start the webserver.

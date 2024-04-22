@@ -6,9 +6,6 @@ export class ProofRequest {
   @IsOptional()
   kid?: string;
 
-  @IsString()
-  aud: string;
-
   @IsObject()
   payload: JWTPayload;
 }

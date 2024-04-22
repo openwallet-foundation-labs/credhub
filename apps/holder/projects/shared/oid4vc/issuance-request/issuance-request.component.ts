@@ -57,7 +57,10 @@ export class IssuanceRequestComponent implements OnInit {
   }
 
   deny() {
-    throw new Error('Method not implemented.');
+    this.snackbar.open('Issuance Request denied', undefined, {
+      duration: 3000,
+    });
+    this.router.navigate(['/']);
   }
   async accept() {
     await firstValueFrom(

@@ -156,14 +156,13 @@ export class Oid4vpService {
         args.presentation as SdJwtDecodedVerifiableCredentialWithKbJwtInput
       ).kbJwt;
       args.selectedCredentials[0];
-      //TODO: set the correct value for aud
       const aud =
         session.verifiedAuthReqWithJWT.authorizationRequest.payload.client_id;
       const cnf = args.presentation.decodedPayload.cnf;
-      const kid = this.keysService.decodeDidJWK(cnf.kid).kid as string;
+      //const kid = this.keysService.decodeDidJWK(cnf.kid).kid as string;
       const signwedKbJwt = await this.keysService.signkbJwt(
         user,
-        kid,
+        cnf.kid,
         kbJwt,
         aud
       );

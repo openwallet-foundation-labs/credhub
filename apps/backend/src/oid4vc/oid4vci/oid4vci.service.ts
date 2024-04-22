@@ -4,6 +4,7 @@ import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { OpenID4VCIClient } from '@sphereon/oid4vci-client';
 import {
   Alg,
+  JwtVerifyResult,
   type CredentialSupported,
   type CredentialSupportedSdJwtVc,
   type Jwt,
@@ -17,6 +18,7 @@ import { KeysService } from 'src/keys/keys.service';
 import { v4 as uuid } from 'uuid';
 import { Oid4vciParseRepsonse } from './dto/parse-response.dto';
 import { Oid4vciParseRequest } from './dto/parse-request.dto';
+import { decodeJwt } from 'jose';
 
 type Session = {
   //instead of storing the client, we could also generate it on demand. In this case we need to store the uri
@@ -92,25 +94,22 @@ export class Oid4vciService {
       key = keys[0];
     }
     const proofCallbacks: ProofOfPossessionCallbacks<DIDDocument> = {
-      // verifyCallback: async (args: {
-      //   jwt: string;
-      //   kid?: string;
-      // }): Promise<JwtVerifyResult<DIDDocument>> => {
-      //   console.log(args);
-      //   return Promise.resolve({
-      //     jwt: JSON.parse(args.jwt) as Jwt,
-      //     alg: 'ES256',
-      //   });
-      // },
-      signCallback: async (args: Jwt): Promise<string> => {
-        return this.keysService
+      verifyCallback: async (args: {
+        jwt: string;
+      }): Promise<JwtVerifyResult<DIDDocument>> =>
+        Promise.resolve({
+          jwt: decodeJwt(args.jwt),
+          alg: Alg.ES256,
+          //instead of using the key referene, we could extract the key from the jwt
+          jwk: key.publicKey,
+        }),
+      signCallback: async (args: Jwt): Promise<string> =>
+        this.keysService
           .proof(user, {
             payload: args.payload,
             kid: key.id,
-            aud: '',
           })
-          .then((response) => response.jwt);
-      },
+          .then((response) => response.jwt),
     };
     await data.client.acquireAccessToken();
     for (const credential of data.credentials) {

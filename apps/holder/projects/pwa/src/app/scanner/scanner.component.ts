@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CameraDevice, Html5Qrcode } from 'html5-qrcode';
 import { Html5QrcodeError } from 'html5-qrcode/esm/core';
 import { MatMenuModule } from '@angular/material/menu';
@@ -29,7 +29,7 @@ type Status = 'scanning' | 'showRequest' | 'showVerificationRequest';
     VerifyRequestComponent,
   ],
 })
-export class ScannerComponent implements OnInit {
+export class ScannerComponent implements OnInit, OnDestroy {
   scanner?: Html5Qrcode;
   devices: CameraDevice[] = [];
   selectedDevice?: string;
@@ -44,7 +44,6 @@ export class ScannerComponent implements OnInit {
 
   ngOnInit(): void {
     const fragment = this.route.snapshot.fragment;
-    console.log(fragment);
     if (fragment === 'issue') {
       this.getCredential();
       return;
@@ -77,6 +76,12 @@ export class ScannerComponent implements OnInit {
       .catch((err) => {
         // handle err
       });
+  }
+
+  async ngOnDestroy(): Promise<void> {
+    if (this.scanner) {
+      await this.scanner.stop();
+    }
   }
 
   async startCamera() {
@@ -116,9 +121,6 @@ export class ScannerComponent implements OnInit {
 
   onScanFailure(errorMessage: string, error: Html5QrcodeError) {
     // handle scan failure, usually better to ignore and keep scanning.
-    // for example:
-    // console.log(error.errorMessage);
-    // console.warn(`Code scan error = ${error}`);
   }
 
   getCredential() {

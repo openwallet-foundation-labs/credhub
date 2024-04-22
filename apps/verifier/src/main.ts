@@ -23,11 +23,11 @@ import { PresentationSubmission } from '@sphereon/pex-models';
 import { CompactJWT, W3CVerifiablePresentation } from '@sphereon/ssi-types';
 import 'dotenv/config';
 import expressListRoutes from 'express-list-routes';
-import { JWK } from 'jose';
+import { JWK, JWTPayload } from 'jose';
 import { v4 } from 'uuid';
-import { decodeDidJWK, encodeDidJWK } from './did.js';
+import { encodeDidJWK } from './did.js';
 import { JWkResolver } from './did.js';
-import { getKeys } from './keys.js';
+import { getKeys, getPublicKey } from './keys.js';
 import { presentationDefinition } from './metadata.js';
 import { expressSupport } from './server.js';
 
@@ -81,6 +81,7 @@ const rp = RP.builder()
   )
   .withScope('openid')
   .withHasher(digest)
+  //TODO: check if did and kid can be blank
   .withSuppliedSignature(withSuppliedSignature, did, kid, SigningAlgo.ES256)
   .withRevocationVerification(RevocationVerification.NEVER)
   .withSessionManager(sessionManager)
@@ -132,12 +133,23 @@ expressSupport.express.get(
   }
 );
 
+interface Header extends Record<string, unknown> {
+  alg: string;
+  typ: string;
+  kid: string;
+}
+
+interface Payload extends Record<string, unknown> {
+  iss: string;
+}
+
 /**
  * Add the route to get the response object
  */
 expressSupport.express.post(
   '/siop/auth-response/:correlationId',
   async (req, res) => {
+    console.log(req.body);
     try {
       req.body.presentation_submission = JSON.parse(
         req.body.presentation_submission
@@ -149,8 +161,7 @@ expressSupport.express.post(
           location: PresentationDefinitionLocation.CLAIMS_VP_TOKEN,
         },
       });
-      // console.log(response);
-      res.send();
+      res.send({});
     } catch (e) {
       console.error(e);
       res.status(500).send((e as Error).message);
@@ -207,11 +218,12 @@ async function presentationVerificationCallback(
      */
     const verifier: Verifier = async (data, signature) => {
       const decodedVC = await sdjwtInstance.decode(`${data}.${signature}`);
-      const issuer: string = (
-        (decodedVC.jwt as Jwt).payload as Record<string, unknown>
-      ).iss as string;
-      //decode the issuer to get the public key. We assume the issuer is a did:jwk.
-      const publicKey = decodeDidJWK(issuer);
+      const payload = decodedVC.jwt?.payload as JWTPayload;
+      const header = decodedVC.jwt?.header as JWK;
+      const publicKey = await getPublicKey(
+        payload.iss as string,
+        header.kid as string
+      );
       const verify = await ES256.getVerifier(publicKey);
       return verify(data, signature);
     };
@@ -238,10 +250,10 @@ async function presentationVerificationCallback(
       kbVerifier,
     });
     // verify the presentation.
-    const sdjwt = await sdjwtInstance.verify(
+    await sdjwtInstance.verify(
       args as CompactJWT,
       requiredClaimKeys,
-      //since there is an error with the sdHash for now, we are not validating the key binding
+      //TODO: since there is an error with the sdHash for now, we are not validating the key binding
       false
     );
     return Promise.resolve({ verified: true });

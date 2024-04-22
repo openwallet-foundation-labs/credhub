@@ -124,17 +124,18 @@ export class KeysService {
         where: { id: newKey.id },
       });
     }
+    //TODO: add the key id when the key is interset into the database. For this the primary get has to be generated first
+    key.publicKey.kid = key.id;
 
     const jwk = await importJWK<JoseKeyLike>(key.privateKey, 'ES256');
-    key.publicKey.kid = key.id;
-    const kid = this.encodeDidJWK(key.publicKey);
     return {
       jwt: await new SignJWT({ ...value.payload })
-        .setProtectedHeader({ alg: 'ES256', kid, typ: 'openid4vci-proof+jwt' })
+        .setProtectedHeader({
+          alg: 'ES256',
+          typ: 'openid4vci-proof+jwt',
+          jwk: key.publicKey,
+        })
         .setIssuedAt()
-        .setIssuer(kid)
-        .setSubject(kid)
-        // .setAudience(value.payload.payload.aud!)
         .setExpirationTime('2h')
         .sign(jwk),
     };

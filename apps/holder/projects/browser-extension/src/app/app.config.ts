@@ -14,7 +14,6 @@ function getConfiguration() {
     basePath: environment.backendUrl,
     credentials: {
       oauth2: () => {
-        console.log(localStorage.getItem('accessToken'));
         return localStorage.getItem('accessToken') as string;
       },
     },
