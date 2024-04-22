@@ -13,6 +13,9 @@
   "pnpm": {
     "overrides": {
       "@sphereon/ssi-types": "^0.22.0"
+    },
+    "patchedDependencies": {
+      "@sphereon/pex@3.3.1": "patches/@sphereon__pex@3.3.1.patch"
     }
   },
   "devDependencies": {

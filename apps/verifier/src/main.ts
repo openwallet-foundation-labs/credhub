@@ -23,7 +23,7 @@ import { PresentationSubmission } from '@sphereon/pex-models';
 import { CompactJWT, W3CVerifiablePresentation } from '@sphereon/ssi-types';
 import 'dotenv/config';
 import expressListRoutes from 'express-list-routes';
-import { JWK, JWTPayload } from 'jose';
+import { JWK, JWTPayload, importJWK, jwtVerify } from 'jose';
 import { v4 } from 'uuid';
 import { encodeDidJWK } from './did.js';
 import { JWkResolver } from './did.js';
@@ -133,23 +133,12 @@ expressSupport.express.get(
   }
 );
 
-interface Header extends Record<string, unknown> {
-  alg: string;
-  typ: string;
-  kid: string;
-}
-
-interface Payload extends Record<string, unknown> {
-  iss: string;
-}
-
 /**
  * Add the route to get the response object
  */
 expressSupport.express.post(
   '/siop/auth-response/:correlationId',
   async (req, res) => {
-    console.log(req.body);
     try {
       req.body.presentation_submission = JSON.parse(
         req.body.presentation_submission
@@ -236,11 +225,14 @@ async function presentationVerificationCallback(
      * @returns
      */
     const kbVerifier: KbVerifier = async (data, signature, payload) => {
-      //TODO: this validation is failing with an error that the sdhashes are not equal
-      console.log(data);
-      console.log(signature);
-      console.log(payload);
-      return true;
+      if (!payload.cnf) {
+        throw new Error('No cnf found in the payload');
+      }
+      const key = await importJWK(payload.cnf.jwk as JWK, 'ES256');
+      return jwtVerify(`${data}.${signature}`, key).then(
+        () => true,
+        () => false
+      );
     };
 
     // initialize the sdjwt instance.
@@ -250,12 +242,7 @@ async function presentationVerificationCallback(
       kbVerifier,
     });
     // verify the presentation.
-    await sdjwtInstance.verify(
-      args as CompactJWT,
-      requiredClaimKeys,
-      //TODO: since there is an error with the sdHash for now, we are not validating the key binding
-      false
-    );
+    await sdjwtInstance.verify(args as CompactJWT, requiredClaimKeys, true);
     return Promise.resolve({ verified: true });
   } catch (e) {
     console.error(e);

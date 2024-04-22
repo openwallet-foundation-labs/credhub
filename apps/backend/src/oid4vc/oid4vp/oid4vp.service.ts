@@ -159,10 +159,9 @@ export class Oid4vpService {
       const aud =
         session.verifiedAuthReqWithJWT.authorizationRequest.payload.client_id;
       const cnf = args.presentation.decodedPayload.cnf;
-      //const kid = this.keysService.decodeDidJWK(cnf.kid).kid as string;
       const signwedKbJwt = await this.keysService.signkbJwt(
         user,
-        cnf.kid,
+        cnf.jwk.kid,
         kbJwt,
         aud
       );
