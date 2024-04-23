@@ -10,7 +10,7 @@ import { JWK } from 'jose';
 export async function getKeys() {
   let privateKey: JsonWebKey;
   let publicKey: JsonWebKey;
-  const folder = 'tmp';
+  const folder = './tmp';
   if (!existsSync(folder)) {
     mkdirSync(folder);
   }

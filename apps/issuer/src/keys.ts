@@ -10,7 +10,7 @@ import { v4 } from 'uuid';
 export async function getKeys() {
   let privateKey: JWK;
   let publicKey: JWK;
-  const folder = 'tmp';
+  const folder = './tmp';
   if (!existsSync(folder)) {
     mkdirSync(folder);
   }
