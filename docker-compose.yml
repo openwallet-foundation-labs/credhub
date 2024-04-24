@@ -33,6 +33,7 @@ services:
         '--spi-theme-static-max-age=-1',
         '--spi-theme-cache-themes=false',
         '--spi-theme-cache-templates=false',
+        '--import-realm',
       ]
     depends_on:
       - 'postgres-keycloak'
@@ -45,9 +46,9 @@ services:
       KC_HOSTNAME_URL: $KEYCLOAK_HOSTNAME_URL
       KEYCLOAK_ADMIN: $KEYCLOAK_ADMIN
       KEYCLOAK_ADMIN_PASSWORD: $KEYCLOAK_ADMIN_PASSWORD
-      KEYCLOAK_IMPORT: /tmp/import/realm-export.json
+      KEYCLOAK_IMPORT: /opt/keycloak/data/import/realm-export.json
     volumes:
-      - ./config/keycloak/realm-export.json:/tmp/import/realm-export.json
+      - ./config/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
     ports:
       - '8080:8080'
 
@@ -82,7 +83,8 @@ services:
       PORT: $ISSUER_PORT
     volumes:
       - issuer_tmp:/app/tmp
-    network_mode: host
+    ports:
+      - 3001:3000
 
   verifier:
     image: ghcr.io/cre8/wallet/verifier
@@ -109,7 +111,8 @@ services:
       dockerfile: docker/node.Dockerfile
       args:
         - PROJECT=backend
-    network_mode: host
+    ports:
+      - 3000:3000
 
   holder:
     image: ghcr.io/cre8/wallet/holder

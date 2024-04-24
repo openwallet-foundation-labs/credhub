@@ -32,6 +32,7 @@ export const KEYCLOAK_VALIDATION_SCHEMA = {
           policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
           //TODO: set this to online
           tokenValidation: TokenValidation.OFFLINE,
+          //TODO: maybe setting verifyTokenAudience could work with the localhost problem
         }) as KeycloakConnectOptions,
     }),
   ],

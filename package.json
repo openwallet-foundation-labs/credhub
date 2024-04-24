@@ -1,7 +1,7 @@
 {
   "name": "wallet",
   "version": "1.0.0",
-  "description": "",
+  "description": "A monorepo including multiple apps for SSI",
   "scripts": {
     "build": "pnpm run -r build",
     "clean": "pnpm run -r clean && rm -rf node_modules",
