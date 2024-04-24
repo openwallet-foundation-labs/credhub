@@ -76,6 +76,8 @@ services:
       dockerfile: docker/node.Dockerfile
       args:
         - PROJECT=issuer
+    volumes:
+      - issuer_tmp:/app/tmp
     ports:
       - '3001:3000'
 
@@ -86,6 +88,8 @@ services:
       dockerfile: docker/node.Dockerfile
       args:
         - PROJECT=verifier
+    volumes:
+      - verifier_tmp:/app/tmp
     ports:
       - '3002:3000'
 
@@ -117,3 +121,5 @@ services:
 volumes:
   keycloak-db:
   nestjs-db:
+  issuer_tmp:
+  verifier_tmp:
