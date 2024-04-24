@@ -78,10 +78,11 @@ services:
         - PROJECT=issuer
     env_file:
       - .env
+    environment:
+      PORT: $ISSUER_PORT
     volumes:
       - issuer_tmp:/app/tmp
-    ports:
-      - '3001:3000'
+    network_mode: host
 
   verifier:
     image: ghcr.io/cre8/wallet/verifier

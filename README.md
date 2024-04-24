@@ -11,7 +11,14 @@ Instead of building a framework for wallets in one programming language, this re
 - Run `docker compose up` to start a database and the issuer/holder/verifier/backend services as well as a keycloak instance.
   - If you have already have a keycloak instance, set `KEYCLOAK_AUTH_URL` accordingly and run 
   `docker compose up --scale postgres-keycloak=0 --scale keycloak=0`.
-
+- Configure Keycloak
+    - If you use the local one
+      - Open http://localhost:8080/ 
+      - Login with the credentials set in the env file
+      - Create a new Realm from `./keycloak/realm-export.json`
+      - Goto http://localhost to open the wallet ui
+      - Login
+      - Register a new user
 
 ## Development
 
