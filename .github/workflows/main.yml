@@ -34,8 +34,8 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          docker-compose --env-file build
-          docker-compose --env-file push
+          docker-compose build
+          docker-compose push
 
       - name: Cleanup
         if: always()
