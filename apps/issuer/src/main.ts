@@ -1,4 +1,3 @@
-import { KeyObject } from 'node:crypto';
 import { ES256, digest, generateSalt } from '@sd-jwt/crypto-nodejs';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import {
@@ -54,10 +53,6 @@ const credentialDataSupplier: CredentialDataSupplier = async (args) => {
     vct: (args.credentialRequest as CredentialRequestSdJwtVc).vct,
     jti: v4(),
     ...args.credentialDataSupplierInput.credentialSubject,
-    // validate this https://github.com/Sphereon-Opensource/OID4VCI/blob/dc70d5282479b18bcd691f99f88d6cd4ad15131f/packages/issuer/lib/VcIssuer.ts#L307
-    // cnf: {
-    //   jwk: jwt.jwk,
-    // },
   };
   return Promise.resolve({
     credential,
@@ -137,7 +132,7 @@ const vcIssuerServer = new OID4VCIServer(expressSupport, {
   endpointOpts: {
     tokenEndpointOpts: {
       accessTokenSignerCallback: signerCallback,
-      // accessTokenIssuer: 'https://www.example.com',
+      accessTokenIssuer: process.env.ISSUER_BASE_URL,
       preAuthorizedCodeExpirationDuration: 1000 * 60 * 10,
       tokenExpiresIn: 300,
     },

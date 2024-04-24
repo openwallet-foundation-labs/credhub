@@ -14,7 +14,10 @@ export async function getKeys() {
   if (!existsSync(folder)) {
     mkdirSync(folder);
   }
-  if (!existsSync(`${folder}`)) {
+  if (
+    !existsSync(`${folder}/private.json`) &&
+    !existsSync(`${folder}/public.json`)
+  ) {
     const keys = await ES256.generateKeyPair();
     privateKey = keys.privateKey;
     publicKey = keys.publicKey;

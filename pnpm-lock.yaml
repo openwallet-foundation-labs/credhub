@@ -430,6 +430,9 @@ importers:
       awesome-qr:
         specifier: ^2.1.5-rc.0
         version: 2.1.5-rc.0
+      axios:
+        specifier: ^1.6.8
+        version: 1.6.8
       did-resolver:
         specifier: ^4.1.0
         version: 4.1.0
@@ -458,9 +461,6 @@ importers:
       '@types/uuid':
         specifier: ^9.0.8
         version: 9.0.8
-      axios:
-        specifier: ^1.6.8
-        version: 1.6.8
       globals:
         specifier: ^15.0.0
         version: 15.0.0
