@@ -8,8 +8,9 @@ Instead of building a framework for wallets in one programming language, this re
 ## Running
 
 - Copy the `.env.example` file to `.env` and optionally modify the values.
-- Run `docker compose --profile keycloak up` to start a database and the issuer/holder/verifier/backend services as well as a keycloak instance.
-  - If you have already have a keycloak instance, set `KEYCLOAK_AUTH_URL` accordingly and just run `docker compose up -d`.
+- Run `docker compose up` to start a database and the issuer/holder/verifier/backend services as well as a keycloak instance.
+  - If you have already have a keycloak instance, set `KEYCLOAK_AUTH_URL` accordingly and run 
+  `docker compose up --scale postgres-keycloak=0 --scale keycloak=0`.
 
 
 ## Development
