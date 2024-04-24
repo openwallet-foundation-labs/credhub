@@ -47,7 +47,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: $KEYCLOAK_ADMIN_PASSWORD
       KEYCLOAK_IMPORT: /tmp/import/realm-export.json
     volumes:
-      - ./keycloak/realm-export.json:/tmp/import/realm-export.json
+      - ./config/keycloak/realm-export.json:/tmp/import/realm-export.json
     ports:
       - '8080:8080'
 
@@ -108,8 +108,6 @@ services:
       dockerfile: docker/node.Dockerfile
       args:
         - PROJECT=backend
-    # ports:
-    #   - '3000:3000'
     network_mode: host
 
   holder:
@@ -120,6 +118,8 @@ services:
       args:
         - SUB_PROJECT=pwa
         - PROJECT=holder
+    volumes:
+      - ./config/holder:/usr/share/nginx/html/assets/config
     ports:
       - 80:80
 

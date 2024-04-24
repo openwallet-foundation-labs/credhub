@@ -1,5 +1,4 @@
 import { EventEmitter } from 'node:events';
-import { Jwt } from '@sd-jwt/core';
 import { ES256, digest } from '@sd-jwt/crypto-nodejs';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { KbVerifier, Verifier } from '@sd-jwt/types';
@@ -25,8 +24,7 @@ import 'dotenv/config';
 import expressListRoutes from 'express-list-routes';
 import { JWK, JWTPayload, importJWK, jwtVerify } from 'jose';
 import { v4 } from 'uuid';
-import { encodeDidJWK } from './did.js';
-import { JWkResolver } from './did.js';
+import { encodeDidJWK, JWkResolver } from './did.js';
 import { getKeys, getPublicKey } from './keys.js';
 import { presentationDefinition } from './metadata.js';
 import { expressSupport } from './server.js';
