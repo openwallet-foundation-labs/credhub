@@ -28,11 +28,14 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: copy env file
+        run: cp .env.example .env
 
       - name: Build and push Docker images
         run: |
-          docker-compose --env-file .env.example build
-          docker-compose --env-file .env.example push
+          docker-compose --env-file build
+          docker-compose --env-file push
 
       - name: Cleanup
         if: always()
