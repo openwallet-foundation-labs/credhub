@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     image: 'postgres:14.4'
     healthcheck:
-      test: ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', 'root']
+      test: ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', '$KC_POSTGRES_USER']
       timeout: 45s
       interval: 10s
       retries: 10
@@ -55,7 +55,7 @@ services:
     image: 'postgres:14.4'
     restart: unless-stopped
     healthcheck:
-      test: ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', 'root']
+      test: ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', '$DB_USERNAME']
       timeout: 45s
       interval: 10s
       retries: 10
