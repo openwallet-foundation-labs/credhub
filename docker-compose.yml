@@ -45,6 +45,9 @@ services:
       KC_HOSTNAME_URL: $KEYCLOAK_HOSTNAME_URL
       KEYCLOAK_ADMIN: $KEYCLOAK_ADMIN
       KEYCLOAK_ADMIN_PASSWORD: $KEYCLOAK_ADMIN_PASSWORD
+      KEYCLOAK_IMPORT: /tmp/import/realm-export.json
+    volumes:
+      - ./keycloak/realm-export.json:/tmp/import/realm-export.json
     ports:
       - '8080:8080'
 
