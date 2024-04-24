@@ -6,7 +6,7 @@ services:
     image: 'postgres:14.4'
     healthcheck:
       test:
-        ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', $KC_POSTGRES_USER]
+        ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', '$KC_POSTGRES_USER']
       timeout: 45s
       interval: 10s
       retries: 10
@@ -44,8 +44,6 @@ services:
       KC_HOSTNAME_URL: $KEYCLOAK_HOSTNAME_URL
       KEYCLOAK_ADMIN: $KEYCLOAK_ADMIN
       KEYCLOAK_ADMIN_PASSWORD: $KEYCLOAK_ADMIN_PASSWORD
-    # volumes:
-    # - ./keywind/theme:/opt/keycloak/themes
     ports:
       - '8080:8080'
 
@@ -53,7 +51,7 @@ services:
     image: 'postgres:14.4'
     restart: unless-stopped
     healthcheck:
-      test: ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', $DB_USERNAME]
+      test: ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', '$DB_USERNAME']
       timeout: 45s
       interval: 10s
       retries: 10
@@ -76,6 +74,8 @@ services:
         - PROJECT=issuer
     env_file:
       - .env
+    volumes:
+      - issuer_tmp:/app/tmp
     ports:
       - '3001:3000'
 
@@ -87,7 +87,7 @@ services:
       args:
         - PROJECT=verifier
     volumes:
-      - verifier:/app/tmp
+      - verifier_tmp:/app/tmp
     env_file:
       - .env
     ports:
@@ -122,5 +122,5 @@ services:
 volumes:
   keycloak-db:
   nestjs-db:
-  issuer:
-  verifier:
+  issuer_tmp:
+  verifier_tmp:

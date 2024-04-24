@@ -4,10 +4,18 @@ Instead of building a framework for wallets in one programming language, this re
 
 
 # Setup
-To install all dependencies for all apps, run `pnpm install` in the root folder.
 
-Copy the `.env.example` file to `.env` and modify the values to your needs.
-Dependencies like keycloak and the persistent storage of the backend can be started with `docker compose up -d`.
+## Running
+
+- Copy the `.env.example` file to `.env` and optionally modify the values.
+- Run `docker compose up` to start a database and the issuer/holder/verifier/backend services as well as a keycloak instance.
+  - If you have already have a keycloak instance, set `KEYCLOAK_AUTH_URL` accordingly and run 
+  `docker compose up --scale postgres-keycloak=0 --scale keycloak=0`.
+
+
+## Development
+
+To install all dependencies needed to run the apps locally, install [pnpm](https://pnpm.io/) and run `pnpm install` in the root folder.
 
 # Apps
 
