@@ -12,7 +12,6 @@ services:
       retries: 10
     volumes:
       - keycloak-db:/var/lib/postgresql/data
-      #- ./sql:/docker-entrypoint-initdb.d/:ro # turn it on, if you need run init DB
     environment:
       POSTGRES_USER: $KC_POSTGRES_USER
       POSTGRES_PASSWORD: $KC_POSTGRES_PASSWORD
