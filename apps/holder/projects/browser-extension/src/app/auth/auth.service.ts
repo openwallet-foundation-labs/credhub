@@ -51,7 +51,7 @@ export class AuthService {
     const scopes = ['openid'];
     let authURL = `${environment.keycloakHost}/realms/${environment.keycloakRealm}/protocol/openid-connect/auth`;
     authURL += `?client_id=${environment.keycloakClient}`;
-    authURL += `&response_type=token`;
+    authURL += '&response_type=token';
     authURL += `&redirect_uri=${encodeURIComponent(redirectURL)}`;
     authURL += `&scope=${encodeURIComponent(scopes.join(' '))}`;
     return authURL;

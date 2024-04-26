@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "clientId": "client",
+    "clientName": "Verifier",
+    "logo_uri": "https://upload.wikimedia.org/wikipedia/de/thumb/e/ee/Fraunhofer-Gesellschaft_2009_logo.svg/2560px-Fraunhofer-Gesellschaft_2009_logo.svg.png"
+  },
+  "request": {
+    "id": "check-in",
+    "purpose": "We need some information about you.",
+    "format": {
+      "vc+sd-jwt": {}
+    },
+    "input_descriptors": [
+      {
+        "id": "adult",
+        "name": "Identity proof",
+        "purpose": "We need some values from your identity card.",
+        "constraints": {
+          "limit_disclosure": "required",
+          "fields": [
+            {
+              "path": ["$.vct"],
+              "filter": {
+                "type": "string",
+                "const": "Identity"
+              }
+            },
+            {
+              "path": ["$.prename"],
+              "filter": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

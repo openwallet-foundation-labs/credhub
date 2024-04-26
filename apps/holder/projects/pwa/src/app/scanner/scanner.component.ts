@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CameraDevice, Html5Qrcode } from 'html5-qrcode';
-import { Html5QrcodeError } from 'html5-qrcode/esm/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -73,7 +72,7 @@ export class ScannerComponent implements OnInit, OnDestroy {
           this.startCamera();
         }
       })
-      .catch((err) => {
+      .catch(() => {
         // handle err
       });
   }
@@ -87,8 +86,8 @@ export class ScannerComponent implements OnInit, OnDestroy {
   async startCamera() {
     this.scanner = new Html5Qrcode('reader');
     //TODO: we need to set the correct dimensions.
-    const dimension =
-      Math.min(window.innerWidth, window.innerHeight - 84) * 0.6;
+    // const dimension =
+    //   Math.min(window.innerWidth, window.innerHeight - 84) * 0.6;
     await this.scanner.start(
       { deviceId: { exact: this.selectedDevice } },
       {
@@ -97,7 +96,8 @@ export class ScannerComponent implements OnInit, OnDestroy {
         // aspectRatio: window.innerWidth / window.innerHeight,
       },
       this.onScanSuccess,
-      this.onScanFailure
+      // we do nothing when a scan failed
+      () => {}
     );
   }
 
@@ -119,15 +119,13 @@ export class ScannerComponent implements OnInit, OnDestroy {
     this.scanner?.stop();
   }
 
-  onScanFailure(errorMessage: string, error: Html5QrcodeError) {
-    // handle scan failure, usually better to ignore and keep scanning.
-  }
-
   getCredential() {
     firstValueFrom(
       this.httpClient.post<{ uri: string }>(
         `${environment.demoIssuer}/request`,
-        {}
+        {
+          credentialId: 'Identity',
+        }
       )
     ).then((response) => this.showRequest(response.uri, 'receive'));
   }
@@ -136,7 +134,9 @@ export class ScannerComponent implements OnInit, OnDestroy {
     firstValueFrom(
       this.httpClient.post<{ uri: string }>(
         `${environment.demoVerifier}/request`,
-        {}
+        {
+          id: 'eID',
+        }
       )
     ).then((response) => this.showRequest(response.uri, 'send'));
   }

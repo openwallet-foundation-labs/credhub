@@ -37,7 +37,6 @@ export class CredentialsController {
     const credentials = await this.credentialsService.findAll(user.sub);
     return credentials.map((credential) => ({
       id: credential.id,
-      value: credential.value,
       display: credential.metaData.display[0],
       issuer: credential.issuer,
     }));
@@ -46,6 +45,7 @@ export class CredentialsController {
   @ApiOperation({ summary: 'get a credential' })
   @Get(':id')
   findOne(@Param('id') id: string, @AuthenticatedUser() user: KeycloakUser) {
+    //TODO: return the parsed values so the client does not have to decode it.
     return this.credentialsService.findOne(id, user.sub).catch(() => {
       throw new ConflictException();
     });

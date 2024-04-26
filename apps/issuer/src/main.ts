@@ -20,16 +20,27 @@ import { SdJwtDecodedVerifiableCredentialPayload } from '@sphereon/ssi-types';
 import { DIDDocument } from 'did-resolver';
 import 'dotenv/config';
 import expressListRoutes from 'express-list-routes';
-import * as jose from 'jose';
-import { JWK } from 'jose';
+import {
+  JWK,
+  SignJWT,
+  decodeProtectedHeader,
+  importJWK,
+  jwtVerify,
+} from 'jose';
 import { v4 } from 'uuid';
 import { getKeys } from './keys.js';
-import { disclosureFrame, metadata } from './metadata.js';
+import { Issuer } from './issuer.js';
 import { expressSupport } from './server.js';
+import { IssuerMetadata } from './types.js';
 
+// get the keys
 const { privateKey, publicKey } = await getKeys();
 
-const privateKeyLike = await jose.importJWK(privateKey);
+// import the private key.
+const privateKeyLike = await importJWK(privateKey);
+
+// create the issuer instance
+const issuer = new Issuer();
 
 // get the signer and verifier. Only ES256 is supported for now.
 const signer = await ES256.getSigner(privateKey);
@@ -45,8 +56,13 @@ const sdjwt = new SDJwtVcInstance({
   saltGenerator: generateSalt,
 });
 
+/**
+ * The credential data supplier is responsible for creating the credential that should be issued.
+ * @param args
+ * @returns
+ */
 const credentialDataSupplier: CredentialDataSupplier = async (args) => {
-  const jwt = jose.decodeJwt(args.credentialRequest.proof?.jwt as string);
+  // const jwt = decodeJwt(args.credentialRequest.proof?.jwt as string);
   const credential: SdJwtDecodedVerifiableCredentialPayload = {
     iat: new Date().getTime(),
     iss: args.credentialOffer.credential_offer.credential_issuer,
@@ -68,7 +84,7 @@ const credentialDataSupplier: CredentialDataSupplier = async (args) => {
  */
 const signerCallback = async (jwt: Jwt, kid?: string): Promise<string> => {
   //TODO: use the kid to select the correct key
-  return new jose.SignJWT({ ...jwt.payload })
+  return new SignJWT({ ...jwt.payload })
     .setProtectedHeader({ ...jwt.header, alg: Alg.ES256, kid: privateKey.kid })
     .sign(privateKeyLike);
 };
@@ -78,14 +94,14 @@ const signerCallback = async (jwt: Jwt, kid?: string): Promise<string> => {
  * @param args jwt and key id
  * @returns the DID document
  */
-async function jwtVerifyCallback(args: {
+const jwtVerifyCallback = async (args: {
   jwt: string;
   kid?: string;
-}): Promise<JwtVerifyResult<DIDDocument>> {
+}): Promise<JwtVerifyResult<DIDDocument>> => {
   //verify the jwt
-  const decoded = jose.decodeProtectedHeader(args.jwt);
-  const publicKey = await jose.importJWK(decoded.jwk as JWK);
-  const result = await jose.jwtVerify(args.jwt, publicKey);
+  const decoded = decodeProtectedHeader(args.jwt);
+  const publicKey = await importJWK(decoded.jwk as JWK);
+  const result = await jwtVerify(args.jwt, publicKey);
   const alg = result.protectedHeader.alg;
   return {
     alg,
@@ -95,7 +111,7 @@ async function jwtVerifyCallback(args: {
       payload: result.payload,
     },
   };
-}
+};
 
 /**
  * Signs the credential with the sd-jwt instance.
@@ -104,29 +120,31 @@ async function jwtVerifyCallback(args: {
  */
 const credentialSignerCallback: CredentialSignerCallback<DIDDocument> = async (
   args
-) => {
-  //TODO: do we need to pass more values to manipulate the header to issue based on other args values? Maybe a reference to the used key?
-  //TODO: can we pass a better value than any?
-  // biome-ignore lint/suspicious/noExplicitAny: correct type passing is not implemented in the lib
-  return sdjwt.issue<any>(
+) =>
+  sdjwt.issue<{ iss: string; vct: string }>(
     args.credential as SdJwtDecodedVerifiableCredentialPayload,
-    disclosureFrame,
+    issuer.getDisclosureFrame(args.credential.vct as string),
     { header: { kid: privateKey.kid } }
   );
-};
 
 //create the issuer instance
-const vcIssuer: VcIssuer<DIDDocument> = new VcIssuer<DIDDocument>(metadata, {
-  cNonceExpiresIn: 300,
-  //TODO: use persistant session managements in production
-  credentialOfferSessions: new MemoryStates<CredentialOfferSession>(),
-  cNonces: new MemoryStates<CNonceState>(),
-  uris: new MemoryStates<URIState>(),
-  jwtVerifyCallback,
-  credentialDataSupplier,
-  credentialSignerCallback,
-});
+const vcIssuer: VcIssuer<DIDDocument> = new VcIssuer<DIDDocument>(
+  issuer.getMetadata(),
+  {
+    cNonceExpiresIn: 300,
+    //TODO: use persistant session managements in production
+    credentialOfferSessions: new MemoryStates<CredentialOfferSession>(),
+    cNonces: new MemoryStates<CNonceState>(),
+    uris: new MemoryStates<URIState>(),
+    jwtVerifyCallback,
+    credentialDataSupplier,
+    credentialSignerCallback,
+  }
+);
 
+/**
+ * Create the issuer server instance.
+ */
 const vcIssuerServer = new OID4VCIServer(expressSupport, {
   issuer: vcIssuer,
   endpointOpts: {
@@ -139,39 +157,44 @@ const vcIssuerServer = new OID4VCIServer(expressSupport, {
   },
 });
 
+interface RequestLinkBody {
+  credentialSubject: unknown;
+  credentialId: string;
+  pin: boolean;
+}
+
 /**
  * Register the route to create a credential offer.
  */
 vcIssuerServer.router.post('/request', async (req, res) => {
+  const values: RequestLinkBody = req.body;
   //TODO: in production this route should be protected with a middleware that checks the authorization header!
-  const credentialSubject = req.body.credentialSubject ?? {
+  const credentialSubject = values.credentialSubject ?? {
     prename: 'Max',
     surname: 'Mustermann',
   };
-  const response = await vcIssuer.createCredentialOfferURI({
-    credentials: [metadata.credentials_supported[0].id as string],
-    grants: {
-      'urn:ietf:params:oauth:grant-type:pre-authorized_code': {
-        'pre-authorized_code': v4().substring(0, 10),
-        user_pin_required: false,
+  const credentialId = values.credentialId;
+  try {
+    const response = await vcIssuer.createCredentialOfferURI({
+      credentials: [issuer.getCredential(credentialId).id as string],
+      grants: {
+        'urn:ietf:params:oauth:grant-type:pre-authorized_code': {
+          'pre-authorized_code': v4().substring(0, 10),
+          user_pin_required: values.pin,
+        },
       },
-    },
-    credentialDataSupplierInput: {
-      credentialSubject,
-      //TODO: allow to pass more values like should a status list be used. These values are defined be the issuer, not the holder that should receive the credential.
-    },
-  });
-  //we are returning the response to the client
-  res.send(response);
+      credentialDataSupplierInput: {
+        credentialSubject,
+        //TODO: allow to pass more values like should a status list be used. These values are defined be the issuer, not the holder that should receive the credential.
+      },
+    });
+    //we are returning the response to the client
+    res.send(response);
+  } catch (error) {
+    console.error(error);
+    res.status(402);
+  }
 });
-
-interface IssuerMetadata {
-  issuer: string;
-  jwks_uri?: string;
-  jwks?: {
-    keys: JWK[];
-  };
-}
 
 /**
  * Returns the issuers metadata.

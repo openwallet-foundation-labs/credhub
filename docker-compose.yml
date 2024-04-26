@@ -82,6 +82,7 @@ services:
       PORT: $ISSUER_PORT
     volumes:
       - issuer_tmp:/app/tmp
+      - ./config/issuer:/app/templates
     ports:
       - 3001:3000
 
@@ -94,6 +95,7 @@ services:
         - PROJECT=verifier
     volumes:
       - verifier_tmp:/app/tmp
+      - ./config/verifier:/app/templates
     env_file:
       - .env
     ports:
