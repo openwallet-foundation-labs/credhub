@@ -1,22 +1,24 @@
-<div fxLayout="row" fxLayoutAlign="space-between center">
-  <div fxLayout="row" fxLayoutGap="16px" fxLayoutAlign="start center">
-    <button mat-icon-button [routerLink]="'../'">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h3>{{ element.relyingParty }}</h3>
+<div *ngIf="element">
+  <div fxLayout="row" fxLayoutAlign="space-between center">
+    <div fxLayout="row" fxLayoutGap="16px" fxLayoutAlign="start center">
+      <button mat-icon-button [routerLink]="'../'">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h3>{{ element.relyingParty }}</h3>
+    </div>
   </div>
+  <mat-card>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item>
+          <div matListItemTitle>Created at</div>
+          <div matListItemLine>{{ element.created_at | date: 'medium' }}</div>
+        </mat-list-item>
+        <mat-list-item>
+          <div matListItemTitle>Action</div>
+          <div matListItemLine>{{ element.status }}</div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
 </div>
-<mat-card>
-  <mat-card-content>
-    <mat-list>
-      <mat-list-item>
-        <div matListItemTitle>Created at</div>
-        <div matListItemLine>{{ element.created_at | date: 'medium' }}</div>
-      </mat-list-item>
-      <mat-list-item>
-        <div matListItemTitle>Action</div>
-        <div matListItemLine>{{ element.status }}</div>
-      </mat-list-item>
-    </mat-list>
-  </mat-card-content>
-</mat-card>
