@@ -1,59 +1,31 @@
 # Modular Wallet
 
-Instead of building a framework for wallets in one programming language, this repo will provide multiple web services that can be used to handle the different tasks of a wallet.
+Instead of building a framework for wallets in one programming language, this repo will provide multiple web services that can be used to handle the different tasks when working with wallets.
 
+It includes
+- a minimal issuer and verifier service
+- a cloud wallet and a progressive web app and browser plugin to interact with it
 
-# Setup
+# Why a cloud wallet
+A cloud wallet is able to move the whole complexity of the SSI algorithms to the server side, so the clients only need to render the data. This makes the development of new clients or integrating it in existing applications much easier.
+Besides it allows the user to access his credentials from multiple devices without the need to sync them.
 
-## Running - Docker
-To run the docker compose setup, copy the `.env.example` to `.env` in the root folder. Modify the values if required.
-Run `docker compose up -d` to start a database and the issuer/holder/verifier/backend services as well as a keycloak instance. It will downlaod the images from the docker registry. In case you want to run your modified apps, run `docker compose build` to build the images locally.
+Of course the user is loosing offline capabilities and has to trust the server to not misuse his data. But this is a tradeoff that can be acceptable for many use cases when you want to start with verifiable credentials with great user experience and low development effort.
 
-Known limitations: right now running it locally via docker can cause some problems since `localhost` is used to interact with some services.
+# Tech Stack
+- transport: [Oid4vc](https://openid.net/sg/openid4vc/) for issuing and presenting credentials
+- credential format: [SD-JWT-VC](https://www.ietf.org/archive/id/draft-ietf-oauth-sd-jwt-vc-03.html)
+- Key management holder: Json Web Key, cnf binding
+- Key management issuer: [JWT Issuer Metadata](https://www.ietf.org/archive/id/draft-ietf-oauth-sd-jwt-vc-03.html#name-jwt-vc-issuer-metadata), X509 and DID will come soon
+- Revocation mechanism: [Status List](https://datatracker.ietf.org/doc/html/draft-looker-oauth-jwt-cwt-status-list-01) (not implemented yet)
 
-## Running - NPM
-To work in developpment mode, you can start the services via `pnpm`. It's possible to run all of them via `pnpm` or some via `docker`.
+# More information
+- [Repo structure](./docs/repo-strucutre.md)
+- [Running docker images](./docs/running-docker.md)
+- [Development](./docs/development.md)
 
-To run the application with `pnpm`, you need to enable corepack by `corepack enable`.
+# Contributing
+Contributions are always welcome. When opening a pull request, please make sure it is signed and explain the changes you made. In case you want to discuss about a new feature/change, open an issue and we can discuss it there.
 
-
-## Keycloak
-You can start a local instance of keycloak to manage user authentication for the cloud wallet. When you start keycloak for the first time, it will install the realm wallet located in the `config/keycloak/realm-export.json`. In case you want to use another keycloak instance, you can import the realm there. It should also be possible to use any other OIDC system.
-
-In the default realm settings, there is no restirction to the origin of the requests and registration is open for everyone. There is also no implementation of keycloak or cloud wallet events like creating or deleting a user object.
-
-The configuration of the pwa client is mounted from the `config/holder/config.js` file. Mount the config into the container and don't forget to modify it when it's hosted online.
-
-## Development
-
-To install all dependencies needed to run the apps locally, install [pnpm](https://pnpm.io/) and run `pnpm install` in the root folder.
-Before you need to install `pnpm` to work with this repository. After this run `pnpm install` in the root folder to install all dependencies for all apps.
-
-There are some jobs in the `package.json` like `build`, `clean` and `lint`. App specifc jobs are found in the app folders.
-
-# Apps
-This project is a monorepo managed by `pnpm`. All apps are under the apps folder, there is no shared code between the apps right now.
-
-## Issuer
-The issuer app is a rest api, supporting the oid4vci protocol. Right now there is only one demo credential available. Start the issuer with `pnpm run dev`. Don't forget to have an `.env` file in the folder to configure the application, it will not use the `.env` file in the root folder.
-
-## Verifier
-The verifier app is a rest api, supporting the oid4vcp protocol. The verifier can verify the demo credential from the issuer. Start the verifier with `pnpm run dev`. Don't forget to have an `.env` file in the folder to configure the application, it will not use the `.env` file in the root folder.
-
-## Wallent clients
-This repository includes two clients. One is a progressive web app, the other one is a chrome browser extension. Both are managed via angular and share the same code base.
-
-Since the backend is following the openAPI specification, an SDK to interact with it can be generated by running `pnpm run api`.
-
-### PWA Client
-The command `pnpm run start:pwa` will run the application in the watch mode. It will start a webserver on port `localhost:4200` and reload when you changed the code. The configuration is managed in the `assets/config` folders. This approach allows a dynamic config since it can be mounted into the docker container without the need of recompiling it.
-
-### Browser Plugin
-The command `pnpm run start:extension` in the `holder` folder will watch on the build files. To use this plugin in the chrome browser during development, go to `chrome://extensions/` and enable developer mode. Then click on `Load unpacked` and select the `dist/browser-extension` folder in the `browser-extension` folder. To get the updates active, you need to reopen the plugin in the browser (hitting refresh on the plugin page is not required).
-
-Angular is using the webpack compiler instead of the modern esbuild. This is required since we need to build multiple file like the main and background file and right now it is not possible to pass a custom esbuild config to angular.
-
-## Backend
-All endpoints are available via the `http://localhost:3000` address. A swagger endpoint is available at `http://localhost:3000/api` where you can authenticate with your keycloak user credentials. Don't forget to have an `.env` file in the folder to configure the application, it will not use the `.env` file in the root folder.
-
-You can either use a postgres or sqlite database. In case of using postgres, there is one defined in the `docker-compose.yml` in the root folder. Don't forget to sync the credentials in the root `.env` file and the one in the backend folder to get a successfull connection.
+# License
+This project is licensed under the Apache 2.0 License
