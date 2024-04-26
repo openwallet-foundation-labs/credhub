@@ -17,6 +17,8 @@ services:
       POSTGRES_PASSWORD: $KC_POSTGRES_PASSWORD
       POSTGRES_DB: $KC_POSTGRES_DB
       POSTGRES_HOST: $KC_POSTGRES_HOST
+    networks:
+      - keycloak-net
 
   keycloak:
     restart: unless-stopped
@@ -50,6 +52,14 @@ services:
       - ./config/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
     ports:
       - '8080:8080'
+    networks:
+      - keycloak-net
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 2m
 
   db:
     image: 'postgres:14.4'
@@ -85,6 +95,12 @@ services:
       - ./config/issuer:/app/templates
     ports:
       - 3001:3000
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 2m
 
   verifier:
     image: ghcr.io/cre8/wallet/verifier
@@ -100,6 +116,12 @@ services:
       - .env
     ports:
       - '3002:3000'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 2m
 
   backend:
     image: ghcr.io/cre8/wallet/backend
@@ -114,6 +136,12 @@ services:
         - PROJECT=backend
     ports:
       - 3000:3000
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 2m
 
   holder:
     image: ghcr.io/cre8/wallet/holder
@@ -127,6 +155,9 @@ services:
       - ./config/holder:/usr/share/nginx/html/assets/config
     ports:
       - 80:80
+
+networks:
+  keycloak-net:
 
 volumes:
   keycloak-db:

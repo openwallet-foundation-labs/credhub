@@ -7,6 +7,7 @@ import { DB_VALIDATION_SCHEMA, DbModule } from './db/db.module';
 import { KeysModule } from './keys/keys.module';
 import { Oid4vcModule } from './oid4vc/oid4vc.module';
 import { HistoryModule } from './history/history.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -23,5 +24,6 @@ import { HistoryModule } from './history/history.module';
     Oid4vcModule,
     HistoryModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

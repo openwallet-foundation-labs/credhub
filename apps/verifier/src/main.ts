@@ -91,6 +91,11 @@ expressSupport.express.post(
     }
   }
 );
+
+expressSupport.express.get('/health', async (req, res) => {
+  res.send('ok');
+});
+
 //start the server
 expressSupport.start();
 console.log(`Running on port ${expressSupport.port}`);

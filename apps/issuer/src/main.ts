@@ -209,6 +209,10 @@ expressSupport.express.get('/.well-known/jwt-vc-issuer', async (req, res) => {
   res.send(metadata);
 });
 
+expressSupport.express.get('/health', async (req, res) => {
+  res.send('ok');
+});
+
 // start the webserver.
 expressSupport.start();
 //print the routes, only for debugging purposes

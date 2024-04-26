@@ -23,4 +23,4 @@ COPY --from=build /usr/src/app/apps/${PROJECT}/dist /app/dist
 WORKDIR /app
 EXPOSE 3000
 CMD [ "node", "dist/main.js" ]
-#TODO: add healthcheck
+# healthcheck are done via docker compose since curl is not installed
