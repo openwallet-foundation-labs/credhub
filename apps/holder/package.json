@@ -2,6 +2,7 @@
   "name": "holder",
   "version": "0.0.0",
   "scripts": {
+    "init": "cp projects/pwa/src/assets/config/config.example.js projects/pwa/src/assets/config/config.js",
     "ng": "ng",
     "start:pwa": "ng serve pwa",
     "build": "ng build --project pwa",

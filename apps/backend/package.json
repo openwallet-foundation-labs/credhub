@@ -5,6 +5,7 @@
   "author": "",
   "license": "Apache-2.0",
   "scripts": {
+    "init": "cp .env.example .env",
     "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",

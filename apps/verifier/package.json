@@ -5,6 +5,7 @@
   "type": "module",
   "main": "dist/main.js",
   "scripts": {
+    "init": "cp .env.example .env",
     "build": "tsc",
     "start": "node ./dist/main.js",
     "dev": "tsc-watch --onSuccess \"node ./dist/main.js\"",
