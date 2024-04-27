@@ -3,13 +3,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { Credential } from './entities/credential.entity';
+import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
+import { digest } from '@sd-jwt/crypto-nodejs';
+import { CredentialResponse } from './dto/credential-response.dto';
 
 @Injectable()
 export class CredentialsService {
+  instance: SDJwtVcInstance;
+
   constructor(
     @InjectRepository(Credential)
     private credentialRepository: Repository<Credential>
-  ) {}
+  ) {
+    this.instance = new SDJwtVcInstance({ hasher: digest });
+  }
 
   async create(createCredentialDto: CreateCredentialDto, user: string) {
     const credential = new Credential();
@@ -28,8 +35,19 @@ export class CredentialsService {
     return this.credentialRepository.find({ where: { user } });
   }
 
-  findOne(id: string, user: string) {
-    return this.credentialRepository.findOneOrFail({ where: { id, user } });
+  findOne(id: string, user: string): Promise<CredentialResponse> {
+    return this.credentialRepository
+      .findOneOrFail({ where: { id, user } })
+      .then(async (entry) => {
+        const sdjwtvc = await this.instance.decode(entry.value);
+        const claims = await sdjwtvc.getClaims<Record<string, unknown>>(digest);
+        entry.value = undefined;
+        entry.user = undefined;
+        return {
+          ...entry,
+          credential: claims,
+        };
+      });
   }
 
   remove(id: string, user: string) {

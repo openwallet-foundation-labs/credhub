@@ -93,7 +93,7 @@ export class ScannerComponent implements OnInit, OnDestroy {
       {
         fps: 10,
         qrbox: { width: 250, height: 250 },
-        // aspectRatio: window.innerWidth / window.innerHeight,
+        aspectRatio: window.innerWidth / window.innerHeight,
       },
       this.onScanSuccess,
       // we do nothing when a scan failed

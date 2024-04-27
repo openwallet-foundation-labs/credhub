@@ -3,6 +3,7 @@ README.md
 api.module.ts
 api/api.ts
 api/credentials.service.ts
+api/default.service.ts
 api/history.service.ts
 api/keys.service.ts
 api/oid4vci.service.ts
@@ -14,8 +15,10 @@ index.ts
 model/createCredentialDto.ts
 model/createKey.ts
 model/cred.ts
-model/credential.ts
+model/credentialIssuer.ts
+model/credentialResponse.ts
 model/history.ts
+model/issuerMetadataLogo.ts
 model/keyResponse.ts
 model/keyType.ts
 model/models.ts

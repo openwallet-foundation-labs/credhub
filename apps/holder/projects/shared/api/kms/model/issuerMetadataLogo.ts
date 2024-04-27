@@ -11,8 +11,8 @@
  */
 
 
-export interface ProofRequest { 
-    kid?: string;
-    payload: object;
+export interface IssuerMetadataLogo { 
+    url: string;
+    alt_text: string;
 }
 

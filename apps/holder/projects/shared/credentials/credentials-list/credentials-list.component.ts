@@ -1,14 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Credential, CredentialsApiService } from '../../api/kms';
+import { CredentialResponse, CredentialsApiService } from '../../api/kms';
 import { firstValueFrom } from 'rxjs';
 import { MatListModule } from '@angular/material/list';
 import { CredentialsShowComponent } from '../credentials-show/credentials-show.component';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
-import {
-  CredentialsSupportedDisplay,
-  MetadataDisplay,
-} from '@sphereon/oid4vci-common';
+import { CredentialsSupportedDisplay } from '@sphereon/oid4vci-common';
 import { RouterLink } from '@angular/router';
 import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,9 +14,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 
-export interface CredentialList extends Credential {
+export interface CredentialList extends CredentialResponse {
   display: CredentialsSupportedDisplay;
-  issuer: MetadataDisplay;
 }
 
 @Component({

@@ -9,10 +9,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { IssuerMetadataLogo } from './issuerMetadataLogo';
 
 
-export interface ProofRequest { 
-    kid?: string;
-    payload: object;
+export interface CredentialIssuer { 
+    name: string;
+    locale: string;
+    logo?: IssuerMetadataLogo;
 }
 

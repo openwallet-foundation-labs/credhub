@@ -13,6 +13,7 @@ import { AuthGuard, AuthenticatedUser } from 'nest-keycloak-connect';
 import { KeycloakUser } from 'src/auth/user';
 import { CredentialsService } from './credentials.service';
 import { CreateCredentialDto } from './dto/create-credential.dto';
+import { CredentialResponse } from './dto/credential-response.dto';
 
 @UseGuards(AuthGuard)
 @ApiOAuth2([])
@@ -44,7 +45,10 @@ export class CredentialsController {
 
   @ApiOperation({ summary: 'get a credential' })
   @Get(':id')
-  findOne(@Param('id') id: string, @AuthenticatedUser() user: KeycloakUser) {
+  findOne(
+    @Param('id') id: string,
+    @AuthenticatedUser() user: KeycloakUser
+  ): Promise<CredentialResponse> {
     //TODO: return the parsed values so the client does not have to decode it.
     return this.credentialsService.findOne(id, user.sub).catch(() => {
       throw new ConflictException();

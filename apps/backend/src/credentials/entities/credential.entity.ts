@@ -1,5 +1,17 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { CredentialSupported, MetadataDisplay } from '@sphereon/oid4vci-common';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
+
+class IssuerMetadataLogo {
+  url: string;
+  alt_text: string;
+}
+
+class CredentialIssuer {
+  name: string;
+  locale: string;
+  logo?: IssuerMetadataLogo;
+}
 
 @Entity()
 export class Credential {
@@ -31,5 +43,6 @@ export class Credential {
    * Metadata for the issuer representation
    */
   @Column({ nullable: true, type: 'json' })
+  @ApiProperty({ type: CredentialIssuer })
   issuer: MetadataDisplay;
 }
