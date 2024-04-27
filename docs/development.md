@@ -7,7 +7,7 @@
 
 
 ### Keycloak (OIDC provider)
-to manage the user accounts from the cloud wallet, an OIDC provider is required. This repository offers a self hosted keycloak instance that you can use. It's a basic setup without a customized registration flow, so the user needs to input information like his name or mail address.
+to manage the user accounts from the cloud wallet, an OIDC provider is required. This repository offers a self hosted keycloak instance that you can use. It's a basic setup without a customized registration flow, so the user registers only with an email and password.
 
 The realm is located in the `config/keycloak/realm-export.json` file. In case you want to use another keycloak instance, you can import the realm there. It should also be possible to use any other OIDC system.
 
