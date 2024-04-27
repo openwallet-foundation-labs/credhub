@@ -17,6 +17,17 @@
         <mat-icon>upload</mat-icon>
         <span>Present Demo</span>
       </button>
+      <mat-divider></mat-divider>
+      @for (device of devices; track device) {
+        <button
+          mat-menu-item
+          (click)="changeCamera(device.id)"
+          [disabled]="device.id === selectedDevice"
+        >
+          <mat-icon>camera</mat-icon>
+          <span>{{ device.label.split(',')[1] }}</span>
+        </button>
+      }
     </mat-menu>
     <div id="reader"></div>
   </div>

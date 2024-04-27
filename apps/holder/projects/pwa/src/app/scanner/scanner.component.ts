@@ -10,6 +10,7 @@ import { IssuanceRequestComponent } from '../../../../shared/oid4vc/issuance-req
 import { VerifyRequestComponent } from '../../../../shared/oid4vc/verify-request/verify-request.component';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { MatDividerModule } from '@angular/material/divider';
 
 type Status = 'scanning' | 'showRequest' | 'showVerificationRequest';
 
@@ -23,6 +24,7 @@ type Status = 'scanning' | 'showRequest' | 'showVerificationRequest';
     MatMenuModule,
     MatButtonModule,
     MatIconModule,
+    MatDividerModule,
     HttpClientModule,
     IssuanceRequestComponent,
     VerifyRequestComponent,
@@ -52,13 +54,6 @@ export class ScannerComponent implements OnInit, OnDestroy {
       return;
     }
     this.status = 'scanning';
-    //set the values so this component covers the whole screen
-    document
-      .getElementById('reader')
-      ?.setAttribute('height', `${window.innerHeight.toString()}px`);
-    document
-      .getElementById('reader')
-      ?.setAttribute('width', `${window.innerWidth.toString()}px`);
     // This method will trigger user permissions
     Html5Qrcode.getCameras()
       .then((devices) => {
@@ -67,7 +62,14 @@ export class ScannerComponent implements OnInit, OnDestroy {
          * { id: "id", label: "label" }
          */
         this.devices = devices;
-        if (devices?.length) {
+        //find a device that has a label that contains the word 'back'
+        const backCamera = devices.find((device) =>
+          device.label.includes('back')
+        );
+        if (backCamera) {
+          this.selectedDevice = backCamera.id;
+          this.startCamera();
+        } else if (devices?.length) {
           this.selectedDevice = devices[0].id;
           this.startCamera();
         }
@@ -85,15 +87,21 @@ export class ScannerComponent implements OnInit, OnDestroy {
 
   async startCamera() {
     this.scanner = new Html5Qrcode('reader');
-    //TODO: we need to set the correct dimensions.
-    // const dimension =
-    //   Math.min(window.innerWidth, window.innerHeight - 84) * 0.6;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const aspectRatio = width / height;
+    const reverseAspectRatio = height / width;
+
+    const mobileAspectRatio =
+      reverseAspectRatio > 1.5
+        ? reverseAspectRatio + (reverseAspectRatio * 12) / 100
+        : reverseAspectRatio;
     await this.scanner.start(
       { deviceId: { exact: this.selectedDevice } },
       {
         fps: 10,
-        qrbox: { width: 250, height: 250 },
-        aspectRatio: window.innerWidth / window.innerHeight,
+        qrbox: { width: 300, height: 300 },
+        aspectRatio: reverseAspectRatio,
       },
       this.onScanSuccess,
       // we do nothing when a scan failed
