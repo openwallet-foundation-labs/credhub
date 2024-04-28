@@ -18,6 +18,21 @@
           <div matListItemTitle>Action</div>
           <div matListItemLine>{{ element.status }}</div>
         </mat-list-item>
+        <!-- in case the user declined, should we show what they requested? -->
+        <mat-list-item *ngIf="element.credentialType">
+          <div matListItemTitle>Credential</div>
+          <div matListItemLine>{{ element.credentialType }}</div>
+        </mat-list-item>
+        <div *ngIf="element.disclosed">
+          <mat-divider></mat-divider>
+          <div mat-subheader>Presented values</div>
+          @for (disclosed of element.disclosed; track disclosed) {
+            <mat-list-item>
+              <div matListItemTitle>{{ disclosed.key }}</div>
+              <div matListItemLine>{{ disclosed.value }}</div>
+            </mat-list-item>
+          }
+        </div>
       </mat-list>
     </mat-card-content>
   </mat-card>

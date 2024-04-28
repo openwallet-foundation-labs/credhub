@@ -9,13 +9,18 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Disclosed } from './disclosed';
 
 
-export interface History { 
+export interface HistoryResponse { 
     /**
      * Status of the history entry
      */
-    status: History.StatusEnum;
+    status: HistoryResponse.StatusEnum;
+    /**
+     * The values that were presented
+     */
+    disclosed: Array<Disclosed>;
     /**
      * Unique ID of the history entry
      */
@@ -40,7 +45,7 @@ export interface History {
      */
     created_at: string;
 }
-export namespace History {
+export namespace HistoryResponse {
     export type StatusEnum = 'pending' | 'accepted' | 'declined';
     export const StatusEnum = {
         pending: 'pending' as StatusEnum,

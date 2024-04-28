@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { History, HistoryApiService } from '../../api/kms';
+import { History, HistoryApiService, HistoryResponse } from '../../api/kms';
 import { firstValueFrom } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
@@ -25,7 +25,7 @@ import { MatListModule } from '@angular/material/list';
   styleUrl: './history-show.component.scss',
 })
 export class HistoryShowComponent implements OnInit {
-  element!: History;
+  element!: HistoryResponse;
 
   constructor(
     private route: ActivatedRoute,

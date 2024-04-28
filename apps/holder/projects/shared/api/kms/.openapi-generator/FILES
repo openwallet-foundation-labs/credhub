@@ -17,7 +17,9 @@ model/createKey.ts
 model/cred.ts
 model/credentialIssuer.ts
 model/credentialResponse.ts
+model/disclosed.ts
 model/history.ts
+model/historyResponse.ts
 model/issuerMetadataLogo.ts
 model/keyResponse.ts
 model/keyType.ts
