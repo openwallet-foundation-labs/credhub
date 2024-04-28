@@ -1,8 +1,8 @@
 export const environment = {
   backendUrl: 'http://localhost:3000',
-  keycloakHost: 'https://keycloak.yanacocha.fit.fraunhofer.de',
+  keycloakHost: 'http://localhost:8080',
   keycloakClient: 'browser',
-  keycloakRealm: 'wallet-ssi',
+  keycloakRealm: 'wallet',
   demoIssuer: 'http://localhost:3001',
   demoVerifier: 'http://localhost:3002',
 };

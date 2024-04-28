@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/chrome-manifest",
   "name": "Wallet",
   "version": "1",
   "description": "A SSI wallet to manage credentials",

@@ -3,6 +3,7 @@ import { ApiOAuth2, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { AuthGuard, AuthenticatedUser } from 'nest-keycloak-connect';
 import { HistoryService } from './history.service';
 import { KeycloakUser } from 'src/auth/user';
+import { HistoryResponse } from './dto/history-response.dto';
 
 @UseGuards(AuthGuard)
 @ApiOAuth2([])
@@ -19,7 +20,10 @@ export class HistoryController {
 
   @ApiOperation({ summary: 'get one element' })
   @Get(':id')
-  getOne(@AuthenticatedUser() user: KeycloakUser, @Param('id') id: string) {
+  getOne(
+    @AuthenticatedUser() user: KeycloakUser,
+    @Param('id') id: string
+  ): Promise<HistoryResponse> {
     return this.historyService.getOne(id, user.sub);
   }
 

@@ -12,9 +12,36 @@ permissions:
     contents: read
     packages: write
 
-jobs:
+jobs:  
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:      
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+
+      - name: init env files
+        run: pnpm run init
+
+      - name: Test
+        run: pnpm test
+
   build-and-push:
     runs-on: ubuntu-latest
+    # only run this when it's a push to main
+    if: github.ref == 'refs/heads/main'
+    needs: build-and-test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

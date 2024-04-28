@@ -100,7 +100,8 @@
               "projects/pwa/src/manifest.webmanifest"
             ],
             "styles": ["projects/pwa/src/styles.scss"],
-            "scripts": []
+            "scripts": [],
+            "karmaConfig": "projects/pwa/karma.conf.js"
           }
         },
         "lint": {
@@ -204,20 +205,6 @@
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "buildTarget": "browser-extension:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
-            "tsConfig": "projects/browser-extension/tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              "projects/browser-extension/src/favicon.ico",
-              "projects/browser-extension/src/assets"
-            ],
-            "styles": ["projects/browser-extension/src/styles.scss"],
-            "scripts": []
           }
         },
         "lint": {

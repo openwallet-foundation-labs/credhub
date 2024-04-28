@@ -42,6 +42,12 @@ export class History {
   @Column()
   status: HistoryStatus;
 
+  @Column({ nullable: true })
+  credentialType: string;
+
+  @Column({ nullable: true })
+  presentation: string;
+
   /**
    * Date of creation
    */

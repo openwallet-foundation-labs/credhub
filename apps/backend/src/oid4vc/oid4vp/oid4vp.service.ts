@@ -21,15 +21,9 @@ import { Oid4vpParseRepsonse } from './dto/parse-response.dto';
 import { SubmissionRequest } from './dto/submission-request.dto';
 import { HistoryService } from 'src/history/history.service';
 import { Oid4vpParseRequest } from './dto/parse-request.dto';
+import { Session } from './session';
+import { CompactSdJwtVc } from '@sphereon/ssi-types';
 
-interface Session {
-  user: string;
-  verifiedAuthReqWithJWT: VerifiedAuthorizationRequest;
-  created: Date;
-  pex: PresentationExchange;
-  op: OP;
-  pd: PresentationDefinitionWithLocation;
-}
 @Injectable()
 export class Oid4vpService {
   sessions: Map<string, Session> = new Map();
@@ -206,7 +200,9 @@ export class Oid4vpService {
     const res = await session.op
       .submitAuthorizationResponse(authenticationResponseWithJWT)
       .catch(() => '');
-    await this.historyService.setStatus(sessionId, 'accepted');
+    const response = authenticationResponseWithJWT.response.payload
+      .vp_token as CompactSdJwtVc;
+    await this.historyService.accept(sessionId, response);
     this.sessions.delete(sessionId);
   }
 
@@ -221,7 +217,7 @@ export class Oid4vpService {
     if (!session || session.user !== user) {
       throw new ConflictException('Session not found');
     }
-    await this.historyService.setStatus(id, 'declined');
+    await this.historyService.decline(id);
     this.sessions.delete(id);
   }
 

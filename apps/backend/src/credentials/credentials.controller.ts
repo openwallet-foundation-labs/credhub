@@ -50,7 +50,7 @@ export class CredentialsController {
     @AuthenticatedUser() user: KeycloakUser
   ): Promise<CredentialResponse> {
     //TODO: return the parsed values so the client does not have to decode it.
-    return this.credentialsService.findOne(id, user.sub).catch(() => {
+    return this.credentialsService.showOne(id, user.sub).catch(() => {
       throw new ConflictException();
     });
   }

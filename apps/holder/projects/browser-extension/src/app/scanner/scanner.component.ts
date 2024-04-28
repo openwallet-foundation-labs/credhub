@@ -67,7 +67,9 @@ export class ScannerComponent implements OnInit {
     const response = await firstValueFrom(
       this.httpClient.post<{ uri: string }>(
         `${environment.demoVerifier}/request`,
-        {}
+        {
+          id: 'eID',
+        }
       )
     );
     this.urlField.patchValue(response.uri);
@@ -77,7 +79,9 @@ export class ScannerComponent implements OnInit {
     const response = await firstValueFrom(
       this.httpClient.post<{ uri: string }>(
         `${environment.demoIssuer}/request`,
-        {}
+        {
+          credentialId: 'Identity',
+        }
       )
     );
     this.urlField.patchValue(response.uri);
