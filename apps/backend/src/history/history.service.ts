@@ -11,7 +11,12 @@ export class HistoryService {
   ) {}
 
   all(user: string) {
-    return this.historyRepository.find({ where: { user } });
+    return this.historyRepository.find({
+      where: { user },
+      order: { created_at: 'DESC' },
+      // we only the id, relyingParty, created_at, and status fields to represent it as a list
+      select: ['id', 'relyingParty', 'created_at', 'status'],
+    });
   }
 
   getOne(id: string, user: string) {

@@ -35,19 +35,21 @@ export class CredentialsService {
     return this.credentialRepository.find({ where: { user } });
   }
 
-  findOne(id: string, user: string): Promise<CredentialResponse> {
-    return this.credentialRepository
-      .findOneOrFail({ where: { id, user } })
-      .then(async (entry) => {
-        const sdjwtvc = await this.instance.decode(entry.value);
-        const claims = await sdjwtvc.getClaims<Record<string, unknown>>(digest);
-        entry.value = undefined;
-        entry.user = undefined;
-        return {
-          ...entry,
-          credential: claims,
-        };
-      });
+  findOne(id: string, user: string) {
+    return this.credentialRepository.findOneOrFail({ where: { id, user } });
+  }
+
+  showOne(id: string, user: string): Promise<CredentialResponse> {
+    return this.findOne(id, user).then(async (entry) => {
+      const sdjwtvc = await this.instance.decode(entry.value);
+      const claims = await sdjwtvc.getClaims<Record<string, unknown>>(digest);
+      entry.value = undefined;
+      entry.user = undefined;
+      return {
+        ...entry,
+        credential: claims,
+      };
+    });
   }
 
   remove(id: string, user: string) {

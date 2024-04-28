@@ -192,8 +192,7 @@ vcIssuerServer.router.post('/request', async (req, res) => {
     //we are returning the response to the client
     res.send(response);
   } catch (error) {
-    console.error(error);
-    res.status(402);
+    res.status(422).send();
   }
 });
 
