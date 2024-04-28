@@ -7,16 +7,13 @@ import expressListRoutes from 'express-list-routes';
 import { v4 } from 'uuid';
 import { expressSupport } from './server.js';
 import { RPManager } from './RPManager.js';
+import { RequestBody } from './types.js';
 
 // create the relying party manager
 const rpManager = new RPManager();
 
 //define the baseurl
 const baseUrl = process.env.VERIFIER_BASE_URL || 'http://localhost:3000';
-
-interface RequestBody {
-  id: string;
-}
 
 //add the endpoint to generate a request
 expressSupport.express.post('/request', async (req, res) => {
@@ -44,7 +41,6 @@ expressSupport.express.post('/request', async (req, res) => {
   });
 });
 
-//TODO: add a parameter for the definition id
 /**
  * Add the route to get the request object
  */
@@ -83,7 +79,6 @@ expressSupport.express.post(
           location: PresentationDefinitionLocation.CLAIMS_VP_TOKEN,
         },
       });
-      console.log(response);
       res.send({});
     } catch (e) {
       console.error(e);

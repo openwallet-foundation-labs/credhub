@@ -21,15 +21,8 @@ import { Oid4vpParseRepsonse } from './dto/parse-response.dto';
 import { SubmissionRequest } from './dto/submission-request.dto';
 import { HistoryService } from 'src/history/history.service';
 import { Oid4vpParseRequest } from './dto/parse-request.dto';
+import { Session } from './session';
 
-interface Session {
-  user: string;
-  verifiedAuthReqWithJWT: VerifiedAuthorizationRequest;
-  created: Date;
-  pex: PresentationExchange;
-  op: OP;
-  pd: PresentationDefinitionWithLocation;
-}
 @Injectable()
 export class Oid4vpService {
   sessions: Map<string, Session> = new Map();

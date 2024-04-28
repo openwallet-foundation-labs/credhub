@@ -25,3 +25,6 @@ export interface VerifierRP {
   metadata: Metadata;
   request: PresentationDefinitionV2;
 }
+export interface RequestBody {
+  id: string;
+}

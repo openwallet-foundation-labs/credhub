@@ -147,6 +147,7 @@ const vcIssuer: VcIssuer<DIDDocument> = new VcIssuer<DIDDocument>(
  */
 const vcIssuerServer = new OID4VCIServer(expressSupport, {
   issuer: vcIssuer,
+  baseUrl: process.env.ISSUER_BASE_URL,
   endpointOpts: {
     tokenEndpointOpts: {
       accessTokenSignerCallback: signerCallback,
