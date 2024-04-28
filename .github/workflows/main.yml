@@ -21,7 +21,7 @@ jobs:
         with:
           version: 9
       - name: Use Node.js 20
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
@@ -30,6 +30,9 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: init env files
+        run: pnpm run init
 
       - name: Test
         run: pnpm test
