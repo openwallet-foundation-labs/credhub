@@ -1,5 +1,5 @@
 <div [ngSwitch]="status">
-  <div *ngSwitchCase="'scanning'">
+  <div *ngSwitchCase="'scanning'" id="scanner">
     <button
       id="menu"
       mat-icon-button
@@ -29,7 +29,7 @@
           [disabled]="device.id === selectedDevice"
         >
           <mat-icon>camera</mat-icon>
-          <span>{{ device.label.split(',')[1] }}</span>
+          <span>{{ device.label }}</span>
         </button>
       }
     </mat-menu>

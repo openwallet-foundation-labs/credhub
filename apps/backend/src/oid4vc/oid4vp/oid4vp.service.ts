@@ -64,7 +64,6 @@ export class Oid4vpService {
     const credentials = (await this.credentialsService.findAll(user)).map(
       (entry) => entry.value
     );
-
     //init the pex instance
     const pex = new PresentationExchange({
       allVerifiableCredentials: credentials,
@@ -93,9 +92,12 @@ export class Oid4vpService {
       });
     }
     // select the credentials for the presentation
-    const result = await pex.selectVerifiableCredentialsForSubmission(
-      pds[0].definition
-    );
+    const result = await pex
+      .selectVerifiableCredentialsForSubmission(pds[0].definition)
+      .catch(() => {
+        //instead of throwing an error, we return an empty array. This allows the user to show who sent the request for what.
+        return { verifiableCredential: [] };
+      });
 
     // decoding the credentials and add the required information
     const creds = [];
@@ -170,6 +172,7 @@ export class Oid4vpService {
         .then((entry) => entry.value);
       credentials.push(credential);
     }
+
     const verifiablePresentationResult =
       await session.pex.createVerifiablePresentation(
         session.pd.definition,

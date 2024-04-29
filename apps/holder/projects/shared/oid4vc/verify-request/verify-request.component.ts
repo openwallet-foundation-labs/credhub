@@ -39,6 +39,7 @@ export class VerifyRequestComponent implements OnInit {
   auto: boolean;
 
   status?: 'select' | 'done';
+  noMatch = false;
 
   constructor(
     private oid4vpApiService: Oid4vcpApiService,
@@ -57,9 +58,8 @@ export class VerifyRequestComponent implements OnInit {
     );
     for (const request of this.response.requests) {
       if (request.credentials.length === 0) {
-        throw new Error(
-          `No matching credentials for request ${request.purpose}`
-        );
+        this.noMatch = true;
+        return;
       }
       const value = this.auto ? [request.credentials[0].jti] : '';
       this.form.addControl(

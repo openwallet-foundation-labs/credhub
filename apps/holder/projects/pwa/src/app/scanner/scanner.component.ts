@@ -58,6 +58,7 @@ export class ScannerComponent implements OnInit, OnDestroy {
          * { id: "id", label: "label" }
          */
         this.devices = devices;
+        console.log(this.devices);
         //find a device that has a label that contains the word 'back'
         const backCamera = devices.find((device) =>
           device.label.includes('back')
