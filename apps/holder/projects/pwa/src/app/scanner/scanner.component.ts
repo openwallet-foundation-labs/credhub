@@ -8,9 +8,10 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { IssuanceRequestComponent } from '../../../../shared/oid4vc/issuance-request/issuance-request.component';
 import { VerifyRequestComponent } from '../../../../shared/oid4vc/verify-request/verify-request.component';
-import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FlexLayoutModule } from 'ng-flex-layout';
 
 type Status = 'scanning' | 'showRequest' | 'showVerificationRequest';
 
@@ -25,7 +26,9 @@ type Status = 'scanning' | 'showRequest' | 'showVerificationRequest';
     MatButtonModule,
     MatIconModule,
     MatDividerModule,
+    MatProgressSpinnerModule,
     HttpClientModule,
+    FlexLayoutModule,
     IssuanceRequestComponent,
     VerifyRequestComponent,
   ],
@@ -36,27 +39,20 @@ export class ScannerComponent implements OnInit, OnDestroy {
   selectedDevice?: string;
 
   status: Status = 'scanning';
+  loading = true;
   url?: string;
 
-  constructor(
-    private httpClient: HttpClient,
-    private route: ActivatedRoute
-  ) {}
+  constructor(private httpClient: HttpClient) {}
 
+  /**
+   * Init the scanner
+   */
   ngOnInit(): void {
-    const fragment = this.route.snapshot.fragment;
-    if (fragment === 'issue') {
-      this.getCredential();
-      return;
-    }
-    if (fragment === 'present') {
-      this.presentCredential();
-      return;
-    }
     this.status = 'scanning';
+    this.loading = true;
     // This method will trigger user permissions
     Html5Qrcode.getCameras()
-      .then((devices) => {
+      .then(async (devices) => {
         /**
          * devices would be an array of objects of type:
          * { id: "id", label: "label" }
@@ -68,39 +64,52 @@ export class ScannerComponent implements OnInit, OnDestroy {
         );
         if (backCamera) {
           this.selectedDevice = backCamera.id;
-          this.startCamera();
+          await this.startCamera();
+          this.loading = false;
         } else if (devices?.length) {
           this.selectedDevice = devices[0].id;
-          this.startCamera();
+          await this.startCamera();
+          this.status = 'scanning';
+          this.loading = false;
         }
       })
-      .catch(() => {
+      .catch((err: Error) => {
+        if (err.message.includes('Permission denied')) {
+          alert('Please allow camera permissions to use this feature');
+        }
         // handle err
       });
   }
 
+  /**
+   * Stop the scanner when leaving the page
+   */
   async ngOnDestroy(): Promise<void> {
     if (this.scanner) {
       await this.scanner.stop();
     }
   }
 
+  /**
+   * Start the camera
+   */
   async startCamera() {
     this.scanner = new Html5Qrcode('reader');
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const aspectRatio = width / height;
+    // const aspectRatio = width / height;
     const reverseAspectRatio = height / width;
 
-    const mobileAspectRatio =
-      reverseAspectRatio > 1.5
-        ? reverseAspectRatio + (reverseAspectRatio * 12) / 100
-        : reverseAspectRatio;
+    // const mobileAspectRatio =
+    //   reverseAspectRatio > 1.5
+    //     ? reverseAspectRatio + (reverseAspectRatio * 12) / 100
+    //     : reverseAspectRatio;
     await this.scanner.start(
       { deviceId: { exact: this.selectedDevice } },
       {
         fps: 10,
         qrbox: { width: 300, height: 300 },
+        //TODO: the ratio is not perfect yet
         aspectRatio: reverseAspectRatio,
       },
       this.onScanSuccess,
@@ -109,25 +118,39 @@ export class ScannerComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Changes the active camera
+   * @param cameraId
+   */
   async changeCamera(cameraId: string) {
-    //TODO: show an option on the top right to change the camera
     await this.scanner?.stop();
     this.selectedDevice = cameraId;
     await this.startCamera();
   }
 
+  /**
+   * Handle the scan success
+   * @param decodedText
+   */
   onScanSuccess(decodedText: string) {
     // handle the scanned code as you like, for example:
     if (decodedText.startsWith('openid-credential-offer://')) {
       this.showRequest(decodedText, 'receive');
-      //TODO: when we scanned it, redirect to another side. There is no need to stay on the scanner page. In this case, the user has already choosen the correct qr code and not a list of it.
+      // use a constant for the verification schema
+      this.scanner?.stop();
     } else if (decodedText.startsWith('openid://')) {
       this.showRequest(decodedText, 'send');
+      this.scanner?.stop();
+    } else {
+      alert("Scanned text doesn't match the expected format");
     }
-    this.scanner?.stop();
   }
 
+  /**
+   * Send a credential request to the demo issuer
+   */
   getCredential() {
+    //TODO: maybe move these demo calls in a demo service
     firstValueFrom(
       this.httpClient.post<{ uri: string }>(
         `${environment.demoIssuer}/request`,
@@ -138,6 +161,9 @@ export class ScannerComponent implements OnInit, OnDestroy {
     ).then((response) => this.showRequest(response.uri, 'receive'));
   }
 
+  /**
+   * Send a verification request to the demo verifier
+   */
   presentCredential() {
     firstValueFrom(
       this.httpClient.post<{ uri: string }>(
@@ -149,7 +175,11 @@ export class ScannerComponent implements OnInit, OnDestroy {
     ).then((response) => this.showRequest(response.uri, 'send'));
   }
 
-  //we should present this inside the scanner component since we do not have a decidated route you can call
+  /**
+   * Show the request
+   * @param url
+   * @param action
+   */
   async showRequest(url: string, action: 'send' | 'receive') {
     await this.scanner?.stop();
     this.url = url;
@@ -158,5 +188,19 @@ export class ScannerComponent implements OnInit, OnDestroy {
     } else {
       this.status = 'showVerificationRequest';
     }
+  }
+
+  /**
+   * Pass the value from the clipboard, Only works when the user has granted clipboard permissions.
+   */
+  passFromClipboard() {
+    //the navigation permission for clipboard is only working in chrome, so we can not check it here
+    navigator.clipboard.readText().then(
+      (text) => this.onScanSuccess(text),
+      () =>
+        alert(
+          'CUnable to read from clipboard, have you granted the permission?'
+        )
+    );
   }
 }

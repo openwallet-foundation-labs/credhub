@@ -17,6 +17,10 @@
         <mat-icon>upload</mat-icon>
         <span>Present Demo</span>
       </button>
+      <button mat-menu-item (click)="passFromClipboard()">
+        <mat-icon>content_paste</mat-icon>
+        <span>Insert from clipboard</span>
+      </button>
       <mat-divider></mat-divider>
       @for (device of devices; track device) {
         <button
@@ -29,6 +33,16 @@
         </button>
       }
     </mat-menu>
+    <div
+      id="loading"
+      fxLayout="column"
+      fxLayoutGap="16px"
+      *ngIf="loading"
+      fxLayoutAlign="center center"
+    >
+      <mat-spinner></mat-spinner>
+      <span>Loading camera</span>
+    </div>
     <div id="reader"></div>
   </div>
   <div *ngSwitchCase="'showRequest'">
