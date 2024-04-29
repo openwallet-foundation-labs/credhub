@@ -8,6 +8,7 @@ import { KeysModule } from './keys/keys.module';
 import { Oid4vcModule } from './oid4vc/oid4vc.module';
 import { HistoryModule } from './history/history.module';
 import { AppController } from './app.controller';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AppController } from './app.controller';
     CredentialsModule,
     Oid4vcModule,
     HistoryModule,
+    SettingsModule,
   ],
   controllers: [AppController],
 })

@@ -36,7 +36,7 @@ export class VerifyRequestComponent implements OnInit {
   @Input() url!: string;
   response?: Oid4vpParseRepsonse;
   form = new FormGroup({});
-  auto: boolean;
+  auto!: boolean;
 
   status?: 'select' | 'done';
   noMatch = false;
@@ -46,11 +46,10 @@ export class VerifyRequestComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private settingsService: SettingsService
-  ) {
-    this.auto = this.settingsService.getAuto();
-  }
+  ) {}
 
   async ngOnInit(): Promise<void> {
+    this.auto = await this.settingsService.getAuto();
     this.response = await firstValueFrom(
       this.oid4vpApiService.oid4vpControllerParse({
         url: this.url,

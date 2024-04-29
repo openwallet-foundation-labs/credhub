@@ -8,6 +8,7 @@ api/history.service.ts
 api/keys.service.ts
 api/oid4vci.service.ts
 api/oid4vcp.service.ts
+api/settings.service.ts
 configuration.ts
 encoder.ts
 git_push.sh
@@ -30,7 +31,10 @@ model/oid4vpParseRepsonse.ts
 model/oid4vpParseRequest.ts
 model/proofRequest.ts
 model/relyingParty.ts
+model/setting.ts
+model/settingResponse.ts
 model/signRequest.ts
+model/updateSettingsDto.ts
 model/verifyRequest.ts
 model/verifyRequestClaim.ts
 model/verifyResponse.ts

@@ -30,18 +30,17 @@ export class IssuanceRequestComponent implements OnInit {
   session?: string;
   credentials?: CredentialSupported[];
   issuer?: MetadataDisplay[];
-  auto: boolean;
+  auto!: boolean;
 
   constructor(
     private oid4vciApiService: Oid4vciApiService,
     private router: Router,
     private snackbar: MatSnackBar,
     private settingsService: SettingsService
-  ) {
-    this.auto = this.settingsService.getAuto();
-  }
+  ) {}
 
   async ngOnInit(): Promise<void> {
+    this.auto = await this.settingsService.getAuto();
     await firstValueFrom(
       this.oid4vciApiService.oid4vciControllerParse({
         url: this.url,

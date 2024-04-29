@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
+import { SettingsApiService } from '../api/kms';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SettingsService {
-  private autoStorage = 'automate';
+  constructor(private settingsService: SettingsApiService) {}
 
   getAuto() {
-    return localStorage.getItem(this.autoStorage) === 'true';
-  }
-
-  setAuto(value: boolean) {
-    localStorage.setItem(this.autoStorage, value ? 'true' : 'false');
+    return firstValueFrom(
+      this.settingsService.settingsControllerGetSettings()
+    ).then((res) => res.auto);
   }
 }
