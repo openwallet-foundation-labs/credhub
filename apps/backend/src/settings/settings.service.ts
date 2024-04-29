@@ -36,12 +36,8 @@ export class SettingsService {
    */
   async setSettings(sub: string, values: UpdateSettingsDto) {
     const settings = await this.getSettings(sub);
-
-    console.log(settings);
-    console.log(values);
     // Update values
     Object.assign(settings, values);
-    console.log(settings);
 
     // Save settings (update existing or insert new)
     return this.keyRepository.save(settings);
