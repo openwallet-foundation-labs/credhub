@@ -2,6 +2,11 @@
   width: 100vw !important;
   height: calc(100vh - 84px) !important;
   object-fit: cover;
+
+  ::ng-deep video {
+    width: 100% !important;
+    height: 100% !important;
+  }
 }
 
 #menu {
