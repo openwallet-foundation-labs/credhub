@@ -2,7 +2,7 @@
   "metadata": {
     "clientId": "client",
     "clientName": "Verifier",
-    "logo_uri": "https://upload.wikimedia.org/wikipedia/de/thumb/e/ee/Fraunhofer-Gesellschaft_2009_logo.svg/2560px-Fraunhofer-Gesellschaft_2009_logo.svg.png"
+    "logo_uri": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Flagge_Deutschland.jpg/640px-Flagge_Deutschland.jpg"
   },
   "request": {
     "id": "check-in",
