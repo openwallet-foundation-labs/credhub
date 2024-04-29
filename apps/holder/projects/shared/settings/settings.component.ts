@@ -10,6 +10,18 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { SettingsApiService } from '../api/kms';
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export declare namespace globalThis {
+  let environment: {
+    backendUrl: string;
+    keycloakHost: string;
+    keycloakClient: string;
+    keycloakRealm: string;
+    demoIssuer: string;
+    demoVerifier: string;
+  };
+}
+
 @Component({
   selector: 'app-settings',
   standalone: true,
@@ -26,6 +38,7 @@ import { SettingsApiService } from '../api/kms';
 })
 export class SettingsComponent implements OnInit {
   automateControl!: FormControl<boolean | null>;
+  keycloakLink: string;
 
   constructor(
     public authService: AuthService,
@@ -34,6 +47,7 @@ export class SettingsComponent implements OnInit {
     private settingsApiService: SettingsApiService
   ) {
     this.automateControl = new FormControl();
+    this.keycloakLink = `${globalThis.environment.keycloakHost}/realms/${globalThis.environment.keycloakRealm}/account`;
   }
 
   async ngOnInit(): Promise<void> {
