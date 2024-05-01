@@ -1,7 +1,6 @@
 import { ES256, digest } from '@sd-jwt/crypto-nodejs';
 import {
   EcdsaSignature,
-  InMemoryRPSessionManager,
   JWK,
   JWTPayload,
   PassBy,
@@ -29,6 +28,7 @@ import { importJWK, jwtVerify } from 'jose';
 import { getKeys, getPublicKey } from './keys.js';
 import { EventEmitter } from 'node:events';
 import { RPInstance } from './types.js';
+import { InMemoryRPSessionManager } from './session-manager.js';
 
 // load the keys
 const { privateKey, publicKey } = await getKeys();
@@ -40,7 +40,9 @@ export const kid = did;
 // create the event emitter to listen to events.
 export const eventEmitter = new EventEmitter();
 //TODO: implement a persistant session manager so reloads don't lose state
-export const sessionManager = new InMemoryRPSessionManager(eventEmitter);
+export const sessionManager = new InMemoryRPSessionManager(eventEmitter, {
+  // maxAgeInSeconds: 10,
+});
 
 /**
  * The RPManager is responsible for managing the relying parties.
@@ -58,9 +60,34 @@ export class RPManager {
     let rp = this.rp.get(id);
     if (!rp) {
       rp = this.buildRP(id);
+      // checks every minute if the rp has active sessions. If there is none, the rp is removed. We want to do this so we can update the rp with new input without losing state. This approach could be improved since we are waiting around 4 minutes for the last finished request until the entries are removed.
+      setInterval(async () => {
+        this.remove(id);
+      }, 1000 * 60);
       this.rp.set(id, rp);
     }
     return rp;
+  }
+
+  /**
+   * Removes a relying party. This is useful when the instance should be restarted with a new definition.
+   * @param id
+   */
+  async remove(id: string, force = false) {
+    const rp = this.rp.get(id);
+    if (!rp) {
+      return;
+    }
+    if (
+      !force &&
+      //the limit for a session is 5 minutes, so after this a session becomes idle an can be removed.
+      !(await (rp.rp.sessionManager as InMemoryRPSessionManager).isIdle())
+    ) {
+      // we have active sessions, we don't want to remove the rp. But at this point we do not know if they have already finished it. We just know they are not over the maximum defined limit (default 5 minutes).
+      return;
+    }
+    this.rp.delete(id);
+    console.log('Removed the rp');
   }
 
   private buildRP(id: string) {
