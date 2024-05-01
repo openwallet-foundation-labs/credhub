@@ -4,7 +4,7 @@ import { IsObject, IsOptional, IsString } from 'class-validator';
 export class ProofRequest {
   @IsString()
   @IsOptional()
-  kid?: string;
+  kid: string;
 
   @IsObject()
   payload: JWTPayload;
