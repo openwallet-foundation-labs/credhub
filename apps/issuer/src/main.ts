@@ -1,3 +1,4 @@
+import './config.js';
 import { ES256, digest, generateSalt } from '@sd-jwt/crypto-nodejs';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import {
@@ -18,7 +19,7 @@ import {
 import { OID4VCIServer } from '@sphereon/oid4vci-issuer-server';
 import { SdJwtDecodedVerifiableCredentialPayload } from '@sphereon/ssi-types';
 import { DIDDocument } from 'did-resolver';
-import 'dotenv/config';
+
 import expressListRoutes from 'express-list-routes';
 import {
   JWK,

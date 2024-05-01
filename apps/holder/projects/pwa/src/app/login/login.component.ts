@@ -11,4 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class LoginComponent {
   constructor(public authService: AuthService) {}
+
+  login() {
+    this.authService.login('credentials');
+  }
 }
