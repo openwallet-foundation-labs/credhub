@@ -18,7 +18,7 @@ import {
 } from '@sphereon/did-auth-siop';
 import { JWkResolver, encodeDidJWK } from './did.js';
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, normalize, sep } from 'node:path';
 import { VerifierRP } from './types.js';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { KbVerifier, Verifier } from '@sd-jwt/types';
@@ -60,10 +60,12 @@ export class RPManager {
     let rp = this.rp.get(id);
     if (!rp) {
       rp = this.buildRP(id);
-      // checks every minute if the rp has active sessions. If there is none, the rp is removed. We want to do this so we can update the rp with new input without losing state. This approach could be improved since we are waiting around 4 minutes for the last finished request until the entries are removed.
-      setInterval(async () => {
-        this.remove(id);
-      }, 1000 * 60);
+      if (process.env.CONFIG_RELOAD) {
+        // checks every minute if the rp has active sessions. If there is none, the rp is removed. We want to do this so we can update the rp with new input without losing state. This approach could be improved since we are waiting around 4 minutes for the last finished request until the entries are removed.
+        setInterval(async () => {
+          this.remove(id);
+        }, 1000 * 60);
+      }
       this.rp.set(id, rp);
     }
     return rp;
@@ -90,9 +92,15 @@ export class RPManager {
     console.log('Removed the rp');
   }
 
+  // create the relying party
   private buildRP(id: string) {
-    // create the relying party
-    const verifierFile = readFileSync(join('templates', `${id}.json`), 'utf-8');
+    // escape potential path traversal attacks
+    const safeId = normalize(id).split(sep).pop();
+    // instead of reading a file, we could pass a storage reference. Then the storage can be implemented in different ways, like using a database or a file system.
+    const verifierFile = readFileSync(
+      join('templates', `${safeId}.json`),
+      'utf-8'
+    );
     if (!verifierFile) {
       throw new Error(`The verifier with the id ${id} is not supported.`);
     }
