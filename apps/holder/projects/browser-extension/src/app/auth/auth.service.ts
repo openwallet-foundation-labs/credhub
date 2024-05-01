@@ -1,12 +1,17 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { decodeJwt } from 'jose';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor() {}
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+  ) {}
 
   /**
    * Checks if the access token exists and if it is expired
@@ -24,6 +29,7 @@ export class AuthService {
    * Launches the web auth flow to authenticate the user
    */
   async login() {
+    console.log(this.getAuthUrl());
     if (typeof chrome.identity !== 'undefined') {
       await chrome.identity
         .launchWebAuthFlow({
@@ -36,10 +42,34 @@ export class AuthService {
             const accessToken = this.extractTokenFromRedirectUri(redirectUri);
             localStorage.setItem('accessToken', accessToken);
           },
-          (err) => console.log(err)
+          (err) => console.log(err),
         );
     }
   }
+
+    /**
+   * Logs out the user
+   */
+    async logout() {
+      // this.http.post(`${environment.keycloakHost}/realms/${environment.keycloakRealm}/protocol/openid-connect/logout`, null).subscribe(() => {
+      //   console.log('successfully logged out');
+      //   this.router.navigateByUrl('/login');
+      // });
+
+      await chrome.identity
+      .launchWebAuthFlow({
+        interactive: false,
+        url: this.getLogoutUrl(),
+      })
+      .then(
+        () => {
+          window.sessionStorage.clear();
+          localStorage.clear();
+          this.router.navigateByUrl('/login');
+        },
+        (err) => console.log(err),
+      );
+    }
 
   /**
    * Generates the auth url that will be used for login.
@@ -77,5 +107,16 @@ export class AuthService {
     setTimeout(() => this.login(), refreshTimer - 1000 * 10);
     // Returning the extracted values
     return accessToken;
+  }
+
+  /**
+   * Generates the logout URL that will be used for logging out.
+   * @returns {string} The logout URL.
+   */
+  private getLogoutUrl() {
+    let logoutUrl = `${environment.keycloakHost}/realms/${environment.keycloakRealm}/protocol/openid-connect/logout`;
+    logoutUrl += `?redirect_uri=${encodeURIComponent(chrome.identity.getRedirectURL())}`;
+    console.log(logoutUrl);
+    return logoutUrl;
   }
 }
