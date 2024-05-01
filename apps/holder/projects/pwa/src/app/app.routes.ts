@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '../../../shared/auth/auth.guard';
+import { authGuard } from './auth/auth.guard';
 import { CredentialsListComponent } from '../../../shared/credentials/credentials-list/credentials-list.component';
 import { CredentialsShowComponent } from '../../../shared/credentials/credentials-show/credentials-show.component';
 import { SettingsComponent } from '../../../shared/settings/settings.component';
 import { ScannerComponent } from './scanner/scanner.component';
-import { LoginComponent } from '../../../shared/login/login.component';
+import { LoginComponent } from './login/login.component';
 import { HistoryListComponent } from '../../../shared/history/history-list/history-list.component';
 import { HistoryShowComponent } from '../../../shared/history/history-show/history-show.component';
 

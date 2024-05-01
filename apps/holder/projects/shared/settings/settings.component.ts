@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { AuthService } from '../auth/auth.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SettingsService } from './settings.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -22,6 +21,10 @@ export declare namespace globalThis {
   };
 }
 
+export abstract class AuthServiceInterface {
+  abstract logout(): void;
+}
+
 @Component({
   selector: 'app-settings',
   standalone: true,
@@ -41,7 +44,7 @@ export class SettingsComponent implements OnInit {
   keycloakLink: string;
 
   constructor(
-    public authService: AuthService,
+    public authService: AuthServiceInterface,
     public settingsService: SettingsService,
     private httpClient: HttpClient,
     private settingsApiService: SettingsApiService
