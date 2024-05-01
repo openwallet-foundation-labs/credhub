@@ -178,17 +178,30 @@ export class VaultKeysService extends KeysService {
           `${this.vaultUrl}/sign/${keyId}/sha2-256`,
           {
             input: Buffer.from(signingInput).toString('base64'),
+            key_version: 1,
           },
           this.headers
         )
       );
+
+      const verify = await firstValueFrom(
+        this.httpService.post(
+          `${this.vaultUrl}/verify/${keyId}/sha2-256`,
+          {
+            input: Buffer.from(signingInput).toString('base64'),
+            signature: response.data.data.signature,
+          },
+          this.headers
+        )
+      );
+      //beeing true means the signature is valid by hashicorp vault. So it seems it's an encoding issue
+      console.log(verify.data.data.valid);
 
       // Extract the signature from response and construct the full JWT
       const signature = this.base64ToBase64Url(
         response.data.data.signature.split(':')[2]
       );
       const jwt = `${encodedHeader}.${encodedPayload}.${signature}`;
-      console.log(jwt);
       //verigy the jwt before continuing
       await jwtVerify(jwt, await importJWK(jwk, 'ES256'));
       return `${encodedHeader}.${encodedPayload}.${signature}`;
