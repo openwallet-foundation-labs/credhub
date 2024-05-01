@@ -1,6 +1,0 @@
-{
-  "watch": ["dist"],
-  "ext": "js,html,css",
-  "ignore": ["dist/assets/**/*"],
-  "exec": "node projects/browser-extension/update-manifest.js"
-}

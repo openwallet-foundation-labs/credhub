@@ -41,6 +41,8 @@ The command `pnpm run start:extension` in the `holder` folder will watch on the 
 
 Angular is using the webpack compiler instead of the modern esbuild. This is required since we need to build multiple file like the main and background file and right now it is not possible to pass a custom esbuild config to angular.
 
+To build the plugin for production, run `pnpm run build:extension`. The output will be in the `dist/browser-extension` folder like the start command, but the files are minified and optimized for production.
+
 ## Backend
 All endpoints are available via the `http://localhost:3000` address. A swagger endpoint is available at `http://localhost:3000/api` where you can authenticate with your keycloak user credentials. Don't forget to have an `.env` file in the folder to configure the application, it will not use the `.env` file in the root folder.
 

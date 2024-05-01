@@ -3,9 +3,7 @@
   "version": 1,
   "cli": {
     "packageManager": "pnpm",
-    "schematicCollections": [
-      "@angular-eslint/schematics"
-    ],
+    "schematicCollections": ["@angular-eslint/schematics"],
     "analytics": false
   },
   "newProjectRoot": "projects",
@@ -56,7 +54,7 @@
                   "maximumError": "4kb"
                 }
               ],
-              "outputHashing": "all",
+              "outputHashing": "none",
               "serviceWorker": "projects/pwa/ngsw-config.json"
             },
             "development": {
@@ -176,7 +174,7 @@
                   "maximumError": "4kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "none"
             },
             "development": {
               "optimization": false,

@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+concurrency: 
+  group: ${{ github.head_ref ||  github.ref }}
+
 permissions:
     contents: read
     packages: write

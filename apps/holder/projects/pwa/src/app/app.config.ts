@@ -13,8 +13,9 @@ import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { OAuthModuleConfig, provideOAuthClient } from 'angular-oauth2-oidc';
 import { environment } from '../environments/environment';
 import { ApiModule, Configuration } from '../../../shared/api/kms';
-import { AuthService } from '../../../shared/auth/auth.service';
+import { AuthService } from './auth/auth.service';
 import { provideServiceWorker } from '@angular/service-worker';
+import { AuthServiceInterface } from '../../../shared/settings/settings.component';
 
 function authAppInitializerFactory(
   authService: AuthService
@@ -46,6 +47,10 @@ export const appConfig: ApplicationConfig = {
     {
       provide: Configuration,
       useValue: new Configuration({ basePath: environment.backendUrl }),
+    },
+    {
+      provide: AuthServiceInterface,
+      useClass: AuthService,
     },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
