@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -25,6 +25,13 @@ import { AuthService } from './auth/auth.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  isAuthenticated = false;
   constructor(public authService: AuthService) {}
+
+  ngOnInit(): void {
+    this.authService.changed.subscribe((isAuthenticated) => {
+      this.isAuthenticated = isAuthenticated;
+    });
+  }
 }

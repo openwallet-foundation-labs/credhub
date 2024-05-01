@@ -36,9 +36,11 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/credentials']);
-    }
+    this.authService.isAuthenticated().then((isAuthenticated) => {
+      if (isAuthenticated) {
+        this.router.navigate(['/credentials']);
+      }
+    });
   }
 
   async login() {
