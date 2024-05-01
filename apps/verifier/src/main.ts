@@ -1,8 +1,8 @@
+import './config.js';
 import {
   PresentationDefinitionLocation,
   SupportedVersion,
 } from '@sphereon/did-auth-siop';
-import 'dotenv/config';
 import expressListRoutes from 'express-list-routes';
 import { v4 } from 'uuid';
 import { expressSupport } from './server.js';
