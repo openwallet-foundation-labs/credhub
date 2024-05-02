@@ -1,5 +1,7 @@
 import jsQR from 'jsqr';
 
+
+
 let codes: string[] = [];
 
 /**
@@ -38,8 +40,8 @@ function readImage(
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
     const code = jsQR(imageData.data, imageData.width, imageData.height);
     //check if the QR code is a valid credential offer or request
-    const protocols = ['openid-credential-offer', 'openid4vp'];
-    if (code && protocols.includes(code.data.split(':')[0])) {
+    // const protocols = ['openid-credential-offer', 'openid4vp'];
+    if (code) {
       //TODO: in case we detected something, we could manipulate the DOM here by passing the html element
       htmlElement.style.border = '5px solid green';
       codes.push(code.data);
@@ -61,6 +63,7 @@ let toProcess = 0;
  * Scans the current page for QR codes.
  */
 function scanForQRCode() {
+  console.log("start scanning for QR Codes")
   const images = document.querySelectorAll('img');
   const canvases = document.querySelectorAll('canvas');
   toProcess = canvases.length + images.length;
@@ -80,6 +83,4 @@ chrome.runtime.onMessage.addListener(function (request) {
   }
 });
 
-//TODO: maybe use an interval for this.
-// Scan the page for QR codes when the page is loaded.
-window.onload = scanForQRCode;
+scanForQRCode();
