@@ -1,8 +1,8 @@
+import './config.js';
 import {
   PresentationDefinitionLocation,
   SupportedVersion,
 } from '@sphereon/did-auth-siop';
-import 'dotenv/config';
 import expressListRoutes from 'express-list-routes';
 import { v4 } from 'uuid';
 import { expressSupport } from './server.js';
@@ -86,6 +86,18 @@ expressSupport.express.post(
     }
   }
 );
+
+// only set this when reload is activated
+if (process.env.CONFIG_RELOAD) {
+  /**
+   * This will remove a rp so it can be reloaded with new values
+   */
+  expressSupport.express.delete('/siop/:rp', async (req, res) => {
+    const rpId = req.params.rp;
+    await rpManager.remove(rpId, true);
+    res.send();
+  });
+}
 
 expressSupport.express.get('/health', async (req, res) => {
   res.send('ok');

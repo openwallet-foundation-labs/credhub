@@ -5,10 +5,11 @@ import { Router } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { authConfig } from '../../pwa/src/app/authConfig';
+import { authConfig } from '../authConfig';
+import { AuthServiceInterface } from '../../../../shared/settings/settings.component';
 
 @Injectable({ providedIn: 'root' })
-export class AuthService {
+export class AuthService implements AuthServiceInterface {
   private isAuthenticatedSubject$ = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject$.asObservable();
 

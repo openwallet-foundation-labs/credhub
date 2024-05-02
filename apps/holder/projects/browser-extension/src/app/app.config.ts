@@ -7,15 +7,21 @@ import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { provideOAuthClient } from 'angular-oauth2-oidc';
 import { environment } from '../environments/environment';
 import { ApiModule, Configuration } from '../../../shared/api/kms';
+import { AuthServiceInterface } from '../../../shared/settings/settings.component';
+import { AuthService } from './auth/auth.service';
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export declare namespace globalThis {
+  let token: string;
+}
 
 function getConfiguration() {
   return new Configuration({
     //TODO: the basepath is static, therefore we can not set it during the login process.
     basePath: environment.backendUrl,
     credentials: {
-      oauth2: () => {
-        return localStorage.getItem('accessToken') as string;
-      },
+      // we fetch the token via globalThis since we can not access it via the chrome.storage API since it's async.
+      oauth2: () => globalThis.token,
     },
   });
 }
@@ -27,6 +33,10 @@ export const appConfig: ApplicationConfig = {
     provideOAuthClient(),
     importProvidersFrom(ApiModule, HttpClientModule),
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true } },
+    {
+      provide: AuthServiceInterface,
+      useClass: AuthService,
+    },
     {
       provide: Configuration,
       useFactory: getConfiguration,

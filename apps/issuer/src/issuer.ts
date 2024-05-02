@@ -5,12 +5,13 @@ import { CredentialSchema } from './types.js';
 
 /**
  * The issuer class is responsible for managing the credentials and the metadata of the issuer.
+ * In case the CONFIG_REALOD environment variable is set, the issuer will reload the configuration every time a method is called.
  */
 export class Issuer {
   /**
    * The metadata of the issuer.
    */
-  private metadata: CredentialIssuerMetadataOpts;
+  private metadata!: CredentialIssuerMetadataOpts;
 
   /**
    * The credentials supported by the issuer.
@@ -21,6 +22,10 @@ export class Issuer {
    * Creates a new instance of the issuer.
    */
   constructor() {
+    this.loadConfig();
+  }
+
+  private loadConfig() {
     //instead of reading at the beginning, we could implement a read on demand.
     this.metadata = JSON.parse(
       readFileSync(join('templates', 'metadata.json'), 'utf-8')
@@ -54,6 +59,9 @@ export class Issuer {
    * @returns
    */
   getCredential(id: string) {
+    if (process.env.CONFIG_RELOAD) {
+      this.loadConfig();
+    }
     const credential = this.credentials.get(id);
     if (!credential) {
       throw new Error(`The credential with the id ${id} is not supported.`);
@@ -67,6 +75,9 @@ export class Issuer {
    * @returns
    */
   getDisclosureFrame(id: string) {
+    if (process.env.CONFIG_RELOAD) {
+      this.loadConfig();
+    }
     const credential = this.credentials.get(id);
     if (!credential) {
       throw new Error(`The credential with the id ${id} is not supported.`);
@@ -78,6 +89,9 @@ export class Issuer {
    * Returns the metadata of the issuer.
    */
   getMetadata() {
+    if (process.env.CONFIG_RELOAD) {
+      this.loadConfig();
+    }
     return this.metadata;
   }
 }
