@@ -68,8 +68,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 2m
-    volumes:
-      - vault:/data
     environment:
       VAULT_DEV_ROOT_TOKEN_ID: $VAULT_DEV_ROOT_TOKEN_ID
     ports:
@@ -178,4 +176,3 @@ volumes:
   nestjs-db:
   issuer_tmp:
   verifier_tmp:
-  vault:

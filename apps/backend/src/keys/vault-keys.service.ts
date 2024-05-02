@@ -16,6 +16,11 @@ import {
   JWK,
 } from 'jose';
 import { ConfigService } from '@nestjs/config';
+import {
+  createSign,
+  KeyLike as CryptoKeyLike,
+  generateKeyPairSync,
+} from 'node:crypto';
 
 @Injectable()
 export class VaultKeysService extends KeysService {
@@ -130,12 +135,19 @@ export class VaultKeysService extends KeysService {
    * @returns
    */
   sign(id: string, user: string, value: SignRequest): Promise<string> {
+    const keyId = user;
     return firstValueFrom(
-      this.httpService.post(`${this.vaultUrl}/sign/${id}`, {
-        algorithm: value.hashAlgorithm,
-        input: Buffer.from(value.data).toString('base64'),
-      })
-    ).then((res) => res.data.data.signature.split('vault:v1:')[1]);
+      this.httpService.post(
+        `${this.vaultUrl}/sign/${keyId}`,
+        {
+          algorithm: value.hashAlgorithm,
+          input: Buffer.from(value.data).toString('base64'),
+        },
+        this.headers
+      )
+    ).then((res) =>
+      this.derToJwtSignature(res.data.data.signature.split(':')[2])
+    );
   }
 
   /**
@@ -178,27 +190,12 @@ export class VaultKeysService extends KeysService {
           `${this.vaultUrl}/sign/${keyId}/sha2-256`,
           {
             input: Buffer.from(signingInput).toString('base64'),
-            key_version: 1,
           },
           this.headers
         )
       );
 
-      const verify = await firstValueFrom(
-        this.httpService.post(
-          `${this.vaultUrl}/verify/${keyId}/sha2-256`,
-          {
-            input: Buffer.from(signingInput).toString('base64'),
-            signature: response.data.data.signature,
-          },
-          this.headers
-        )
-      );
-      //beeing true means the signature is valid by hashicorp vault. So it seems it's an encoding issue
-      console.log(verify.data.data.valid);
-
-      // Extract the signature from response and construct the full JWT
-      const signature = this.base64ToBase64Url(
+      const signature = this.derToJwtSignature(
         response.data.data.signature.split(':')[2]
       );
       const jwt = `${encodedHeader}.${encodedPayload}.${signature}`;
@@ -259,7 +256,7 @@ export class VaultKeysService extends KeysService {
     try {
       const response = await firstValueFrom(
         this.httpService.post(
-          `${this.vaultUrl}/sign/${keyId}`,
+          `${this.vaultUrl}/sign/${keyId}/sha2-256`,
           {
             input: Buffer.from(signingInput).toString('base64'),
           },
@@ -271,11 +268,87 @@ export class VaultKeysService extends KeysService {
       const signature = this.base64ToBase64Url(
         response.data.data.signature.split(':')[2]
       );
-      console.log(`${encodedHeader}.${encodedPayload}.${signature}`);
       return `${encodedHeader}.${encodedPayload}.${signature}`;
     } catch (error) {
       console.error('Error signing JWT with Vault:', error);
       throw error;
     }
+  }
+
+  async test(type: 'RS256' | 'ES256') {
+    let privateKey: CryptoKeyLike;
+    let publicKey: CryptoKeyLike;
+
+    if (type === 'RS256') {
+      const keys = generateKeyPairSync('rsa', {
+        modulusLength: 2048,
+      });
+      privateKey = keys.privateKey;
+      publicKey = keys.publicKey;
+    } else {
+      const keys = generateKeyPairSync('ec', {
+        namedCurve: 'prime256v1',
+      });
+      privateKey = keys.privateKey;
+      publicKey = keys.publicKey;
+    }
+
+    const payload = { iss: 'foo' };
+    const header = { alg: type };
+    const h = Buffer.from(JSON.stringify(header)).toString('base64url');
+    const p = Buffer.from(JSON.stringify(payload)).toString('base64url');
+    const sign = createSign('SHA256');
+    sign.update(`${h}.${p}`);
+    sign.end();
+    const finalSign = sign.sign(privateKey, 'base64');
+    const jwt1 = `${h}.${p}.${type === 'RS256' ? this.base64ToBase64Url(finalSign) : this.derToJwtSignature(finalSign)}`;
+    await jwtVerify(jwt1, publicKey);
+  }
+
+  /**
+   * Converts a DER signature to a JWT signature.
+   * @param derSignature
+   * @returns
+   */
+  derToJwtSignature(derSignature: string) {
+    // Step 1: Extract r and s from DER signature
+    const der = Buffer.from(derSignature, 'base64');
+    const sequence = der.slice(2); // Skip the sequence tag and length
+    const rLength = sequence[1];
+    const r = sequence.slice(2, 2 + rLength);
+    const s = sequence.slice(2 + rLength + 2); // Skip r, its tag and length byte, and s's tag and length byte
+
+    // Step 2: Ensure r and s are 32 bytes each (pad with zeros if necessary)
+    // Ensure r and s are 32 bytes each
+    let rPadded: Buffer;
+    let sPadded: Buffer;
+    if (r.length > 32) {
+      if (r.length === 33 && r[0] === 0x00) {
+        rPadded = r.slice(1);
+      } else {
+        throw new Error('Invalid r length in DER signature');
+      }
+    } else {
+      rPadded = Buffer.concat([Buffer.alloc(32 - r.length), r]);
+    }
+    if (s.length > 32) {
+      if (s.length === 33 && s[0] === 0x00) {
+        sPadded = s.slice(1);
+      } else {
+        throw new Error('Invalid s length in DER signature');
+      }
+    } else {
+      sPadded = Buffer.concat([Buffer.alloc(32 - s.length), s]);
+    }
+
+    // Step 3: Concatenate r and s to form the raw signature
+    const rawSignature = Buffer.concat([rPadded, sPadded]);
+
+    // Step 4: Base64url encode the raw signature
+    return rawSignature
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
   }
 }
