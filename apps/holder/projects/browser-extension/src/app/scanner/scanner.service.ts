@@ -31,7 +31,19 @@ export class ScannerService {
     private zone: NgZone,
     private oid4vciApiService: Oid4vciApiService,
     private oid4vpApiService: Oid4vcpApiService
-  ) {}
+  ) {
+    // this.listenToEvents();
+  }
+
+  listenToEvents() {
+    console.log('listen');
+    chrome.runtime.onMessage.addListener((request) => {
+      console.log(request);
+      if (request.action === 'addQRCode') {
+        this.parse(request.data);
+      }
+    });
+  }
 
   async parse(url: string) {
     if (url.startsWith('openid-credential-offer')) {
