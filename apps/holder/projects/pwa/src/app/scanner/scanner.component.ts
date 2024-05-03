@@ -138,7 +138,7 @@ export class ScannerComponent implements OnInit, OnDestroy {
       this.showRequest(decodedText, 'send');
       await this.scanner?.stop();
     } else {
-      alert('Scanned text: ' + decodedText);
+      alert("Scanned text doesn't match the expected format");
     }
   }
 
