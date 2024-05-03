@@ -176,12 +176,13 @@ vcIssuerServer.router.post('/request', async (req, res) => {
     surname: 'Mustermann',
   };
   const credentialId = values.credentialId;
+  const sessionId = v4();
   try {
     const response = await vcIssuer.createCredentialOfferURI({
       credentials: [issuer.getCredential(credentialId).id as string],
       grants: {
         'urn:ietf:params:oauth:grant-type:pre-authorized_code': {
-          'pre-authorized_code': v4().substring(0, 10),
+          'pre-authorized_code': sessionId,
           user_pin_required: values.pin,
         },
       },
@@ -192,9 +193,19 @@ vcIssuerServer.router.post('/request', async (req, res) => {
     });
     //we are returning the response to the client
     res.send(response);
-  } catch (error) {
-    res.status(422).send();
+  } catch (error: any) {
+    res.status(422).send(error.message);
   }
+});
+
+expressSupport.express.get('/sessions/:id', async (req, res) => {
+  const id = req.params.id;
+  const session = await vcIssuer.credentialOfferSessions.get(id);
+  if (!session) {
+    res.status(404).json({ error: 'Session not found' });
+    return;
+  }
+  res.send(session);
 });
 
 /**
@@ -210,6 +221,9 @@ expressSupport.express.get('/.well-known/jwt-vc-issuer', async (req, res) => {
   res.send(metadata);
 });
 
+/**
+ * Health check route.
+ */
 expressSupport.express.get('/health', async (req, res) => {
   res.send('ok');
 });

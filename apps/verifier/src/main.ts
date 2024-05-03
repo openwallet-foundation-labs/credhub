@@ -18,6 +18,7 @@ const baseUrl = process.env.VERIFIER_BASE_URL || 'http://localhost:3000';
 //add the endpoint to generate a request
 expressSupport.express.post('/request', async (req, res) => {
   const body: RequestBody = req.body;
+  // console.log(body);
   const instance = rpManager.getOrCreate(body.id);
 
   //TODO: we need a middleware to protect this route
@@ -59,6 +60,27 @@ expressSupport.express.get(
   }
 );
 
+/**
+ * Add the route to get the status of the request
+ */
+expressSupport.express.get(
+  '/siop/:rp/auth-request/:correlationId/status',
+  async (req, res) => {
+    const rpId = req.params.rp;
+    const instance = rpManager.getOrCreate(rpId);
+    //normally we would use the definitionId to get the correct rp builder since there could be multiple
+    const correlationId = req.params.correlationId;
+    const request =
+      await instance.rp.sessionManager.getRequestStateByCorrelationId(
+        correlationId
+      );
+    if (!request) {
+      res.status(404).send();
+      return;
+    }
+    res.send({ status: request?.status });
+  }
+);
 /**
  * Add the route to get the response object
  */

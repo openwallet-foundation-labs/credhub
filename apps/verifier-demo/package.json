@@ -1,0 +1,23 @@
+{
+  "name": "verifier-demo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist && rm -rf node_modules",
+    "lint": "biome lint .",
+    "format": "biome check --apply .",
+    "publish": "pnpm run build && cd ../../ && docker compose build verifier-demo && docker compose push verifier-demo"
+  },
+  "devDependencies": {
+    "@types/qrcode": "^1.5.5",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.3"
+  }
+}

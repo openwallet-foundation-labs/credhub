@@ -97,24 +97,19 @@ export class ScannerComponent implements OnInit, OnDestroy {
     this.scanner = new Html5Qrcode('reader');
     const width = window.innerWidth;
     const height = window.innerHeight;
-    // const aspectRatio = width / height;
     const reverseAspectRatio = height / width;
-
-    // const mobileAspectRatio =
-    //   reverseAspectRatio > 1.5
-    //     ? reverseAspectRatio + (reverseAspectRatio * 12) / 100
-    //     : reverseAspectRatio;
     await this.scanner.start(
       { deviceId: { exact: this.selectedDevice } },
       {
         fps: 10,
         qrbox: { width: 300, height: 300 },
-        //TODO: the ratio is not perfect yet
         aspectRatio: reverseAspectRatio,
       },
-      this.onScanSuccess,
+      this.onScanSuccess.bind(this),
       // we do nothing when a scan failed
-      () => {}
+      (err) => {
+        // console.log(err);
+      }
     );
   }
 
@@ -132,15 +127,16 @@ export class ScannerComponent implements OnInit, OnDestroy {
    * Handle the scan success
    * @param decodedText
    */
-  onScanSuccess(decodedText: string) {
+  async onScanSuccess(decodedText: string) {
+    console.log(decodedText);
     // handle the scanned code as you like, for example:
     if (decodedText.startsWith('openid-credential-offer://')) {
       this.showRequest(decodedText, 'receive');
       // use a constant for the verification schema
-      this.scanner?.stop();
+      await this.scanner?.stop();
     } else if (decodedText.startsWith('openid://')) {
       this.showRequest(decodedText, 'send');
-      this.scanner?.stop();
+      await this.scanner?.stop();
     } else {
       alert("Scanned text doesn't match the expected format");
     }

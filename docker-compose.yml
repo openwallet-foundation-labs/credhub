@@ -102,6 +102,16 @@ services:
       retries: 3
       start_period: 2m
 
+  issuer-demo:
+    image: ghcr.io/cre8/wallet/issuer-demo
+    build:
+      context: .
+      dockerfile: apps/issuer-demo/Dockerfile
+    volumes:
+      - ./config/issuer-demo/config.json:/usr/share/nginx/html/config.json
+    ports:
+      - 81:80
+
   verifier:
     image: ghcr.io/cre8/wallet/verifier
     build:
@@ -122,6 +132,16 @@ services:
       timeout: 10s
       retries: 3
       start_period: 2m
+
+  verifier-demo:
+    image: ghcr.io/cre8/wallet/verifier-demo
+    build:
+      context: .
+      dockerfile: apps/verifier-demo/Dockerfile
+    volumes:
+      - ./config/verifier-demo/config.json:/usr/share/nginx/html/config.json
+    ports:
+      - 82:80
 
   backend:
     image: ghcr.io/cre8/wallet/backend
