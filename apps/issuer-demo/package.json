@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "clean": "rm -rf dist && rm -rf node_modules",
+    "lint": "biome lint .",
+    "format": "biome check --apply .",
+    "publish": "pnpm run build && cd ../../ && docker compose build issuer-demo && docker compose push issuer-demo"
   },
   "devDependencies": {
     "@types/qrcode": "^1.5.5",

@@ -1,19 +1,23 @@
 import './style.css';
 import qrcode from 'qrcode';
 
-interface Meta {
-  env: {
-    VITE_VERIFIER_URL: string;
-    VITE_CREDENTIAL_ID: string;
-  };
-}
-
 interface RequestLinkBody {
   id: string;
 }
 
-// to laod the env variables
-const env = (import.meta as unknown as Meta).env;
+interface Config {
+  verifierUrl: string;
+  credentialId: string;
+}
+
+let config: Config;
+
+//fetch the config
+fetch('/config.json')
+  .then((res) => res.json())
+  .then((res) => {
+    config = res;
+  });
 
 let loop: NodeJS.Timeout;
 
@@ -22,9 +26,9 @@ function getCode() {
     clearInterval(loop);
   }
   const body: RequestLinkBody = {
-    id: env.VITE_CREDENTIAL_ID,
+    id: config.credentialId,
   };
-  fetch(`${env.VITE_VERIFIER_URL}/request`, {
+  fetch(`${config.verifierUrl}/request`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -46,16 +50,14 @@ function getCode() {
       const correlationId = decodeURIComponent(res.uri)
         .split('/')
         .pop() as string;
-      const rp = env.VITE_CREDENTIAL_ID;
+      const rp = config.credentialId;
       getStatus(rp, correlationId);
       loop = setInterval(() => getStatus(rp, correlationId), 2000);
     });
 }
 
 function getStatus(rp: string, correlationId: string) {
-  fetch(
-    `${env.VITE_VERIFIER_URL}/siop/${rp}/auth-request/${correlationId}/status`
-  )
+  fetch(`${config.verifierUrl}/siop/${rp}/auth-request/${correlationId}/status`)
     .then((res) => res.json())
     .then((res) => {
       status.innerHTML = res.status;

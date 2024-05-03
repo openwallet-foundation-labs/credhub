@@ -1,21 +1,25 @@
 import './style.css';
 import qrcode from 'qrcode';
 
-interface Meta {
-  env: {
-    VITE_ISSUER_URL: string;
-    VITE_CREDENTIAL_ID: string;
-  };
-}
-
 interface RequestLinkBody {
   credentialSubject?: Record<string, unknown>;
   credentialId: string;
   pin?: boolean;
 }
 
-// to laod the env variables
-const env = (import.meta as unknown as Meta).env;
+interface Config {
+  issuerUrl: string;
+  credentialId: string;
+}
+
+let config: Config;
+
+//fetch the config
+fetch('/config.json')
+  .then((res) => res.json())
+  .then((res) => {
+    config = res;
+  });
 
 let loop: NodeJS.Timeout;
 
@@ -24,9 +28,9 @@ function getCode() {
     clearInterval(loop);
   }
   const body: RequestLinkBody = {
-    credentialId: env.VITE_CREDENTIAL_ID,
+    credentialId: config.credentialId,
   };
-  fetch(`${env.VITE_ISSUER_URL}/request`, {
+  fetch(`${config.issuerUrl}/request`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -51,7 +55,7 @@ function getCode() {
 }
 
 function getStatus(id: string) {
-  fetch(`${env.VITE_ISSUER_URL}/sessions/${id}`)
+  fetch(`${config.issuerUrl}/sessions/${id}`)
     .then((res) => res.json())
     .then((res) => {
       console.log(res);
