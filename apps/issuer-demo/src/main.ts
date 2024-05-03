@@ -58,7 +58,6 @@ function getStatus(id: string) {
   fetch(`${config.issuerUrl}/sessions/${id}`)
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
       status.innerHTML = res.status;
     });
 }
