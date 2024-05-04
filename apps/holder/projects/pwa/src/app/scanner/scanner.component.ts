@@ -162,7 +162,7 @@ export class ScannerComponent implements OnInit, OnDestroy {
       this.httpClient.post<{ uri: string }>(
         `${environment.demoVerifier}/request`,
         {
-          id: 'eID',
+          id: 'Identity',
         }
       )
     ).then((response) => this.showRequest(response.uri, 'send'));

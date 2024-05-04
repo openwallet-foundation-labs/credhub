@@ -68,7 +68,7 @@ export class ScannerComponent implements OnInit {
       this.httpClient.post<{ uri: string }>(
         `${environment.demoVerifier}/request`,
         {
-          id: 'eID',
+          id: 'Identity',
         }
       )
     );

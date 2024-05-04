@@ -55,10 +55,21 @@ async function getStatus(rp: string, correlationId: string) {
 }
 
 (document.querySelector<HTMLDivElement>('#app') as HTMLDivElement).innerHTML = `
-  <button id="get">Get Code</button>
-  <img id="qr" />
-  <input type="text" id="url" />
-  <div id="status"></div>
+<div class="mdc-card" style="padding: 20px;">
+<button id="get" class="mdc-button mdc-button--outlined" style="margin-top: 10px;">
+  <div class="mdc-button__ripple"></div>
+  <span class="mdc-button__label">Generate QR Code</span>
+</button>
+<img id="qr" style="margin-top: 20px;" />
+<div class="mdc-text-field mdc-text-field--outlined" style="width: 300px;">
+  <input type="text" id="url" class="mdc-text-field__input">
+  <div class="mdc-notched-outline">
+    <div class="mdc-notched-outline__leading"></div>    
+    <div class="mdc-notched-outline__trailing"></div>
+  </div>
+</div>
+<div style="margin-top: 20px;">Status: <span id="status"></span></div>
+</div>
 `;
 const status = document.getElementById('status') as HTMLDivElement;
 const urlInput = document.getElementById('url') as HTMLInputElement;

@@ -1,6 +1,6 @@
 {
   "verifierUrl": "http://localhost:3002",
-  "credentialId": "eID",
+  "credentialId": "Identity",
   "tokenEndpoint": "http://localhost:8080/realms/wallet/protocol/openid-connect/token",
   "clientId": "issuer",
   "clientSecret": "Lwo4XCBBdWEKWJctgEqAEhWTrP6EUy2G"
