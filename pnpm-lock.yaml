@@ -11,6 +11,9 @@ patchedDependencies:
   '@sphereon/pex@3.3.3':
     hash: bzkrsrlwcpq6eepymelnbd2pca
     path: patches/@sphereon__pex@3.3.3.patch
+  '@sphereon/ssi-express-support@0.23.4':
+    hash: 3nqsmj7bnbjgr7sf4q24hgui6q
+    path: patches/@sphereon__ssi-express-support@0.23.4.patch
 
 importers:
 
@@ -310,85 +313,6 @@ importers:
         specifier: ~5.2.2
         version: 5.2.2
 
-  apps/issuer:
-    dependencies:
-      '@noble/hashes':
-        specifier: 1.2.0
-        version: 1.2.0
-      '@sd-jwt/crypto-nodejs':
-        specifier: ^0.6.1
-        version: 0.6.1
-      '@sd-jwt/sd-jwt-vc':
-        specifier: ^0.6.1
-        version: 0.6.1
-      '@sd-jwt/types':
-        specifier: ^0.6.1
-        version: 0.6.1
-      '@sphereon/oid4vci-common':
-        specifier: ^0.10.3
-        version: 0.10.3(encoding@0.1.13)
-      '@sphereon/oid4vci-issuer':
-        specifier: ^0.10.3
-        version: 0.10.3(awesome-qr@2.1.5-rc.0(encoding@0.1.13))(encoding@0.1.13)
-      '@sphereon/oid4vci-issuer-server':
-        specifier: ^0.10.3
-        version: 0.10.3(@noble/hashes@1.2.0)(awesome-qr@2.1.5-rc.0(encoding@0.1.13))(encoding@0.1.13)(passport-azure-ad@4.3.5)(passport-http-bearer@1.0.1)
-      '@sphereon/ssi-express-support':
-        specifier: ^0.23.4
-        version: 0.23.4(@noble/hashes@1.2.0)(passport-azure-ad@4.3.5)(passport-http-bearer@1.0.1)
-      '@sphereon/ssi-types':
-        specifier: ^0.22.0
-        version: 0.22.0
-      awesome-qr:
-        specifier: ^2.1.5-rc.0
-        version: 2.1.5-rc.0(encoding@0.1.13)
-      did-resolver:
-        specifier: ^4.1.0
-        version: 4.1.0
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
-      express:
-        specifier: ^4.19.2
-        version: 4.19.2
-      express-list-routes:
-        specifier: ^1.2.1
-        version: 1.2.1
-      joi:
-        specifier: ^17.13.0
-        version: 17.13.0
-      jose:
-        specifier: ^5.2.4
-        version: 5.2.4
-      passport-azure-ad:
-        specifier: ^4.3.5
-        version: 4.3.5
-      passport-http-bearer:
-        specifier: ^1.0.1
-        version: 1.0.1
-      uuid:
-        specifier: ^9.0.1
-        version: 9.0.1
-    devDependencies:
-      '@types/uuid':
-        specifier: ^9.0.8
-        version: 9.0.8
-      axios:
-        specifier: ^1.6.8
-        version: 1.6.8
-      globals:
-        specifier: ^15.1.0
-        version: 15.1.0
-      tsc-watch:
-        specifier: ^6.2.0
-        version: 6.2.0(typescript@5.4.5)
-      typescript:
-        specifier: ^5.4.5
-        version: 5.4.5
-      vitest:
-        specifier: ^1.5.2
-        version: 1.5.2(@types/node@20.12.7)(less@4.2.0)(sass@1.71.1)(terser@5.30.4)
-
   apps/issuer-backend:
     dependencies:
       '@nestjs/common':
@@ -432,7 +356,7 @@ importers:
         version: 0.10.3(@noble/hashes@1.2.0)(awesome-qr@2.1.5-rc.0(encoding@0.1.13))(encoding@0.1.13)(passport-azure-ad@4.3.5)(passport-http-bearer@1.0.1)
       '@sphereon/ssi-express-support':
         specifier: ^0.23.4
-        version: 0.23.4(@noble/hashes@1.2.0)(passport-azure-ad@4.3.5)(passport-http-bearer@1.0.1)
+        version: 0.23.4(patch_hash=3nqsmj7bnbjgr7sf4q24hgui6q)(@noble/hashes@1.2.0)(passport-azure-ad@4.3.5)(passport-http-bearer@1.0.1)
       '@sphereon/ssi-types':
         specifier: ^0.22.0
         version: 0.22.0
@@ -569,7 +493,7 @@ importers:
         version: 2.2.4
       '@sphereon/ssi-express-support':
         specifier: ^0.23.4
-        version: 0.23.4(@noble/hashes@1.2.0)(passport-azure-ad@4.3.5)(passport-http-bearer@1.0.1)
+        version: 0.23.4(patch_hash=3nqsmj7bnbjgr7sf4q24hgui6q)(@noble/hashes@1.2.0)(passport-azure-ad@4.3.5)(passport-http-bearer@1.0.1)
       '@sphereon/ssi-types':
         specifier: ^0.22.0
         version: 0.22.0
@@ -11116,7 +11040,7 @@ snapshots:
     dependencies:
       '@sphereon/oid4vci-common': 0.10.3(encoding@0.1.13)
       '@sphereon/oid4vci-issuer': 0.10.3(awesome-qr@2.1.5-rc.0(encoding@0.1.13))(encoding@0.1.13)
-      '@sphereon/ssi-express-support': 0.23.4(@noble/hashes@1.2.0)(passport-azure-ad@4.3.5)(passport-http-bearer@1.0.1)
+      '@sphereon/ssi-express-support': 0.23.4(patch_hash=3nqsmj7bnbjgr7sf4q24hgui6q)(@noble/hashes@1.2.0)(passport-azure-ad@4.3.5)(passport-http-bearer@1.0.1)
       '@sphereon/ssi-types': 0.22.0
       body-parser: 1.20.2
       cookie-parser: 1.4.6
@@ -11178,7 +11102,7 @@ snapshots:
       string.prototype.matchall: 4.0.11
       uint8arrays: 3.1.1
 
-  '@sphereon/ssi-express-support@0.23.4(@noble/hashes@1.2.0)(passport-azure-ad@4.3.5)(passport-http-bearer@1.0.1)':
+  '@sphereon/ssi-express-support@0.23.4(patch_hash=3nqsmj7bnbjgr7sf4q24hgui6q)(@noble/hashes@1.2.0)(passport-azure-ad@4.3.5)(passport-http-bearer@1.0.1)':
     dependencies:
       body-parser: 1.20.2
       casbin: 5.30.0
