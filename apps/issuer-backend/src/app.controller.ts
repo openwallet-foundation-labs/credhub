@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { Public } from 'nest-keycloak-connect';
 
-@Controller('app')
+@Controller()
 export class AppController {
 
   /**
