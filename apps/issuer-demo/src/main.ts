@@ -21,9 +21,13 @@ async function getCode() {
   }
   const body: RequestLinkBody = {
     credentialId: config.credentialId,
+    credentialSubject: {
+      prename: 'Max',
+      surname: 'Mustermann',
+    },
   };
   const accessToken = await authenticateWithKeycloak();
-  fetch(`${config.issuerUrl}/request`, {
+  fetch(`${config.issuerUrl}/sessions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -37,6 +41,7 @@ async function getCode() {
       qrcode.toDataURL(res.uri).then((url) => {
         (document.getElementById('qr') as HTMLElement).setAttribute('src', url);
         urlInput.value = res.uri;
+        navigator.clipboard.writeText(res.uri);
       });
       getStatus(res.session.preAuthorizedCode);
       //request for the status update in the background with a loop

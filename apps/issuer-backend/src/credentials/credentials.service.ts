@@ -13,7 +13,6 @@ export class CredentialsService {
 
   create(createCredentialDto: CreateCredentialDto) {
     const credential = this.credentialRepository.create(createCredentialDto);
-    console.log(credential);
     return this.credentialRepository.save(credential);
   }
 

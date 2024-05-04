@@ -107,9 +107,7 @@ export class ScannerComponent implements OnInit, OnDestroy {
       },
       this.onScanSuccess.bind(this),
       // we do nothing when a scan failed
-      (err) => {
-        // console.log(err);
-      }
+      () => {}
     );
   }
 
@@ -128,7 +126,6 @@ export class ScannerComponent implements OnInit, OnDestroy {
    * @param decodedText
    */
   async onScanSuccess(decodedText: string) {
-    console.log(decodedText);
     // handle the scanned code as you like, for example:
     if (decodedText.startsWith('openid-credential-offer://')) {
       this.showRequest(decodedText, 'receive');

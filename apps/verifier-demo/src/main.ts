@@ -1,51 +1,30 @@
+import { authenticateWithKeycloak } from './auth';
+import { config } from './config';
 import './style.css';
 import qrcode from 'qrcode';
 
-interface RequestLinkBody {
-  id: string;
-}
-
-interface Config {
-  verifierUrl: string;
-  credentialId: string;
-}
-
-let config: Config;
-
-//fetch the config
-fetch('/config.json')
-  .then((res) => res.json())
-  .then((res) => {
-    config = res;
-  });
-
 let loop: NodeJS.Timeout;
 
-function getCode() {
+async function getCode() {
   if (loop) {
     clearInterval(loop);
   }
-  const body: RequestLinkBody = {
-    id: config.credentialId,
-  };
-  fetch(`${config.verifierUrl}/request`, {
+  const accessToken = await authenticateWithKeycloak();
+  fetch(`${config.verifierUrl}/siop/${config.credentialId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify(body),
   })
     .then((res) => res.json())
     .then((res) => {
       //display the qrocde
-      qrcode
-        .toDataURL(res.uri)
-        .then((url) =>
-          (document.getElementById('qr') as HTMLElement).setAttribute(
-            'src',
-            url
-          )
-        );
+      qrcode.toDataURL(res.uri).then((url) => {
+        (document.getElementById('qr') as HTMLElement).setAttribute('src', url);
+        urlInput.value = res.uri;
+        navigator.clipboard.writeText(res.uri);
+      });
       // get correlecationId
       const correlationId = decodeURIComponent(res.uri)
         .split('/')
@@ -56,10 +35,21 @@ function getCode() {
     });
 }
 
-function getStatus(rp: string, correlationId: string) {
-  fetch(`${config.verifierUrl}/siop/${rp}/auth-request/${correlationId}/status`)
+async function getStatus(rp: string, correlationId: string) {
+  const accessToken = await authenticateWithKeycloak();
+  fetch(
+    `${config.verifierUrl}/siop/${rp}/auth-request/${correlationId}/status`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  )
     .then((res) => res.json())
     .then((res) => {
+      if (res.status === 'verified') {
+        clearInterval(loop);
+      }
       status.innerHTML = res.status;
     });
 }
@@ -67,9 +57,11 @@ function getStatus(rp: string, correlationId: string) {
 (document.querySelector<HTMLDivElement>('#app') as HTMLDivElement).innerHTML = `
   <button id="get">Get Code</button>
   <img id="qr" />
+  <input type="text" id="url" />
   <div id="status"></div>
 `;
 const status = document.getElementById('status') as HTMLDivElement;
+const urlInput = document.getElementById('url') as HTMLInputElement;
 (document.getElementById('get') as HTMLElement).addEventListener(
   'click',
   getCode
