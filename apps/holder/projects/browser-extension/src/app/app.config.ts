@@ -9,6 +9,7 @@ import { environment } from '../environments/environment';
 import { ApiModule, Configuration } from '../../../shared/api/kms';
 import { AuthServiceInterface } from '../../../shared/settings/settings.component';
 import { AuthService } from './auth/auth.service';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export declare namespace globalThis {
@@ -29,6 +30,7 @@ function getConfiguration() {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
     provideAnimations(),
     provideOAuthClient(),
     importProvidersFrom(ApiModule, HttpClientModule),

@@ -1,7 +1,8 @@
 let qrCodes: string[] = [];
 let scanningStatus: string;
+let walletenWindow: chrome.windows.Window | null = null;
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   if (request.action === 'fetchImage') {
     fetch(request.url)
       .then((response) => response.blob())
@@ -23,11 +24,31 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     qrCodes.push(request.data);
     chrome.action.setBadgeText({
       text: qrCodes.length.toString(),
-      tabId: sender.tab!.id,
+      tabId: (sender.tab as chrome.tabs.Tab).id,
     });
   }
   if (request.action === 'getQRCodes') {
     sendResponse(qrCodes);
+  }
+
+  if (request.action === 'open') {
+    const id = request.data.url;
+    const url = chrome.runtime.getURL(
+      `index.html#/scan/${encodeURIComponent(id)}`
+    );
+    if (walletenWindow !== null) {
+      console.log('removing window');
+      chrome.windows.remove(
+        (walletenWindow as chrome.windows.Window).id as number
+      );
+    }
+    walletenWindow = await chrome.windows.create({
+      url,
+      type: 'panel',
+      width: 400,
+      height: 700,
+      focused: true,
+    });
   }
 
   if (request.action === 'reset') {
@@ -35,7 +56,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     qrCodes = [];
     chrome.action.setBadgeText({
       text: qrCodes.length.toString(),
-      tabId: sender.tab!.id,
+      tabId: (sender.tab as chrome.tabs.Tab).id,
     });
   }
 
