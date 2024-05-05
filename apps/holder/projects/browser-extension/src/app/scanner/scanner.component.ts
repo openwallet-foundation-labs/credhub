@@ -12,6 +12,7 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { IssuanceRequestComponent } from '../../../../shared/oid4vc/issuance-request/issuance-request.component';
 import { VerifyRequestComponent } from '../../../../shared/oid4vc/verify-request/verify-request.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-scanner',
@@ -38,10 +39,18 @@ export class ScannerComponent implements OnInit {
 
   constructor(
     public scanner: ScannerService,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.url = id;
+      this.action = id.startsWith('openid-credential-offer://')
+        ? 'issue'
+        : 'verify';
+    }
     this.scanner.results = [];
     this.urlField = new FormControl('');
     this.urlField.valueChanges.subscribe((value) => {
@@ -68,7 +77,7 @@ export class ScannerComponent implements OnInit {
       this.httpClient.post<{ uri: string }>(
         `${environment.demoVerifier}/request`,
         {
-          id: 'eID',
+          id: 'Identity',
         }
       )
     );

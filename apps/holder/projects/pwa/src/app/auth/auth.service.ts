@@ -189,7 +189,6 @@ export class AuthService implements AuthServiceInterface {
 
   public async logout() {
     this.oauthService.logOut();
-    this.router.navigateByUrl('/login');
   }
   public refresh() {
     this.oauthService.silentRefresh();
@@ -213,6 +212,7 @@ export class AuthService implements AuthServiceInterface {
     return this.oauthService.getIdToken();
   }
   public get logoutUrl() {
+    alert(this.oauthService.logoutUrl);
     return this.oauthService.logoutUrl;
   }
 }

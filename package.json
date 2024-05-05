@@ -18,7 +18,8 @@
       "@sphereon/ssi-types": "^0.22.0"
     },
     "patchedDependencies": {
-      "@sphereon/pex@3.3.3": "patches/@sphereon__pex@3.3.3.patch"
+      "@sphereon/pex@3.3.3": "patches/@sphereon__pex@3.3.3.patch",
+      "@sphereon/ssi-express-support@0.23.4": "patches/@sphereon__ssi-express-support@0.23.4.patch"
     }
   },
   "devDependencies": {

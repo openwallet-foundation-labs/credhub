@@ -9,14 +9,15 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="getCredential()">
+      <!-- TODO: since the endpoints are protected, we need to pass the credentials into it -->
+      <!-- <button mat-menu-item (click)="getCredential()">
         <mat-icon>download</mat-icon>
         <span>Issue Demo</span>
       </button>
       <button mat-menu-item (click)="presentCredential()">
         <mat-icon>upload</mat-icon>
         <span>Present Demo</span>
-      </button>
+      </button> -->
       <button mat-menu-item (click)="passFromClipboard()">
         <mat-icon>content_paste</mat-icon>
         <span>Insert from clipboard</span>
