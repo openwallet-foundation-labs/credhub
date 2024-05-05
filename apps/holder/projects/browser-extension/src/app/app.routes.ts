@@ -22,6 +22,10 @@ export const routes: Routes = [
         component: ScannerComponent,
       },
       {
+        path: 'scan/:id',
+        component: ScannerComponent,
+      },
+      {
         path: 'credentials',
         component: CredentialsListComponent,
       },
