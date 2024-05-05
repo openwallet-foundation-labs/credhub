@@ -79,13 +79,13 @@ services:
     ports:
       - '5432:5432'
 
-  issuer:
-    image: ghcr.io/cre8/wallet/issuer
+  issuer-backend:
+    image: ghcr.io/cre8/wallet/issuer-backend
     build:
       context: .
       dockerfile: docker/node.Dockerfile
       args:
-        - PROJECT=issuer
+        - PROJECT=issuer-backend
     env_file:
       - .env
     environment:
@@ -112,13 +112,13 @@ services:
     ports:
       - 81:80
 
-  verifier:
-    image: ghcr.io/cre8/wallet/verifier
+  verifier-backend:
+    image: ghcr.io/cre8/wallet/verifier-backend
     build:
       context: .
       dockerfile: docker/node.Dockerfile
       args:
-        - PROJECT=verifier
+        - PROJECT=verifier-backend
     volumes:
       - verifier_tmp:/app/tmp
       - ./config/verifier:/app/templates
