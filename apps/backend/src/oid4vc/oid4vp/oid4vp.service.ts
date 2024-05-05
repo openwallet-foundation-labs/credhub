@@ -200,9 +200,9 @@ export class Oid4vpService {
           },
         }
       );
-    const res = await session.op
-      .submitAuthorizationResponse(authenticationResponseWithJWT)
-      .catch(() => '');
+    const res = await session.op.submitAuthorizationResponse(
+      authenticationResponseWithJWT
+    );
     const response = authenticationResponseWithJWT.response.payload
       .vp_token as CompactSdJwtVc;
     await this.historyService.accept(sessionId, response);
