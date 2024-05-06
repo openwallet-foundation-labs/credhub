@@ -22,12 +22,12 @@ import { CredentialsModule } from './credentials/credentials.module';
         ...DB_VALIDATION_SCHEMA,
       }),
     }),
-    KeyModule,
+    KeyModule.forRootSync(),
     IssuerModule,
     AuthModule,
     DbModule,
     CredentialsModule,
   ],
-  controllers: [AppController],  
+  controllers: [AppController],
 })
 export class AppModule {}

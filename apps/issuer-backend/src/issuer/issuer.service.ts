@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  OnModuleInit,
+} from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { ES256, digest, generateSalt } from '@sd-jwt/crypto-nodejs';
@@ -35,10 +40,10 @@ import {
   ExpressCorsConfigurer,
   ExpressSupport,
 } from '@sphereon/ssi-express-support';
-import { KeyService } from 'src/key/key.service';
 import { IssuerDataService } from './issuer-data.service';
 import { SessionRequestDto } from './dto/session-request.dto';
 import { CredentialsService } from 'src/credentials/credentials.service';
+import { KeyService } from 'src/key/key.service';
 
 @Injectable()
 export class IssuerService implements OnModuleInit {
@@ -46,11 +51,11 @@ export class IssuerService implements OnModuleInit {
   vcIssuer: VcIssuer<DIDDocument>;
   constructor(
     private adapterHost: HttpAdapterHost<ExpressAdapter>,
-    private keyService: KeyService,
+    @Inject('KeyService') private keyService: KeyService,
     private issuerDataService: IssuerDataService,
-    private credentialsService: CredentialsService,
+    private credentialsService: CredentialsService
   ) {
-    this.express = this.getExpressInstance();    
+    this.express = this.getExpressInstance();
   }
   async onModuleInit() {
     await this.init();
@@ -60,11 +65,11 @@ export class IssuerService implements OnModuleInit {
    * Returns the issuer metadata.
    * @returns
    */
-  getIssuerMetadata(): IssuerMetadata {
+  async getIssuerMetadata(): Promise<IssuerMetadata> {
     return {
       issuer: process.env.ISSUER_BASE_URL as string,
       jwks: {
-        keys: [this.keyService.getPublicKey() as JWK],
+        keys: [await this.keyService.getPublicKey()],
       },
     };
   }
@@ -113,15 +118,13 @@ export class IssuerService implements OnModuleInit {
 
   async init() {
     // import the private key.
-    const privateKeyLike = await importJWK(this.keyService.getPrivateKey());
 
-    // get the signer and verifier. Only ES256 is supported for now.
-    const signer = await ES256.getSigner(this.keyService.getPrivateKey());
+    // get verifier. Only ES256 is supported for now.
     const verifier = await ES256.getVerifier(this.keyService.getPublicKey());
 
     // crearre the sd-jwt instance with the required parameters.
     const sdjwt = new SDJwtVcInstance({
-      signer,
+      signer: this.keyService.sign,
       verifier,
       signAlg: 'ES256',
       hasher: digest,
@@ -134,7 +137,7 @@ export class IssuerService implements OnModuleInit {
      * @param args
      * @returns
      */
-    const credentialDataSupplier: CredentialDataSupplier = async (args) => {      
+    const credentialDataSupplier: CredentialDataSupplier = async (args) => {
       const credential: SdJwtDecodedVerifiableCredentialPayload = {
         iat: new Date().getTime(),
         iss: args.credentialOffer.credential_offer.credential_issuer,
@@ -155,14 +158,11 @@ export class IssuerService implements OnModuleInit {
      * @returns signed jwt
      */
     const signerCallback = async (jwt: Jwt, kid?: string): Promise<string> => {
-      //TODO: use the kid to select the correct key
-      return new SignJWT({ ...jwt.payload })
-        .setProtectedHeader({
-          ...jwt.header,
-          alg: Alg.ES256,
-          kid: this.keyService.getKid(),
-        })
-        .sign(privateKeyLike);
+      return this.keyService.signJWT(jwt.payload, {
+        ...jwt.header,
+        alg: Alg.ES256,
+        kid: await this.keyService.getKid(),
+      });
     };
 
     /**
@@ -196,16 +196,20 @@ export class IssuerService implements OnModuleInit {
      */
     const credentialSignerCallback: CredentialSignerCallback<
       DIDDocument
-    > = async (args) => {            
+    > = async (args) => {
       const jwt = await sdjwt.issue<{ iss: string; vct: string }>(
         args.credential as SdJwtDecodedVerifiableCredentialPayload,
         this.issuerDataService.getDisclosureFrame(
-          args.credential.vct as string,
+          args.credential.vct as string
         ),
-        { header: { kid: this.keyService.getKid() } });                
-        await this.credentialsService.create({value: jwt, id: args.credential.jti as string})
-        return jwt;
-      }      
+        { header: { kid: this.keyService.getKid() } }
+      );
+      await this.credentialsService.create({
+        value: jwt,
+        id: args.credential.jti as string,
+      });
+      return jwt;
+    };
 
     //create the issuer instance
     this.vcIssuer = new VcIssuer<DIDDocument>(
@@ -218,8 +222,8 @@ export class IssuerService implements OnModuleInit {
         uris: new MemoryStates<URIState>(),
         jwtVerifyCallback,
         credentialDataSupplier,
-        credentialSignerCallback,        
-      },
+        credentialSignerCallback,
+      }
     );
 
     /**

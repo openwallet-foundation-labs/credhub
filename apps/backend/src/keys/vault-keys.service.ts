@@ -16,11 +16,6 @@ import {
   JWK,
 } from 'jose';
 import { ConfigService } from '@nestjs/config';
-import {
-  createSign,
-  KeyLike as CryptoKeyLike,
-  generateKeyPairSync,
-} from 'node:crypto';
 
 @Injectable()
 export class VaultKeysService extends KeysService {
@@ -198,9 +193,6 @@ export class VaultKeysService extends KeysService {
       const signature = this.derToJwtSignature(
         response.data.data.signature.split(':')[2]
       );
-      const jwt = `${encodedHeader}.${encodedPayload}.${signature}`;
-      //verigy the jwt before continuing
-      await jwtVerify(jwt, await importJWK(jwk, 'ES256'));
       return `${encodedHeader}.${encodedPayload}.${signature}`;
     } catch (error) {
       console.error('Error signing JWT with Vault:', error);
@@ -273,36 +265,6 @@ export class VaultKeysService extends KeysService {
       console.error('Error signing JWT with Vault:', error);
       throw error;
     }
-  }
-
-  async test(type: 'RS256' | 'ES256') {
-    let privateKey: CryptoKeyLike;
-    let publicKey: CryptoKeyLike;
-
-    if (type === 'RS256') {
-      const keys = generateKeyPairSync('rsa', {
-        modulusLength: 2048,
-      });
-      privateKey = keys.privateKey;
-      publicKey = keys.publicKey;
-    } else {
-      const keys = generateKeyPairSync('ec', {
-        namedCurve: 'prime256v1',
-      });
-      privateKey = keys.privateKey;
-      publicKey = keys.publicKey;
-    }
-
-    const payload = { iss: 'foo' };
-    const header = { alg: type };
-    const h = Buffer.from(JSON.stringify(header)).toString('base64url');
-    const p = Buffer.from(JSON.stringify(payload)).toString('base64url');
-    const sign = createSign('SHA256');
-    sign.update(`${h}.${p}`);
-    sign.end();
-    const finalSign = sign.sign(privateKey, 'base64');
-    const jwt1 = `${h}.${p}.${type === 'RS256' ? this.base64ToBase64Url(finalSign) : this.derToJwtSignature(finalSign)}`;
-    await jwtVerify(jwt1, publicKey);
   }
 
   /**
