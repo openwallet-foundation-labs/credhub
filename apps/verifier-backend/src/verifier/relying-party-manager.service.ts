@@ -188,8 +188,8 @@ export class RelyingPartyManagerService {
           const payload = decodedVC.jwt?.payload as JWTPayload;
           const header = decodedVC.jwt?.header as JWK;
           const publicKey = await this.keyService.resolvePublicKey(
-            payload.iss as string,
-            header.kid as string
+            payload,
+            header
           );
           const verify = await ES256.getVerifier(publicKey);
           return verify(data, signature);

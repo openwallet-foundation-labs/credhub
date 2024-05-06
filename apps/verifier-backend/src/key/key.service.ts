@@ -1,11 +1,19 @@
 import { ConflictException, Injectable, OnModuleInit } from '@nestjs/common';
 import { ES256 } from '@sd-jwt/crypto-nodejs';
 import { existsSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
-import { JWK } from 'jose';
+import { JWK, JWTPayload } from 'jose';
 import { v4 } from 'uuid';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { encodeDidJWK } from 'src/verifier/did';
+import { X509Certificate } from 'node:crypto';
+import { Resolver } from 'did-resolver';
+import web from 'web-did-resolver';
+
+const webResolver = web.getResolver();
+const resolver = new Resolver({
+  ...webResolver,
+});
 
 interface IssuerMetadata {
   issuer: string;
@@ -90,10 +98,45 @@ export class KeyService implements OnModuleInit {
     return this.privateKey;
   }
 
-  async resolvePublicKey(issuer: string, kid: string): Promise<JWK> {
+  /**
+   * Resolve the public key from the issuer, the function will first check for the x5c header, then for the did document and finally for the issuer metadata.
+   * @param payload
+   * @param header
+   * @returns
+   */
+  async resolvePublicKey(payload: JWTPayload, header: JWK): Promise<JWK> {
+    if (header.x5c) {
+      const cert = new X509Certificate(Buffer.from(header.x5c[0], 'base64'));
+      //TODO: implement the validation of the certificate chain and also the comparison of the identifier
+      if (cert.subject !== payload.iss) {
+        throw new Error('Subject and issuer do not match');
+      }
+      return cert.publicKey.export({ format: 'jwk' }) as JWK;
+    }
+    if (payload.iss.startsWith('did:')) {
+      const did = await resolver.resolve(payload.iss);
+      if (!did) {
+        throw new ConflictException('DID not found');
+      }
+      //TODO: header.kid can be relative or absolute, we need to handle this
+      const key = did.didDocument.verificationMethod.find(
+        (vm) => vm.id === header.kid
+      );
+      if (!key) {
+        throw new ConflictException('Key not found');
+      }
+      if (!key.publicKeyJwk) {
+        throw new ConflictException(
+          'Public key not found, we are only supporting JWK keys for now.'
+        );
+      }
+      return key.publicKeyJwk;
+    }
+
+    // lets look for a did
     const response = await firstValueFrom(
       this.httpService.get<IssuerMetadata>(
-        `${issuer}/.well-known/jwt-vc-issuer`
+        `${payload.iss}/.well-known/jwt-vc-issuer`
       )
     ).then(
       (r) => r.data,
@@ -101,7 +144,7 @@ export class KeyService implements OnModuleInit {
         throw new ConflictException('Issuer not reachable');
       }
     );
-    const key = response.jwks.keys.find((key) => key.kid === kid);
+    const key = response.jwks.keys.find((key) => key.kid === header.kid);
     if (!key) {
       throw new Error('Key not found');
     }
