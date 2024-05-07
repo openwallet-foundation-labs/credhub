@@ -11,6 +11,7 @@ import {
 import { v4 } from 'uuid';
 import { KeyService } from './key.service';
 import { Injectable } from '@nestjs/common';
+import { Signer } from '@sd-jwt/types';
 
 //TODO: implement a vault integration like in the backend
 /**
@@ -18,10 +19,10 @@ import { Injectable } from '@nestjs/common';
  */
 @Injectable()
 export class FileSystemKeyService implements KeyService {
+  public signer: Signer;
   private privateKey: JWK;
   private publicKey: JWK;
   private privateKeyInstance: KeyLike;
-  signer: (data: string) => Promise<string>;
 
   async onModuleInit(): Promise<void> {
     await this.init();
@@ -82,14 +83,6 @@ export class FileSystemKeyService implements KeyService {
     copy.key_ops = undefined;
     copy.ext = undefined;
     return Promise.resolve(copy);
-  }
-
-  /**
-   * Returns the signature of the given value
-   * @param value
-   */
-  sign(value: string) {
-    return this.signer(value);
   }
 
   async signJWT(payload: JWTPayload, header: JWTHeaderParameters) {

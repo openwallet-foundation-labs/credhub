@@ -4,12 +4,12 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { importSPKI, exportJWK, JWTHeaderParameters } from 'jose';
 import { ConfigService } from '@nestjs/config';
-import { v4 } from 'uuid';
-import { JwtPayload } from '@sd-jwt/types';
+import { JwtPayload, Signer } from '@sd-jwt/types';
 
 @Injectable()
 export class VaultKeyService extends KeyService {
-  private keyId = 'keyID';
+  public signer: Signer;
+  private keyId: string;
 
   // url to the vault instance
   private vaultUrl: string;
@@ -27,6 +27,7 @@ export class VaultKeyService extends KeyService {
         'X-Vault-Token': this.configService.get<string>('VAULT_TOKEN'),
       },
     };
+    this.keyId = this.configService.get<string>('VAULT_KEY_ID');
   }
 
   /**
@@ -34,10 +35,10 @@ export class VaultKeyService extends KeyService {
    */
   async init() {
     await this.getPublicKey().catch(() => {
-      this.keyId = v4();
       //TODO: we need to persist this key id
       this.create();
     });
+    this.signer = async (input: string) => this.sign(input);
   }
 
   /**

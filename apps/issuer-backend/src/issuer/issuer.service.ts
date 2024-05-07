@@ -26,13 +26,7 @@ import {
 import { OID4VCIServer } from '@sphereon/oid4vci-issuer-server';
 import { SdJwtDecodedVerifiableCredentialPayload } from '@sphereon/ssi-types';
 import { DIDDocument } from 'did-resolver';
-import {
-  importJWK,
-  SignJWT,
-  decodeProtectedHeader,
-  JWK,
-  jwtVerify,
-} from 'jose';
+import { importJWK, decodeProtectedHeader, JWK, jwtVerify } from 'jose';
 import { IssuerMetadata } from 'src/issuer/types';
 import { v4 } from 'uuid';
 import {
@@ -117,14 +111,14 @@ export class IssuerService implements OnModuleInit {
   }
 
   async init() {
-    // import the private key.
-
     // get verifier. Only ES256 is supported for now.
-    const verifier = await ES256.getVerifier(this.keyService.getPublicKey());
+    const verifier = await ES256.getVerifier(
+      await this.keyService.getPublicKey()
+    );
 
     // crearre the sd-jwt instance with the required parameters.
     const sdjwt = new SDJwtVcInstance({
-      signer: this.keyService.sign,
+      signer: this.keyService.signer,
       verifier,
       signAlg: 'ES256',
       hasher: digest,

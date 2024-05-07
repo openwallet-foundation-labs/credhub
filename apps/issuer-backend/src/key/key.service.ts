@@ -1,10 +1,13 @@
 import { OnModuleInit } from '@nestjs/common';
+import { Signer } from '@sd-jwt/types';
 import { JWK, JWTHeaderParameters, JWTPayload } from 'jose';
 
 /**
  * Generic interface for a key service
  */
 export abstract class KeyService implements OnModuleInit {
+  public abstract signer: Signer;
+
   async onModuleInit() {
     await this.init();
   }
@@ -30,7 +33,7 @@ export abstract class KeyService implements OnModuleInit {
    * Returns the signature of the given value
    * @param value
    */
-  abstract sign(value: string): Promise<string>;
+  // abstract sign(value: string): Promise<string>;
 
   abstract signJWT(
     payload: JWTPayload,

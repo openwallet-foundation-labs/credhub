@@ -7,14 +7,7 @@ import { ProofRequest } from './dto/proof-request.dto';
 import { SignRequest } from './dto/sign-request.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import {
-  importSPKI,
-  KeyLike,
-  exportJWK,
-  jwtVerify,
-  importJWK,
-  JWK,
-} from 'jose';
+import { importSPKI, KeyLike, exportJWK, JWK } from 'jose';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -57,7 +50,10 @@ export class VaultKeysService extends KeysService {
         },
         this.headers
       )
-    );
+    ).catch((error) => {
+      console.error(error);
+      throw error;
+    });
     const jwk = await this.getPublicKeyAsJwk(user);
     return {
       id: res.data.id,
@@ -193,7 +189,8 @@ export class VaultKeysService extends KeysService {
       const signature = this.derToJwtSignature(
         response.data.data.signature.split(':')[2]
       );
-      return `${encodedHeader}.${encodedPayload}.${signature}`;
+      const jwt = `${encodedHeader}.${encodedPayload}.${signature}`;
+      return jwt;
     } catch (error) {
       console.error('Error signing JWT with Vault:', error);
       throw error;
