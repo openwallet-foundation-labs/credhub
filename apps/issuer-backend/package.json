@@ -23,6 +23,7 @@
     "publish": "pnpm run build && cd ../../ && docker compose build issuer-backend && docker compose push issuer-backend"
   },
   "dependencies": {
+    "@nestjs/axios": "^3.0.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.2",
     "@nestjs/core": "^10.0.0",
