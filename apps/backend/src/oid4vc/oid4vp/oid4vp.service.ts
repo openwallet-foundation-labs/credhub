@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { digest } from '@sd-jwt/crypto-nodejs';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import {
@@ -15,7 +15,6 @@ import {
 } from '@sphereon/did-auth-siop';
 import { SdJwtDecodedVerifiableCredentialWithKbJwtInput } from '@sphereon/pex';
 import { CredentialsService } from 'src/credentials/credentials.service';
-import { KeysService } from 'src/keys/keys.service';
 import { v4 as uuid } from 'uuid';
 import { Oid4vpParseRepsonse } from './dto/parse-response.dto';
 import { SubmissionRequest } from './dto/submission-request.dto';
@@ -23,6 +22,7 @@ import { HistoryService } from 'src/history/history.service';
 import { Oid4vpParseRequest } from './dto/parse-request.dto';
 import { Session } from './session';
 import { CompactSdJwtVc } from '@sphereon/ssi-types';
+import { KeysService } from 'src/keys/keys.service';
 
 @Injectable()
 export class Oid4vpService {
@@ -30,8 +30,8 @@ export class Oid4vpService {
   sdjwt: SDJwtVcInstance;
 
   constructor(
+    @Inject('KeyService') private keysService: KeysService,
     private credentialsService: CredentialsService,
-    private keysService: KeysService,
     private historyService: HistoryService
   ) {
     this.sdjwt = new SDJwtVcInstance({ hasher: digest });

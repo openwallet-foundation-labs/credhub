@@ -1,4 +1,3 @@
-import { JsonWebKey } from 'node:crypto';
 export class KeyResponse {
   /**
    * Id of the key

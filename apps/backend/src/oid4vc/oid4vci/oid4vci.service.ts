@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { digest } from '@sd-jwt/crypto-nodejs';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { OpenID4VCIClient } from '@sphereon/oid4vci-client';
@@ -13,12 +13,11 @@ import {
 } from '@sphereon/oid4vci-common';
 import { DIDDocument } from 'did-resolver';
 import { CredentialsService } from 'src/credentials/credentials.service';
-import { KeyResponse } from 'src/keys/dto/key-response.dto';
-import { KeysService } from 'src/keys/keys.service';
 import { v4 as uuid } from 'uuid';
 import { Oid4vciParseRepsonse } from './dto/parse-response.dto';
 import { Oid4vciParseRequest } from './dto/parse-request.dto';
 import { decodeJwt } from 'jose';
+import { KeysService } from 'src/keys/keys.service';
 
 type Session = {
   //instead of storing the client, we could also generate it on demand. In this case we need to store the uri
@@ -37,7 +36,7 @@ export class Oid4vciService {
 
   constructor(
     private credentialsService: CredentialsService,
-    private keysService: KeysService
+    @Inject('KeyService') private keysService: KeysService
   ) {
     this.sdjwt = new SDJwtVcInstance({ hasher: digest });
   }
@@ -86,13 +85,7 @@ export class Oid4vciService {
     }
 
     //use the first key, can be changed to use a specific or unique key
-    const keys = await this.keysService.findAll(user);
-    let key: KeyResponse;
-    if (keys.length === 0) {
-      key = await this.keysService.create({ type: 'ES256' }, user);
-    } else {
-      key = keys[0];
-    }
+    const key = await this.keysService.firstOrCreate(user);
     const proofCallbacks: ProofOfPossessionCallbacks<DIDDocument> = {
       verifyCallback: async (args: {
         jwt: string;
@@ -104,12 +97,10 @@ export class Oid4vciService {
           jwk: key.publicKey,
         }),
       signCallback: async (args: Jwt): Promise<string> =>
-        this.keysService
-          .proof(user, {
-            payload: args.payload,
-            kid: key.id,
-          })
-          .then((response) => response.jwt),
+        this.keysService.proof(user, {
+          payload: args.payload,
+          kid: key.id,
+        }),
     };
     await data.client.acquireAccessToken();
     for (const credential of data.credentials) {
