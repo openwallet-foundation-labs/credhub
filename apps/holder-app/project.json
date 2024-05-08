@@ -89,7 +89,7 @@
         "metadata": {
           "images": ["ghcr.io/cre8/wallet/holder-app"],
           "load": true,
-          "push": true,
+          "push": false,
           "tags": ["latest"]
         }
       }

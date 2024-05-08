@@ -28,7 +28,7 @@
         "metadata": {
           "images": ["holder-backend"],
           "load": true,
-          "push": true,
+          "push": false,
           "tags": [
             "type=schedule",
             "type=ref,event=branch",
