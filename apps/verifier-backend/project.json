@@ -28,6 +28,7 @@
         "metadata": {
           "images": ["ghcr.io/cre8/wallet/verifier-backend"],
           "load": true,
+          "push": true,
           "tags": ["latest"]
         }
       }
