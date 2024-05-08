@@ -17,11 +17,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-      
+
 
       # Connect your workspace on nx.app and uncomment this to enable task distribution.
       # The "--stop-agents-after" is optional, but allows idle agents to shut down once the "build" targets have been requested
@@ -37,4 +37,4 @@ jobs:
 
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: pnpm exec nx-cloud record -- echo Hello World
-      - run: pnpm exec nx affected -t lint test build
+      - run: pnpm exec nx affected -t lint test build container
