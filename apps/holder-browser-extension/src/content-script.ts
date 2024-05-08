@@ -63,9 +63,7 @@ function scanForQRCode() {
   const canvases = document.querySelectorAll('canvas');
   toProcess = canvases.length + images.length;
   chrome.runtime.sendMessage({ action: 'process', data: 'scanning' });
-  // biome-ignore lint/complexity/noForEach: <explanation>
   images.forEach((image) => scanImage(image));
-  // biome-ignore lint/complexity/noForEach: <explanation>
   canvases.forEach((canvas) => {
     const imageData = canvas.toDataURL();
     readImage(imageData, canvas);

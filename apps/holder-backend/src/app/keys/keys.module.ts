@@ -12,20 +12,17 @@ export const KEY_VALIDATION_SCHEMA = {
   KM_TYPE: Joi.string().valid('db', 'vault').default('db'),
   VAULT_URL: Joi.string().when('KM_TYPE', {
     is: 'vault',
-    // biome-ignore lint/suspicious/noThenProperty: <explanation>
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
   VAULT_TOKEN: Joi.string().when('KM_TYPE', {
     is: 'vault',
-    // biome-ignore lint/suspicious/noThenProperty: <explanation>
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
 };
 @Global()
 @Module({})
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class KeysModule {
   static forRootSync(): DynamicModule {
     return {

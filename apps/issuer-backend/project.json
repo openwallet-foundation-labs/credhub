@@ -19,6 +19,18 @@
           "buildTarget": "issuer-backend:build:production"
         }
       }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "options": {
+        "engine": "docker",
+        "metadata": {
+          "images": ["ghcr.io/cre8/wallet/issuer-backend"],
+          "load": true,
+          "tags": ["latest"]
+        }
+      }
     }
   }
 }

@@ -8,25 +8,21 @@ export const DB_VALIDATION_SCHEMA = {
   DB_TYPE: Joi.string().default('postgres'),
   DB_HOST: Joi.string().when('DB_TYPE', {
     is: 'postgres',
-    // biome-ignore lint/suspicious/noThenProperty: <explanation>
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
   DB_PORT: Joi.number().when('DB_TYPE', {
     is: 'postgres',
-    // biome-ignore lint/suspicious/noThenProperty: <explanation>
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
   DB_USERNAME: Joi.string().when('DB_TYPE', {
     is: 'postgres',
-    // biome-ignore lint/suspicious/noThenProperty: <explanation>
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
   DB_PASSWORD: Joi.string().when('DB_TYPE', {
     is: 'postgres',
-    // biome-ignore lint/suspicious/noThenProperty: <explanation>
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),

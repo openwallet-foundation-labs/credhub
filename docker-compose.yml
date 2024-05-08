@@ -93,18 +93,13 @@ services:
 
   issuer-backend:
     image: ghcr.io/cre8/wallet/issuer-backend
-    build:
-      context: .
-      dockerfile: docker/node.Dockerfile
-      args:
-        - PROJECT=issuer-backend
     env_file:
       - .env
     environment:
       PORT: $ISSUER_PORT
     volumes:
       - issuer_tmp:/app/tmp
-      - ./config/issuer:/app/templates
+      - ./config/issuer-backend:/app/templates
     ports:
       - 3001:3000
     healthcheck:
@@ -114,26 +109,18 @@ services:
       retries: 3
       start_period: 2m
 
-  issuer-demo:
-    image: ghcr.io/cre8/wallet/issuer-demo
-    build:
-      context: .
-      dockerfile: apps/issuer-demo/Dockerfile
+  issuer-frontend:
+    image: ghcr.io/cre8/wallet/issuer-frontend
     volumes:
-      - ./config/issuer-demo/config.json:/usr/share/nginx/html/config.json
+      - ./config/issuer-frontend/config.json:/usr/share/nginx/html/config.json
     ports:
       - 81:80
 
   verifier-backend:
     image: ghcr.io/cre8/wallet/verifier-backend
-    build:
-      context: .
-      dockerfile: docker/node.Dockerfile
-      args:
-        - PROJECT=verifier-backend
     volumes:
       - verifier_tmp:/app/tmp
-      - ./config/verifier:/app/templates
+      - ./config/verifier-backend:/app/templates
     env_file:
       - .env
     ports:
@@ -145,20 +132,15 @@ services:
       retries: 3
       start_period: 2m
 
-  verifier-demo:
-    image: ghcr.io/cre8/wallet/verifier-demo
-    build:
-      context: .
-      dockerfile: apps/verifier-demo/Dockerfile
+  verifier-frontend:
+    image: ghcr.io/cre8/wallet/verifier-frontend
     volumes:
-      - ./config/verifier-demo/config.json:/usr/share/nginx/html/config.json
+      - ./config/verifier-frontend/config.json:/usr/share/nginx/html/config.json
     ports:
       - 82:80
 
-  backend:
-    image: ghcr.io/cre8/wallet/backend
-    depends_on:
-      - db
+  holder-backend:
+    image: ghcr.io/cre8/wallet/holder-backend
     env_file:
       - .env
     build:
@@ -175,16 +157,10 @@ services:
       retries: 3
       start_period: 2m
 
-  holder:
-    image: ghcr.io/cre8/wallet/holder
-    build:
-      context: .
-      dockerfile: docker/browser.Dockerfile
-      args:
-        - SUB_PROJECT=pwa
-        - PROJECT=holder
+  holder-frontend:
+    image: ghcr.io/cre8/wallet/holder-app
     volumes:
-      - ./config/holder:/usr/share/nginx/html/assets/config
+      - ./config/holder-frontend:/usr/share/nginx/html/assets/config
     ports:
       - 80:80
 

@@ -20,6 +20,7 @@
     "@angular/language-service": "~17.3.0",
     "@nestjs/schematics": "^10.0.1",
     "@nestjs/testing": "^10.0.2",
+    "@nx-tools/nx-container": "^6.0.0",
     "@nx/angular": "19.0.0",
     "@nx/devkit": "19.0.0",
     "@nx/eslint": "19.0.0",

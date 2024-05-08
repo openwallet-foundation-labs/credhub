@@ -325,7 +325,6 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
         throw Error(
           `Mapping exists for key ${key} and we do not allow overwriting values`
         );
-        // biome-ignore lint/style/noUselessElse: <explanation>
       } else if (value && existing !== value) {
         throw Error('Value changed for key');
       }
@@ -344,7 +343,6 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
   ): Promise<void> {
     if (!event) {
       throw new Error('event not present');
-      // biome-ignore lint/style/noUselessElse: <explanation>
     } else if (!event.correlationId) {
       throw new Error(
         `'${type} ${status}' event without correlation id received`
@@ -409,7 +407,6 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
       correlationId
     );
     if (keys && keys.length > 0) {
-      // biome-ignore lint/complexity/noForEach: <explanation>
       keys.forEach((key) => delete mapping[key]);
     }
   }
@@ -421,7 +418,7 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
     const cleanupCorrelations = (
       reqByCorrelationId: [
         string,
-        AuthorizationRequestState | AuthorizationResponseState,
+        AuthorizationRequestState | AuthorizationResponseState
       ]
     ) => {
       const correlationId = reqByCorrelationId[0];
@@ -434,11 +431,9 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
       }
     };
 
-    // biome-ignore lint/complexity/noForEach: <explanation>
     Object.entries(this.authorizationRequests).forEach((reqByCorrelationId) => {
       cleanupCorrelations.call(this, reqByCorrelationId);
     });
-    // biome-ignore lint/complexity/noForEach: <explanation>
     Object.entries(this.authorizationResponses).forEach(
       (resByCorrelationId) => {
         cleanupCorrelations.call(this, resByCorrelationId);

@@ -182,7 +182,7 @@ export class RelyingPartyManagerService {
         (field) => field.path[0].slice(2)
       );
       try {
-        // biome-ignore lint/style/useConst: <explanation>
+        // eslint-disable-next-line prefer-const
         let sdjwtInstance: SDJwtVcInstance;
         /**
          * The verifier function. This function will verify the signature of the vc.
