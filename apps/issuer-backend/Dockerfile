@@ -5,6 +5,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /usr/src/app
 COPY dist/apps/holder-backend/package*.json ./
 COPY dist/apps/holder-backend/pnpm-lock.yaml ./
+COPY patches ./patches
 RUN npm install -g pnpm@8.15.8
 RUN pnpm install --prod
 
