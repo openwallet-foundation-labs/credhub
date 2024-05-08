@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "clientId": "client",
+    "clientName": "Verifier",
+    "logo_uri": "https://www.bmi.bund.de/SharedDocs/bilder/DE/schmuckbilder/moderne-verwaltung/paesse-ausweise/personalausweis_vorderseite_ab_august_2021.jpg?__blob=poster&v=2"
+  },
+  "request": {
+    "id": "check-in",
+    "purpose": "We need some information about you.",
+    "format": {
+      "vc+sd-jwt": {}
+    },
+    "input_descriptors": [
+      {
+        "id": "adult",
+        "name": "Identity proof",
+        "purpose": "We need some values from your identity card.",
+        "constraints": {
+          "limit_disclosure": "required",
+          "fields": [
+            {
+              "path": ["$.vct"],
+              "filter": {
+                "type": "string",
+                "const": "Identity"
+              }
+            },
+            {
+              "path": ["$.prename"],
+              "filter": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
