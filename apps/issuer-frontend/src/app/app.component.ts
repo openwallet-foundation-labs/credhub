@@ -31,7 +31,7 @@ export class AppComponent {
   qrCodeImage?: string;
 
   constructor(
-    private issuerService: IssuerService,
+    public issuerService: IssuerService,
     private snackBar: MatSnackBar
   ) {}
 

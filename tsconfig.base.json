@@ -15,7 +15,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@my-wallet/config": ["libs/config/src/index.ts"]
+      "@my-wallet/relying-party-shared": [
+        "libs/relying-party-shared/src/index.ts"
+      ],
+      "@my-wallet/-holder-shared": ["libs/holder-shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

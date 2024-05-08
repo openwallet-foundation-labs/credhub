@@ -5,36 +5,6 @@
   "projectType": "application",
   "tags": [],
   "targets": {
-    "build": {
-      "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "target": "node",
-        "compiler": "tsc",
-        "generatePackageJson": true,
-        "outputPath": "dist/apps/issuer-backend",
-        "main": "apps/issuer-backend/src/main.ts",
-        "tsConfig": "apps/issuer-backend/tsconfig.app.json",
-        "assets": ["apps/issuer-backend/src/assets"],
-        "isolatedConfig": true,
-        "webpackConfig": "apps/issuer-backend/webpack.config.js",
-        "transformers": [
-          {
-            "name": "@nestjs/swagger/plugin",
-            "options": {
-              "classValidatorShim": true,
-              "introspectComments": true,
-              "controllerKeyOfComment": "summary"
-            }
-          }
-        ]
-      },
-      "configurations": {
-        "development": {},
-        "production": {}
-      }
-    },
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",

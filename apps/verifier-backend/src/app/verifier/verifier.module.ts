@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { RelyingPartyManagerService } from './relying-party-manager.service';
 import { VerifierController } from './verifier.controller';
-import { KeyModule } from '../key/key.module';
+import { ResolverModule } from '../resolver/resolver.module';
 
 @Module({
-  imports: [KeyModule],
+  imports: [ResolverModule],
   controllers: [VerifierController],
   providers: [RelyingPartyManagerService],
 })

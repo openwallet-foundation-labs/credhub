@@ -27,9 +27,6 @@
         "scripts": []
       },
       "configurations": {
-        "options": {
-          "port": 4201
-        },
         "production": {
           "budgets": [
             {
@@ -55,6 +52,9 @@
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "port": 4201
+      },
       "configurations": {
         "production": {
           "buildTarget": "issuer-frontend:build:production"

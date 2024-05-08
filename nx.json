@@ -51,7 +51,8 @@
       },
       "exclude": [
         "apps/issuer-backend-e2e/**/*",
-        "apps/verifier-backend-e2e/**/*"
+        "apps/verifier-backend-e2e/**/*",
+        "apps/holder-backend-e2e/**/*"
       ]
     },
     {

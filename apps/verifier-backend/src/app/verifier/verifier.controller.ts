@@ -33,13 +33,17 @@ export class VerifierController {
   @ApiOperation({ summary: 'Create a session' })
   @Post(':id')
   async createSession(@Param('id') id: string) {
-    const instance = this.relyingPartyManagerService.getOrCreate(id);
+    const instance = await this.relyingPartyManagerService.getOrCreate(id);
 
     const correlationId = v4();
     const nonce = v4();
     const state = v4();
-    const requestByReferenceURI = `${this.configService.get('VERIFIER_BASE_URL')}/siop/${id}/auth-request/${correlationId}`;
-    const responseURI = `${this.configService.get('VERIFIER_BASE_URL')}/siop/${id}/auth-response/${correlationId}`;
+    const requestByReferenceURI = `${this.configService.get(
+      'VERIFIER_BASE_URL'
+    )}/siop/${id}/auth-request/${correlationId}`;
+    const responseURI = `${this.configService.get(
+      'VERIFIER_BASE_URL'
+    )}/siop/${id}/auth-response/${correlationId}`;
     const request = await instance.rp.createAuthorizationRequestURI({
       correlationId,
       nonce,
@@ -61,7 +65,7 @@ export class VerifierController {
     @Param('rp') rp: string,
     @Param('correlationId') correlationId: string
   ) {
-    const instance = this.relyingPartyManagerService.getOrCreate(rp);
+    const instance = await this.relyingPartyManagerService.getOrCreate(rp);
     const request =
       await instance.rp.sessionManager.getRequestStateByCorrelationId(
         correlationId
@@ -79,7 +83,7 @@ export class VerifierController {
     @Param('rp') rp: string,
     @Param('correlationId') correlationId: string
   ) {
-    const instance = this.relyingPartyManagerService.getOrCreate(rp);
+    const instance = await this.relyingPartyManagerService.getOrCreate(rp);
     const request =
       await instance.rp.sessionManager.getRequestStateByCorrelationId(
         correlationId
@@ -107,7 +111,7 @@ export class VerifierController {
     body.presentation_submission = JSON.parse(
       body.presentation_submission as string
     );
-    const instance = this.relyingPartyManagerService.getOrCreate(rp);
+    const instance = await this.relyingPartyManagerService.getOrCreate(rp);
     try {
       const response = await instance.rp.verifyAuthorizationResponse(
         body as AuthorizationResponsePayload,

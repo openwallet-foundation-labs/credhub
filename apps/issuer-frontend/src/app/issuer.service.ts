@@ -102,5 +102,6 @@ export class IssuerService {
       )
     );
     this.status = response.status;
+    if (this.status === 'CREDENTIAL_ISSUED') clearInterval(this.loop);
   }
 }

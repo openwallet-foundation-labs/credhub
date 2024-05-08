@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { VerifierModule } from './verifier/verifier.module';
+import { AuthModule, KeyModule } from '@my-wallet/relying-party-shared';
 
 @Module({
   imports: [
@@ -21,6 +21,7 @@ import { VerifierModule } from './verifier/verifier.module';
       }),
     }),
     VerifierModule,
+    KeyModule.forRootSync(),
   ],
   controllers: [AppController],
 })

@@ -1,0 +1,19 @@
+<div fxLayout="row" fxLayoutAlign="space-between center">
+  <h3>History</h3>
+  <button mat-icon-button (click)="clear()">
+    <mat-icon>clear</mat-icon>
+  </button>
+</div>
+<mat-nav-list>
+  @for (history of values; track history) {
+    <a mat-list-item [routerLink]="history.id">
+      <img matListItemAvatar [src]="history.relyingPartyLogo" alt="logo" />
+      <h3 matListItemTitle *ngIf="history.credentialType">
+        <span>{{ history.credentialType }}</span>
+      </h3>
+      <h3 matListItemTitle *ngIf="history.status === 'declined'">Declined</h3>
+      <span matListItemLine>{{ history.relyingParty }}</span>
+      <span matListItemLine>{{ history.created_at | date: 'medium' }}</span>
+    </a>
+  }
+</mat-nav-list>

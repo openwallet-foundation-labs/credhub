@@ -36,7 +36,7 @@ import {
 import { IssuerDataService } from './issuer-data.service';
 import { SessionRequestDto } from './dto/session-request.dto';
 import { CredentialsService } from '../credentials/credentials.service';
-import { KeyService } from '../key/key.service';
+import { KeyService } from '@my-wallet/relying-party-shared';
 import { IssuerMetadata } from './types';
 
 @Injectable()
@@ -196,7 +196,7 @@ export class IssuerService implements OnModuleInit {
         this.issuerDataService.getDisclosureFrame(
           args.credential.vct as string
         ),
-        { header: { kid: this.keyService.getKid() } }
+        { header: { kid: await this.keyService.getKid() } }
       );
       await this.credentialsService.create({
         value: jwt,

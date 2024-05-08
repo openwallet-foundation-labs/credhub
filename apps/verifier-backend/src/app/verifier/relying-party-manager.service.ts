@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ES256, digest } from '@sd-jwt/crypto-nodejs';
 import {
   EcdsaSignature,
@@ -17,7 +17,7 @@ import {
   SubjectType,
   SupportedVersion,
 } from '@sphereon/did-auth-siop';
-import { JWkResolver } from './did';
+import { JWkResolver, encodeDidJWK } from './did';
 import { readFileSync } from 'node:fs';
 import { join, normalize, sep } from 'node:path';
 import { VerifierRP, RPInstance } from './types';
@@ -28,8 +28,9 @@ import { W3CVerifiablePresentation, CompactJWT } from '@sphereon/ssi-types';
 import { importJWK, jwtVerify } from 'jose';
 import { InMemoryRPSessionManager } from './session-manager';
 import { EventEmitter } from 'node:events';
-import { KeyService } from '../key/key.service';
 import { ConfigService } from '@nestjs/config';
+import { KeyService } from '@my-wallet/relying-party-shared';
+import { ResolverService } from '../resolver/resolver.service';
 
 @Injectable()
 export class RelyingPartyManagerService {
@@ -40,7 +41,8 @@ export class RelyingPartyManagerService {
   private sessionManager: InMemoryRPSessionManager;
 
   constructor(
-    private keyService: KeyService,
+    @Inject('KeyService') private keyService: KeyService,
+    private resolverService: ResolverService,
     private configService: ConfigService
   ) {
     this.sessionManager = new InMemoryRPSessionManager(this.eventEmitter, {
@@ -53,10 +55,10 @@ export class RelyingPartyManagerService {
    * @param id
    * @returns
    */
-  getOrCreate(id: string) {
+  async getOrCreate(id: string) {
     let rp = this.rp.get(id);
     if (!rp) {
-      rp = this.buildRP(id);
+      rp = await this.buildRP(id);
       if (process.env.CONFIG_RELOAD) {
         // checks every minute if the rp has active sessions. If there is none, the rp is removed. We want to do this so we can update the rp with new input without losing state. This approach could be improved since we are waiting around 4 minutes for the last finished request until the entries are removed.
         setInterval(async () => {
@@ -90,7 +92,7 @@ export class RelyingPartyManagerService {
   }
 
   // create the relying party
-  private buildRP(id: string) {
+  private async buildRP(id: string) {
     // escape potential path traversal attacks
     const safeId = normalize(id).split(sep).pop();
     // instead of reading a file, we could pass a storage reference. Then the storage can be implemented in different ways, like using a database or a file system.
@@ -102,6 +104,8 @@ export class RelyingPartyManagerService {
       throw new Error(`The verifier with the id ${id} is not supported.`);
     }
     const verifier = JSON.parse(verifierFile) as VerifierRP;
+    const did = encodeDidJWK(await this.keyService.getPublicKey());
+
     const rp = RP.builder()
       .withClientId(verifier.metadata.clientId)
       .withIssuer(ResponseIss.SELF_ISSUED_V2)
@@ -133,9 +137,9 @@ export class RelyingPartyManagerService {
       .withHasher(digest)
       //TODO: right now the verifier sdk only supports did usage
       .withSuppliedSignature(
-        this.getSigner(),
-        this.keyService.getDid(),
-        this.keyService.getDid(),
+        this.keyService.signer as any,
+        did,
+        did,
         SigningAlgo.ES256
       )
       .withRevocationVerification(RevocationVerification.NEVER)
@@ -191,7 +195,7 @@ export class RelyingPartyManagerService {
           const decodedVC = await sdjwtInstance.decode(`${data}.${signature}`);
           const payload = decodedVC.jwt?.payload as JWTPayload;
           const header = decodedVC.jwt?.header as JWK;
-          const publicKey = await this.keyService.resolvePublicKey(
+          const publicKey = await this.resolverService.resolvePublicKey(
             payload,
             header
           );
@@ -230,16 +234,6 @@ export class RelyingPartyManagerService {
         console.error(e);
         return Promise.reject({ verified: false, error: (e as Error).message });
       }
-    };
-  }
-
-  getSigner() {
-    return async (
-      data: string | Uint8Array
-    ): Promise<string | EcdsaSignature> => {
-      //get the signer, we are only supporting ES256 for now
-      const signer = await ES256.getSigner(this.keyService.getPrivateKey());
-      return signer(data as string);
     };
   }
 }

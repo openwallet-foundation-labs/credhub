@@ -2,10 +2,13 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
-import { KEY_VALIDATION_SCHEMA, KeyModule } from './key/key.module';
+import {
+  AuthModule,
+  KEY_VALIDATION_SCHEMA,
+  KeyModule,
+} from '@my-wallet/relying-party-shared';
 import { IssuerModule } from './issuer/issuer.module';
 import { DB_VALIDATION_SCHEMA, DbModule } from './db/db.module';
-import { AuthModule } from './auth/auth.module';
 import { CredentialsModule } from './credentials/credentials.module';
 
 @Module({

@@ -1,0 +1,73 @@
+<mat-card *ngIf="response && !auto && status !== 'done'">
+  <mat-card-header>
+    <img
+      mat-card-avatar
+      *ngIf="response.rp.logo"
+      [src]="response.rp.logo"
+      alt="logo of the relying party"
+    />
+    <mat-card-title>Verify Request by {{ response.rp.name }}</mat-card-title>
+    <mat-card-subtitle>No option to verify identity yet</mat-card-subtitle>
+  </mat-card-header>
+  <div *ngIf="noMatch">
+    <mat-card-content>
+      Unable to find any matching credentials in your wallet.
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <a routerLink="/" mat-button>Credential overview</a>
+    </mat-card-actions>
+  </div>
+  <form [formGroup]="form" (submit)="submit()" *ngIf="!noMatch">
+    <mat-card-content>
+      <h2>{{ response.purpose }}</h2>
+
+      @for (request of response.requests; track request) {
+        <h3>{{ request.purpose }}</h3>
+        <mat-selection-list [formControlName]="request.id" [multiple]="false">
+          @for (option of request.credentials; track option) {
+            <mat-list-option [value]="option.jti">{{
+              option.vct
+            }}</mat-list-option>
+          }
+        </mat-selection-list>
+      }
+    </mat-card-content>
+    <mat-card-actions flexLayout="row" fxLayoutAlign="space-between center">
+      <button type="button" mat-button color="warn" (click)="cancel()">
+        Cancel
+      </button>
+      <button
+        type="submit"
+        mat-flat-button
+        color="primary"
+        [disabled]="form.invalid"
+      >
+        Send
+      </button>
+    </mat-card-actions>
+  </form>
+</mat-card>
+
+<div
+  *ngIf="status === 'done'"
+  fxLayout="column"
+  fxLayoutAlign="space-around center"
+  fxLayoutGap="16px"
+>
+  <div class="success-animation">
+    <svg
+      class="checkmark"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 52 52"
+    >
+      <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+      <path
+        class="checkmark__check"
+        fill="none"
+        d="M14.1 27.2l7.1 7.2 16.7-16.8"
+      />
+    </svg>
+  </div>
+  <span>Credentials successfully presented</span>
+  <a mat-button routerLink="/">Credential overview</a>
+</div>
