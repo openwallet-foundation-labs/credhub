@@ -88,7 +88,6 @@ export class RelyingPartyManagerService {
       return;
     }
     this.rp.delete(id);
-    console.log('Removed the rp');
   }
 
   // create the relying party

@@ -1,0 +1,33 @@
+<div class="content">
+  <router-outlet></router-outlet>
+</div>
+<mat-toolbar
+  *ngIf="isAuthenticated"
+  fxLayout="row"
+  fxLayoutAlign="space-between center"
+>
+  <div fxLayout="column" fxLayoutAlign=" center">
+    <a mat-icon-button routerLink="/scan" routerLinkActive="active-link"
+      ><mat-icon>qr_code_scanner</mat-icon></a
+    >
+    <span class="info">scan</span>
+  </div>
+  <div fxLayout="column" fxLayoutAlign=" center">
+    <a mat-icon-button routerLink="/credentials" routerLinkActive="active-link"
+      ><mat-icon>account_balance_wallet</mat-icon></a
+    >
+    <span class="info">credentials</span>
+  </div>
+  <div fxLayout="column" fxLayoutAlign=" center">
+    <a mat-icon-button routerLink="/history" routerLinkActive="active-link"
+      ><mat-icon>history</mat-icon></a
+    >
+    <span class="info">History</span>
+  </div>
+  <div fxLayout="column" fxLayoutAlign=" center">
+    <a mat-icon-button routerLink="/settings" routerLinkActive="active-link"
+      ><mat-icon>settings</mat-icon></a
+    >
+    <span class="info">settings</span>
+  </div>
+</mat-toolbar>

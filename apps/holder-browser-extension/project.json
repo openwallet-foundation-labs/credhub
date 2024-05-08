@@ -1,0 +1,77 @@
+{
+  "name": "holder-browser-extension",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/holder-browser-extension/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:webpack-browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/holder-browser-extension",
+        "index": "apps/holder-browser-extension/src/index.html",
+        "main": "apps/holder-browser-extension/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/holder-browser-extension/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/holder-browser-extension/src/favicon.ico",
+          "apps/holder-browser-extension/src/assets",
+          "apps/holder-browser-extension/src/manifest.json"
+        ],
+        "styles": [
+          "apps/holder-browser-extension/src/styles.scss",
+          "apps/holder-browser-extension/src/theme.scss"
+        ],
+        "scripts": [],
+        "customWebpackConfig": {
+          "path": "apps/holder-browser-extension/webpack.config.js"
+        }
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "outputHashing": "none"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "holder-browser-extension:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/holder-browser-extension/jest.config.ts"
+      }
+    }
+  }
+}

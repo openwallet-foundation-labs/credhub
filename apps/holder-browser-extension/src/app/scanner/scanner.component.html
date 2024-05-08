@@ -1,0 +1,46 @@
+<div
+  fxLayout="column"
+  fxLayoutGap="16px"
+  fxLayoutAlign="start center"
+  *ngIf="!action"
+>
+  <!-- <p>Issue yourself a Identity for demo purposes</p>
+  <button mat-button (click)="getCredential()">Issue Request</button>
+  <p>Generate a verify request for demo purposes</p>
+  <button mat-button (click)="presentCredential()">Verify Request</button> -->
+  <!-- <button mat-raised-button (click)="scanner.scan()">Scan</button> -->
+  <mat-form-field>
+    <mat-label>Url</mat-label>
+    <input matInput [formControl]="urlField" />
+  </mat-form-field>
+  <mat-list>
+    @for (result of scanner.results; track result) {
+      <mat-list-item
+        (click)="process(result)"
+        *ngIf="result.action === 'issue'"
+      >
+        <mat-icon matListItemIcon>{{ 'call_received' }}</mat-icon>
+        <span matListItemTitle>{{
+          result.credentials![0].display![0].name
+        }}</span>
+        <span matListItemLine>{{ result.relyingParty }}</span>
+      </mat-list-item>
+      <mat-list-item
+        (click)="process(result)"
+        *ngIf="result.action === 'verify'"
+      >
+        <mat-icon matListItemIcon>{{ 'call_made' }}</mat-icon>
+        <span matListItemTitle>{{ result.purpose }}</span>
+        <span matListItemLine>{{ result.relyingParty }}</span>
+      </mat-list-item>
+    }
+  </mat-list>
+</div>
+<app-issuance-request
+  *ngIf="action === 'issue'"
+  [url]="url!"
+></app-issuance-request>
+<app-verify-request
+  *ngIf="action === 'verify'"
+  [url]="url!"
+></app-verify-request>
