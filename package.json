@@ -81,9 +81,11 @@
     "@sd-jwt/crypto-nodejs": "^0.6.1",
     "@sd-jwt/sd-jwt-vc": "^0.6.1",
     "@sd-jwt/types": "^0.6.1",
+    "@sphereon/did-auth-siop": "^0.6.4",
     "@sphereon/oid4vci-common": "^0.10.3",
     "@sphereon/oid4vci-issuer": "^0.10.3",
     "@sphereon/oid4vci-issuer-server": "^0.10.3",
+    "@sphereon/pex-models": "^2.2.4",
     "@sphereon/ssi-express-support": "^0.23.4",
     "@sphereon/ssi-types": "^0.23.4",
     "axios": "^1.6.0",
@@ -101,6 +103,7 @@
     "tslib": "^2.3.0",
     "typeorm": "^0.3.20",
     "uuid": "^9.0.1",
+    "web-did-resolver": "^2.0.27",
     "zone.js": "~0.14.3"
   },
   "packageManager": "pnpm@8.15.8+sha256.691fe176eea9a8a80df20e4976f3dfb44a04841ceb885638fe2a26174f81e65e"

@@ -13,5 +13,6 @@ export const appConfig: ApplicationConfig = {
       multi: true,
     },
     provideAnimationsAsync(),
+    provideAnimationsAsync(),
   ],
 };

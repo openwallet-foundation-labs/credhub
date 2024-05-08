@@ -1,0 +1,24 @@
+{
+  "name": "verifier-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/verifier-backend/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "verifier-backend:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "verifier-backend:build:development"
+        },
+        "production": {
+          "buildTarget": "verifier-backend:build:production"
+        }
+      }
+    }
+  }
+}

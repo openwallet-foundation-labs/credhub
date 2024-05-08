@@ -49,7 +49,10 @@
       "options": {
         "targetName": "test"
       },
-      "exclude": ["apps/issuer-backend-e2e/**/*"]
+      "exclude": [
+        "apps/issuer-backend-e2e/**/*",
+        "apps/verifier-backend-e2e/**/*"
+      ]
     },
     {
       "plugin": "@nx/playwright/plugin",

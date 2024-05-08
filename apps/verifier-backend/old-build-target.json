@@ -1,0 +1,29 @@
+{
+  "executor": "@nx/webpack:webpack",
+  "outputs": ["{options.outputPath}"],
+  "defaultConfiguration": "production",
+  "options": {
+    "target": "node",
+    "compiler": "tsc",
+    "outputPath": "dist/apps/verifier-backend",
+    "main": "apps/verifier-backend/src/main.ts",
+    "tsConfig": "apps/verifier-backend/tsconfig.app.json",
+    "assets": ["apps/verifier-backend/src/assets"],
+    "isolatedConfig": true,
+    "webpackConfig": "apps/verifier-backend/webpack.config.js",
+    "transformers": [
+      {
+        "name": "@nestjs/swagger/plugin",
+        "options": {
+          "classValidatorShim": true,
+          "introspectComments": true,
+          "controllerKeyOfComment": "summary"
+        }
+      }
+    ]
+  },
+  "configurations": {
+    "development": {},
+    "production": {}
+  }
+},
