@@ -14,11 +14,8 @@
     ],
     "sharedGlobals": []
   },
-  "workspaceLayout": {
-    "appsDir": "apps",
-    "libsDir": "libs"
-  },
-  "nxCloudAccessToken": "ZTk2NjRmMzAtZTA2OS00YmE0LTkyNGUtYTMyM2NmZGQwNTkyfHJlYWQtd3JpdGU=",
+  "workspaceLayout": { "appsDir": "apps", "libsDir": "libs" },
+  "nxCloudAccessToken": "MTU5MTViNTItMDM2NC00ZGE0LWEzZWYtOWQ3ZGQ5YTAwNGVjfHJlYWQtd3JpdGU=",
   "plugins": [
     {
       "plugin": "@nx/vite/plugin",
@@ -38,29 +35,17 @@
         "previewTargetName": "preview"
       }
     },
-    {
-      "plugin": "@nx/eslint/plugin",
-      "options": {
-        "targetName": "lint"
-      }
-    },
+    { "plugin": "@nx/eslint/plugin", "options": { "targetName": "lint" } },
     {
       "plugin": "@nx/jest/plugin",
-      "options": {
-        "targetName": "test"
-      },
+      "options": { "targetName": "test" },
       "exclude": [
         "apps/issuer-backend-e2e/**/*",
         "apps/verifier-backend-e2e/**/*",
         "apps/holder-backend-e2e/**/*"
       ]
     },
-    {
-      "plugin": "@nx/playwright/plugin",
-      "options": {
-        "targetName": "e2e"
-      }
-    }
+    { "plugin": "@nx/playwright/plugin", "options": { "targetName": "e2e" } }
   ],
   "targetDefaults": {
     "@angular-devkit/build-angular:application": {
@@ -86,12 +71,7 @@
       "style": "css",
       "unitTestRunner": "jest"
     },
-    "@nx/angular:library": {
-      "linter": "eslint",
-      "unitTestRunner": "jest"
-    },
-    "@nx/angular:component": {
-      "style": "scss"
-    }
+    "@nx/angular:library": { "linter": "eslint", "unitTestRunner": "jest" },
+    "@nx/angular:component": { "style": "scss" }
   }
 }
