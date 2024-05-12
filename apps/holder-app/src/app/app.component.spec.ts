@@ -10,6 +10,18 @@ describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
   let checkForUpdatesService: CheckForUpdatesService;
 
+  beforeAll(() => {
+    Object.defineProperty(window, 'matchMedia', {
+      value: jest.fn(() => {
+        return {
+          matches: true,
+          addListener: jest.fn(),
+          removeListener: jest.fn(),
+        };
+      }),
+    });
+  });
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, AppComponent],
