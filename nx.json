@@ -15,7 +15,7 @@
     "sharedGlobals": []
   },
   "workspaceLayout": { "appsDir": "apps", "libsDir": "libs" },
-  "nxCloudAccessToken": "MTU5MTViNTItMDM2NC00ZGE0LWEzZWYtOWQ3ZGQ5YTAwNGVjfHJlYWQtd3JpdGU=",
+  "nxCloudAccessToken": "NjQ2NjhiMWUtYjA1Ni00NTRjLWJjMjctMjkzNzA1NmRkMTgxfHJlYWQ=",
   "plugins": [
     {
       "plugin": "@nx/vite/plugin",
