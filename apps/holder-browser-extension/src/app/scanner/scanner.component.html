@@ -15,32 +15,26 @@
   </mat-form-field>
   <mat-list>
     @for (result of scanner.results; track result) {
-      <mat-list-item
-        (click)="process(result)"
-        *ngIf="result.action === 'issue'"
-      >
-        <mat-icon matListItemIcon>{{ 'call_received' }}</mat-icon>
-        <span matListItemTitle>{{
-          result.credentials![0].display![0].name
-        }}</span>
-        <span matListItemLine>{{ result.relyingParty }}</span>
-      </mat-list-item>
-      <mat-list-item
-        (click)="process(result)"
-        *ngIf="result.action === 'verify'"
-      >
-        <mat-icon matListItemIcon>{{ 'call_made' }}</mat-icon>
-        <span matListItemTitle>{{ result.purpose }}</span>
-        <span matListItemLine>{{ result.relyingParty }}</span>
-      </mat-list-item>
+    <mat-list-item (click)="process(result)" *ngIf="result.action === 'issue'">
+      <mat-icon matListItemIcon>{{ 'call_received' }}</mat-icon>
+      <span matListItemTitle>{{
+        result.credentials![0].display![0].name
+      }}</span>
+      <span matListItemLine>{{ result.relyingParty }}</span>
+    </mat-list-item>
+    <mat-list-item (click)="process(result)" *ngIf="result.action === 'verify'">
+      <mat-icon matListItemIcon>{{ 'call_made' }}</mat-icon>
+      <span matListItemTitle>{{ result.purpose }}</span>
+      <span matListItemLine>{{ result.relyingParty }}</span>
+    </mat-list-item>
     }
   </mat-list>
 </div>
-<app-issuance-request
+<lib-issuance-request
   *ngIf="action === 'issue'"
   [url]="url!"
-></app-issuance-request>
-<app-verify-request
+></lib-issuance-request>
+<lib-verify-request
   *ngIf="action === 'verify'"
   [url]="url!"
-></app-verify-request>
+></lib-verify-request>
