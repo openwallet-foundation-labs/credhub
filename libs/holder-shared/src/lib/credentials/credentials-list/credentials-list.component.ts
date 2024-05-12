@@ -19,7 +19,7 @@ export interface CredentialList extends CredentialResponse {
 }
 
 @Component({
-  selector: 'app-credentials-list',
+  selector: 'lib-credentials-list',
   standalone: true,
   imports: [
     RouterLink,

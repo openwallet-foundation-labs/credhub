@@ -13,7 +13,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-credentials-show',
+  selector: 'lib-credentials-show',
   standalone: true,
   imports: [
     CommonModule,

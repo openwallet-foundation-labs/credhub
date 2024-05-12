@@ -17,7 +17,7 @@ import { Router, RouterLink } from '@angular/router';
 import { SettingsService } from '../../settings/settings.service';
 
 @Component({
-  selector: 'app-verify-request',
+  selector: 'lib-verify-request',
   standalone: true,
   imports: [
     CommonModule,

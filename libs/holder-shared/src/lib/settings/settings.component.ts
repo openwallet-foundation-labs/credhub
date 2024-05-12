@@ -26,7 +26,7 @@ export abstract class AuthServiceInterface {
 }
 
 @Component({
-  selector: 'app-settings',
+  selector: 'lib-settings',
   standalone: true,
   imports: [
     MatButtonModule,
