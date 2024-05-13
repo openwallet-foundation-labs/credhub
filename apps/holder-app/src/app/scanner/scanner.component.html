@@ -24,14 +24,14 @@
       </button>
       <mat-divider></mat-divider>
       @for (device of devices; track device) {
-        <button
-          mat-menu-item
-          (click)="changeCamera(device.id)"
-          [disabled]="device.id === selectedDevice"
-        >
-          <mat-icon>camera</mat-icon>
-          <span>{{ device.label }}</span>
-        </button>
+      <button
+        mat-menu-item
+        (click)="changeCamera(device.id)"
+        [disabled]="device.id === selectedDevice"
+      >
+        <mat-icon>camera</mat-icon>
+        <span>{{ device.label }}</span>
+      </button>
       }
     </mat-menu>
     <div
@@ -47,9 +47,9 @@
     <div id="reader"></div>
   </div>
   <div *ngSwitchCase="'showRequest'">
-    <app-issuance-request [url]="url" *ngIf="url"></app-issuance-request>
+    <lib-issuance-request [url]="url" *ngIf="url"></lib-issuance-request>
   </div>
   <div *ngSwitchCase="'showVerificationRequest'">
-    <app-verify-request [url]="url" *ngIf="url"></app-verify-request>
+    <lib-verify-request [url]="url" *ngIf="url"></lib-verify-request>
   </div>
 </div>

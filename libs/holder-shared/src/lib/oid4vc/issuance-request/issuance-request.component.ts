@@ -12,7 +12,7 @@ import { MatListModule } from '@angular/material/list';
 import { SettingsService } from '../../settings/settings.service';
 
 @Component({
-  selector: 'app-issuance-request',
+  selector: 'lib-issuance-request',
   standalone: true,
   imports: [
     CommonModule,

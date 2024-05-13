@@ -109,7 +109,9 @@ export class ScannerComponent implements OnInit, OnDestroy {
       },
       this.onScanSuccess.bind(this),
       // we do nothing when a scan failed
-      () => {}
+      () => {
+        // do nothing
+      }
     );
   }
 

@@ -15,7 +15,7 @@
     "sharedGlobals": []
   },
   "workspaceLayout": { "appsDir": "apps", "libsDir": "libs" },
-  "nxCloudAccessToken": "MTU5MTViNTItMDM2NC00ZGE0LWEzZWYtOWQ3ZGQ5YTAwNGVjfHJlYWQtd3JpdGU=",
+  "nxCloudAccessToken": "NjQ2NjhiMWUtYjA1Ni00NTRjLWJjMjctMjkzNzA1NmRkMTgxfHJlYWQ=",
   "plugins": [
     {
       "plugin": "@nx/vite/plugin",
@@ -57,6 +57,11 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "@nx-tools/nx-container:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   },
   "generators": {
@@ -67,6 +72,6 @@
       "unitTestRunner": "jest"
     },
     "@nx/angular:library": { "linter": "eslint", "unitTestRunner": "jest" },
-    "@nx/angular:component": { "style": "css" }
+    "@nx/angular:component": { "style": "scss" }
   }
 }

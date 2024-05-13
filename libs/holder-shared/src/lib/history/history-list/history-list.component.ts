@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { FlexLayoutModule } from 'ng-flex-layout';
 
 @Component({
-  selector: 'app-history-list',
+  selector: 'lib-history-list',
   standalone: true,
   imports: [
     CommonModule,

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { History, HistoryApiService, HistoryResponse } from '../../api/kms';
+import { HistoryApiService, HistoryResponse } from '../../api/kms';
 import { firstValueFrom } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 
 @Component({
-  selector: 'app-history-show',
+  selector: 'lib-history-show',
   standalone: true,
   imports: [
     CommonModule,
