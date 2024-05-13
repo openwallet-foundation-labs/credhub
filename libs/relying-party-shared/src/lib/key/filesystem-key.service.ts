@@ -47,7 +47,7 @@ export class FileSystemKeyService implements KeyService {
   private async getKeys() {
     let privateKey: JWK;
     let publicKey: JWK;
-    const folder = join(this.configService.get('KM_FOLDER') as string, 'keys');
+    const folder = this.configService.get('KM_FOLDER');
     if (!existsSync(folder)) {
       mkdirSync(folder, { recursive: true });
     }

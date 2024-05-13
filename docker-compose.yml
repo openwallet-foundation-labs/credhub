@@ -143,11 +143,6 @@ services:
     image: ghcr.io/cre8/wallet/holder-backend
     env_file:
       - .env
-    build:
-      context: .
-      dockerfile: docker/node.Dockerfile
-      args:
-        - PROJECT=backend
     ports:
       - 3000:3000
     healthcheck:

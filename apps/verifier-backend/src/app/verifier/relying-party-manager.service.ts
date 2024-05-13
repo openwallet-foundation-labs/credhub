@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ES256, digest } from '@sd-jwt/crypto-nodejs';
 import {
-  EcdsaSignature,
   JWK,
   JWTPayload,
   PassBy,

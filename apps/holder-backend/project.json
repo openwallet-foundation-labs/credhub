@@ -5,6 +5,14 @@
   "projectType": "application",
   "tags": [],
   "targets": {
+    "init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cp apps/holder-backend/.env.example apps/holder-backend/.env"
+        ]
+      }
+    },
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
@@ -25,17 +33,11 @@
       "dependsOn": ["build"],
       "options": {
         "engine": "docker",
+        "push": true,
         "metadata": {
-          "images": ["holder-backend"],
+          "images": ["ghcr.io/cre8/wallet/holder-backend"],
           "load": true,
-          "push": false,
-          "tags": [
-            "type=schedule",
-            "type=ref,event=branch",
-            "type=ref,event=tag",
-            "type=ref,event=pr",
-            "type=sha,prefix=sha-"
-          ]
+          "tags": ["latest"]
         }
       }
     }

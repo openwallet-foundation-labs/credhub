@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@sphereon/pex": "^3.3.3",
+    "pg": "^8.11.5"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@sphereon/pex@3.3.3": "patches/@sphereon__pex@3.3.3.patch"
+    }
+  }
+}

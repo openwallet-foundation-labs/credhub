@@ -6,6 +6,14 @@
   "sourceRoot": "apps/holder-app/src",
   "tags": [],
   "targets": {
+    "init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cp apps/holder-app/src/assets/config/config.example.js apps/holder-app/src/assets/config/config.js"
+        ]
+      }
+    },
     "build": {
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
@@ -86,10 +94,10 @@
       "dependsOn": ["build"],
       "options": {
         "engine": "docker",
+        "push": true,
         "metadata": {
           "images": ["ghcr.io/cre8/wallet/holder-app"],
           "load": true,
-          "push": false,
           "tags": ["latest"]
         }
       }

@@ -5,6 +5,14 @@
   "projectType": "application",
   "tags": [],
   "targets": {
+    "init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cp apps/issuer-backend/.env.example apps/issuer-backend/.env"
+        ]
+      }
+    },
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
@@ -25,10 +33,10 @@
       "dependsOn": ["build"],
       "options": {
         "engine": "docker",
+        "push": true,
         "metadata": {
           "images": ["ghcr.io/cre8/wallet/issuer-backend"],
           "load": true,
-          "push": false,
           "tags": ["latest"]
         }
       }
