@@ -1,7 +1,7 @@
-name: CI
+name: CD
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
@@ -28,7 +28,8 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - uses: nrwl/nx-set-shas@v4
-      - name: Lint, test, build, and container
+      - name: Build and push images
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm exec nx affected -t lint test build container
+          INPUT_PUSH: true
+        run: pnpm exec nx affected -t container
