@@ -43,6 +43,7 @@ export class CredentialsService {
     return this.findOne(id, user).then(async (entry) => {
       const sdjwtvc = await this.instance.decode(entry.value);
       const claims = await sdjwtvc.getClaims<Record<string, unknown>>(digest);
+      claims.status = undefined;
       entry.value = undefined;
       entry.user = undefined;
       return {

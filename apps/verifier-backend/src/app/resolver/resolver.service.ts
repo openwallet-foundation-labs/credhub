@@ -67,8 +67,6 @@ export class ResolverService {
         throw new ConflictException('Issuer not reachable');
       }
     );
-    console.log(response.jwks.keys);
-    console.log(header.kid);
     const key = response.jwks.keys.find((key) => key.kid === header.kid);
     if (!key) {
       throw new Error('Key not found');

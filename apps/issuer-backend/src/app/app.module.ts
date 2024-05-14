@@ -10,6 +10,7 @@ import {
 import { IssuerModule } from './issuer/issuer.module';
 import { DB_VALIDATION_SCHEMA, DbModule } from './db/db.module';
 import { CredentialsModule } from './credentials/credentials.module';
+import { StatusModule } from './status/status.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CredentialsModule } from './credentials/credentials.module';
     AuthModule,
     DbModule,
     CredentialsModule,
+    StatusModule,
   ],
   controllers: [AppController],
 })

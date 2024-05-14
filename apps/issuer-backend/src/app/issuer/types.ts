@@ -18,5 +18,5 @@ export interface IssuerMetadata {
  */
 export interface CredentialSchema {
   schema: CredentialSupported;
-  sd: DisclosureFrame<object>;
+  sd: DisclosureFrame<Record<string, unknown | boolean>>;
 }

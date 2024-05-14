@@ -7,7 +7,7 @@ import {
 import { HttpAdapterHost } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { ES256, digest, generateSalt } from '@sd-jwt/crypto-nodejs';
-import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
+import { SDJwtVcInstance, SdJwtVcPayload } from '@sd-jwt/sd-jwt-vc';
 import {
   CredentialRequestSdJwtVc,
   Jwt,
@@ -38,6 +38,8 @@ import { SessionRequestDto } from './dto/session-request.dto';
 import { CredentialsService } from '../credentials/credentials.service';
 import { KeyService } from '@my-wallet/relying-party-shared';
 import { IssuerMetadata } from './types';
+import { StatusService } from '../status/status.service';
+export type { SdJwtVcPayload } from '@sd-jwt/sd-jwt-vc';
 
 @Injectable()
 export class IssuerService implements OnModuleInit {
@@ -47,7 +49,8 @@ export class IssuerService implements OnModuleInit {
     private adapterHost: HttpAdapterHost<ExpressAdapter>,
     @Inject('KeyService') private keyService: KeyService,
     private issuerDataService: IssuerDataService,
-    private credentialsService: CredentialsService
+    private credentialsService: CredentialsService,
+    private statusService: StatusService
   ) {
     this.express = this.getExpressInstance();
   }
@@ -132,12 +135,17 @@ export class IssuerService implements OnModuleInit {
      * @returns
      */
     const credentialDataSupplier: CredentialDataSupplier = async (args) => {
+      const status = await this.statusService.getEmptySlot();
+
       const credential: SdJwtDecodedVerifiableCredentialPayload = {
         iat: new Date().getTime(),
         iss: args.credentialOffer.credential_offer.credential_issuer,
         vct: (args.credentialRequest as CredentialRequestSdJwtVc).vct,
         jti: v4(),
         ...args.credentialDataSupplierInput.credentialSubject,
+        status: {
+          status_list: status,
+        },
       };
       return Promise.resolve({
         credential,
@@ -191,8 +199,8 @@ export class IssuerService implements OnModuleInit {
     const credentialSignerCallback: CredentialSignerCallback<
       DIDDocument
     > = async (args) => {
-      const jwt = await sdjwt.issue<{ iss: string; vct: string }>(
-        args.credential as SdJwtDecodedVerifiableCredentialPayload,
+      const jwt = await sdjwt.issue<SdJwtVcPayload>(
+        args.credential as unknown as SdJwtVcPayload,
         this.issuerDataService.getDisclosureFrame(
           args.credential.vct as string
         ),
