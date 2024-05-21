@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, IsNull, Not, Repository } from 'typeorm';
+import { DataSource, IsNull, LessThan, Not, Repository } from 'typeorm';
 import { StatusList } from './entities/status-list.entity';
 import { CreateListDto } from './dto/create-list.dto';
 import {
@@ -13,6 +13,7 @@ import { JwtPayload } from '@sd-jwt/types';
 import { ConfigService } from '@nestjs/config';
 import { KeyService } from '@my-wallet/relying-party-shared';
 import { v4 } from 'uuid';
+import { SchedulerRegistry } from '@nestjs/schedule';
 
 @Injectable()
 export class StatusService {
@@ -21,9 +22,12 @@ export class StatusService {
     private statusRepository: Repository<StatusList>,
     private configService: ConfigService,
     @Inject('KeyService') private keyService: KeyService,
-    private dataSource: DataSource
+    private dataSource: DataSource,
+    private schedulerRegistry: SchedulerRegistry
   ) {
-    // this.statusRepository.delete({});
+    // check every minute if the statuslist needs to be updated
+    const interval = setInterval(this.updateListJob.bind(this), 1000 * 60);
+    this.schedulerRegistry.addInterval('updateListJob', interval);
   }
 
   private generateShuffledArray(n: number): number[] {
@@ -35,6 +39,24 @@ export class StatusService {
       [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
+  }
+
+  /**
+   * Updates the status list. This is done by checking if the list is expired and if so, updating the JWT.
+   */
+  private async updateListJob() {
+    // get all lists that are expired
+    const lists = await this.statusRepository.find({
+      where: { exp: LessThan(new Date().getTime() / 1000) },
+    });
+    for (const list of lists) {
+      // update the jwt
+      const { jwt, exp } = await this.packList(list);
+      list.jwt = jwt;
+      list.exp = exp;
+      // store the updated jwt
+      await this.statusRepository.save(list);
+    }
   }
 
   /**
@@ -51,14 +73,29 @@ export class StatusService {
       bitsPerStatus: createListDto.bitsPerStatus,
       positions: JSON.stringify(positions),
     });
-    entry.jwt = await this.packList(entry);
+    const { jwt, exp } = await this.packList(entry);
+    entry.jwt = jwt;
+    entry.exp = exp;
     return this.statusRepository.save(entry);
   }
 
+  /**
+   * Returns a status list by its id. If the list is expired, it will be updated.
+   * @param id identifier of the status list
+   * @returns
+   */
   async getOne(id: string) {
     const list = await this.statusRepository.findOneBy({ id });
     if (!list) {
       throw new NotFoundException();
+    }
+    //TODO: instead of updating it on demand, it would maybe make more sense to update it in a cronjob
+    // in case the list is expired, we need to update the jwt
+    if (!list.exp || list.exp < new Date().getTime() / 1000) {
+      const { jwt, exp } = await this.packList(list);
+      list.jwt = jwt;
+      list.exp = exp;
+      await this.statusRepository.save(list);
     }
     return list.jwt;
   }
@@ -98,10 +135,20 @@ export class StatusService {
     }
   }
 
+  /**
+   * Encodes a list of numbers into a buffer.
+   * @param list
+   * @returns
+   */
   private encodeList(list: number[]): Buffer {
     return Buffer.from(list.map((e) => e.toString(2)).join(''), 'binary');
   }
 
+  /**
+   * Decodes a buffer into a list of numbers.
+   * @param list
+   * @returns
+   */
   private decodeList(list: Buffer): number[] {
     return list
       .toString('binary')
@@ -109,6 +156,12 @@ export class StatusService {
       .map((e) => parseInt(e, 2));
   }
 
+  /**
+   * Returns the status of a given index in the status list.
+   * @param id
+   * @param index
+   * @returns
+   */
   getStatus(id: string, index: string) {
     return this.statusRepository.findOneBy({ id }).then((list) => {
       if (!list) {
@@ -136,7 +189,9 @@ export class StatusService {
     statusList.setStatus(index, status);
     list.list = this.encodeList(statusList.getStatusList());
     //when dealing with TTL, we should not update the jwt here
-    list.jwt = await this.packList(list);
+    const { jwt, exp } = await this.packList(list);
+    list.jwt = jwt;
+    list.exp = exp;
     await this.statusRepository.save(list);
   }
 
@@ -162,7 +217,11 @@ export class StatusService {
       kid: await this.keyService.getKid(),
     };
     const values = createHeaderAndPayload(statusList, payload, header);
-    return await this.keyService.signJWT(values.payload, values.header);
+    const jwt = await this.keyService.signJWT(values.payload, values.header);
+    return {
+      jwt,
+      exp: payload.exp,
+    };
   }
 
   /**

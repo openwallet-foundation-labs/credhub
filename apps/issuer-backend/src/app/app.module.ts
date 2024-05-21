@@ -7,10 +7,11 @@ import {
   KEY_VALIDATION_SCHEMA,
   KeyModule,
 } from '@my-wallet/relying-party-shared';
-import { IssuerModule } from './issuer/issuer.module';
 import { DB_VALIDATION_SCHEMA, DbModule } from './db/db.module';
 import { CredentialsModule } from './credentials/credentials.module';
 import { StatusModule } from './status/status.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { IssuerModule } from './issuer/issuer.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { StatusModule } from './status/status.module';
       }),
     }),
     KeyModule.forRootSync(),
+    ScheduleModule.forRoot(),
     IssuerModule,
     AuthModule,
     DbModule,

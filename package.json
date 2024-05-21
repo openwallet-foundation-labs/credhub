@@ -85,6 +85,7 @@
     "@nestjs/config": "^3.2.2",
     "@nestjs/core": "^10.3.8",
     "@nestjs/platform-express": "^10.3.8",
+    "@nestjs/schedule": "^4.0.2",
     "@nestjs/swagger": "^7.3.1",
     "@nestjs/typeorm": "^10.0.2",
     "@sd-jwt/crypto-nodejs": "^0.7.0",

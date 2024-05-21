@@ -25,4 +25,10 @@ export class StatusList {
    */
   @Column()
   jwt: string;
+
+  /**
+   * Expiration time of the JWT
+   */
+  @Column()
+  exp: number;
 }
