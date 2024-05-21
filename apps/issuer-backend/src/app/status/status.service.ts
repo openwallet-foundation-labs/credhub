@@ -180,19 +180,21 @@ export class StatusService {
    * @param status
    */
   async setStatus(statusListId: string, index: number, status: number) {
-    const list = await this.statusRepository.findOneBy({ id: statusListId });
-    if (!list) {
+    const listEntry = await this.statusRepository.findOneBy({
+      id: statusListId,
+    });
+    if (!listEntry) {
       throw new NotFoundException();
     }
-    const decodedList = this.decodeList(list.list);
-    const statusList = new List(decodedList, list.bitsPerStatus);
-    statusList.setStatus(index, status);
-    list.list = this.encodeList(statusList.getStatusList());
+    const decodedList = this.decodeList(listEntry.list);
+    const list = new List(decodedList, listEntry.bitsPerStatus);
+    list.setStatus(index, status);
+    listEntry.list = this.encodeList(list.statusList);
     //when dealing with TTL, we should not update the jwt here
-    const { jwt, exp } = await this.packList(list);
-    list.jwt = jwt;
-    list.exp = exp;
-    await this.statusRepository.save(list);
+    const { jwt, exp } = await this.packList(listEntry);
+    listEntry.jwt = jwt;
+    listEntry.exp = exp;
+    await this.statusRepository.save(listEntry);
   }
 
   /**
