@@ -39,7 +39,6 @@ import { CredentialsService } from '../credentials/credentials.service';
 import { KeyService } from '@my-wallet/relying-party-shared';
 import { IssuerMetadata } from './types';
 import { StatusService } from '../status/status.service';
-export type { SdJwtVcPayload } from '@sd-jwt/sd-jwt-vc';
 
 @Injectable()
 export class IssuerService implements OnModuleInit {
