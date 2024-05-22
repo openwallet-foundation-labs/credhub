@@ -69,7 +69,7 @@ export class IssuerDataService {
     if (!credential) {
       throw new Error(`The credential with the id ${id} is not supported.`);
     }
-    return credential.schema;
+    return credential;
   }
 
   /**

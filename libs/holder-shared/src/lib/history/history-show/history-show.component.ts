@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { HistoryApiService, HistoryResponse } from '../../api/kms';
+import { HistoryApiService, HistoryResponse } from '../../api/';
 import { firstValueFrom } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';

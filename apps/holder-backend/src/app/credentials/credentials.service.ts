@@ -15,7 +15,11 @@ export class CredentialsService {
     @InjectRepository(Credential)
     private credentialRepository: Repository<Credential>
   ) {
-    this.instance = new SDJwtVcInstance({ hasher: digest });
+    this.instance = new SDJwtVcInstance({
+      hasher: digest,
+      verifier: () => Promise.resolve(true),
+    });
+    this.updateStatus();
   }
 
   async create(createCredentialDto: CreateCredentialDto, user: string) {
@@ -25,10 +29,21 @@ export class CredentialsService {
     credential.value = createCredentialDto.value;
     credential.metaData = createCredentialDto.metaData;
     credential.issuer = createCredentialDto.issuer;
+    credential.exp = await this.getExp(createCredentialDto.value);
     await this.credentialRepository.save(credential);
     return {
       id: credential.id,
     };
+  }
+
+  private getExp(credential: string) {
+    return this.instance
+      .decode(credential)
+      .then((vc) =>
+        vc.jwt.payload.exp
+          ? new Date((vc.jwt.payload.exp as number) * 1000)
+          : undefined
+      );
   }
 
   findAll(user: string) {
@@ -43,8 +58,6 @@ export class CredentialsService {
     return this.findOne(id, user).then(async (entry) => {
       const sdjwtvc = await this.instance.decode(entry.value);
       const claims = await sdjwtvc.getClaims<Record<string, unknown>>(digest);
-      claims.status = undefined;
-      entry.value = undefined;
       entry.user = undefined;
       return {
         ...entry,
@@ -55,5 +68,18 @@ export class CredentialsService {
 
   remove(id: string, user: string) {
     return this.credentialRepository.delete({ id, user });
+  }
+
+  async updateStatus() {
+    const credentials = await this.credentialRepository.find();
+    for (const credential of credentials) {
+      await this.instance.verify(credential.value).catch(async (err: Error) => {
+        if (err.message.includes('Status is not valid')) {
+          //update the status in the db.
+          credential.status = 'revoked';
+          await this.credentialRepository.save(credential);
+        }
+      });
+    }
   }
 }

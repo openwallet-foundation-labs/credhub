@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SettingsApiService } from '../api/kms';
+import { SettingsApiService } from '../api';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({

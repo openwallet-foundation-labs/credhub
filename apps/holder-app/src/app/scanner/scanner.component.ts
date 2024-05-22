@@ -87,9 +87,7 @@ export class ScannerComponent implements OnInit, OnDestroy {
    * Stop the scanner when leaving the page
    */
   async ngOnDestroy(): Promise<void> {
-    if (this.scanner) {
-      await this.scanner.stop();
-    }
+    await this.stopScanning();
   }
 
   /**
@@ -120,7 +118,7 @@ export class ScannerComponent implements OnInit, OnDestroy {
    * @param cameraId
    */
   async changeCamera(cameraId: string) {
-    await this.scanner?.stop();
+    await this.stopScanning();
     this.selectedDevice = cameraId;
     await this.startCamera();
   }
@@ -134,12 +132,18 @@ export class ScannerComponent implements OnInit, OnDestroy {
     if (decodedText.startsWith('openid-credential-offer://')) {
       this.showRequest(decodedText, 'receive');
       // use a constant for the verification schema
-      await this.scanner?.stop();
+      await this.stopScanning();
     } else if (decodedText.startsWith('openid://')) {
       this.showRequest(decodedText, 'send');
-      await this.scanner?.stop();
+      await this.stopScanning();
     } else {
       alert("Scanned text doesn't match the expected format");
+    }
+  }
+
+  private async stopScanning() {
+    if (this.scanner?.isScanning) {
+      await this.scanner.stop();
     }
   }
 
@@ -178,7 +182,7 @@ export class ScannerComponent implements OnInit, OnDestroy {
    * @param action
    */
   async showRequest(url: string, action: 'send' | 'receive') {
-    await this.scanner?.stop();
+    await this.stopScanning();
     this.url = url;
     if (action === 'receive') {
       this.status = 'showRequest';

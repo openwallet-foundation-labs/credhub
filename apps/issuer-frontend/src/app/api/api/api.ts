@@ -1,0 +1,11 @@
+export * from './credentials.service';
+import { CredentialsApiService } from './credentials.service';
+export * from './default.service';
+import { DefaultApiService } from './default.service';
+export * from './sessions.service';
+import { SessionsApiService } from './sessions.service';
+export * from './status.service';
+import { StatusApiService } from './status.service';
+export * from './wellKnown.service';
+import { WellKnownApiService } from './wellKnown.service';
+export const APIS = [CredentialsApiService, DefaultApiService, SessionsApiService, StatusApiService, WellKnownApiService];

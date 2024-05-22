@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CredentialResponse, CredentialsApiService } from '../../api/kms';
+import { CredentialResponse, CredentialsApiService } from '../../api/';
 import { firstValueFrom } from 'rxjs';
 import { MatListModule } from '@angular/material/list';
 import { CredentialsShowComponent } from '../credentials-show/credentials-show.component';

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { CredentialResponse, CredentialsApiService } from '../../api/kms';
+import { CredentialResponse, CredentialsApiService } from '../../api/';
 import { firstValueFrom } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CredentialSupportedSdJwtVc } from '@sphereon/oid4vci-common';

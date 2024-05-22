@@ -93,6 +93,14 @@
           "tags": ["latest"]
         }
       }
+    },
+    "api": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx @openapitools/openapi-generator-cli generate -g typescript-angular --skip-validate-spec -i http://localhost:3002/api-json -o apps/verifier-frontend/src/app/api --additional-properties=supportsES6=true,enumPropertyNaming=original,serviceSuffix=ApiService"
+        ]
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Oid4vcpApiService, Oid4vpParseRepsonse } from '../../api/kms';
+import { Oid4vcpApiService, Oid4vpParseRepsonse } from '../../api/';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';

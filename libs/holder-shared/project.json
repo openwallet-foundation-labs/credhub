@@ -8,6 +8,14 @@
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "api": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx @openapitools/openapi-generator-cli generate -g typescript-angular --skip-validate-spec -i http://localhost:3000/api-json -o libs/holder-shared/src/lib/api --additional-properties=supportsES6=true,enumPropertyNaming=original,serviceSuffix=ApiService"
+        ]
+      }
     }
   }
 }
