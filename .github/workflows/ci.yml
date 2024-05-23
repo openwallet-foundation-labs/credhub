@@ -29,6 +29,4 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - uses: nrwl/nx-set-shas@v4
       - name: Lint, test, build, and container
-        env:
-          INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm exec nx affected -t lint test build container
+        run: pnpm exec nx affected -t lint test container
