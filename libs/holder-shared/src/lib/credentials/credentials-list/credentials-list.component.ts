@@ -18,6 +18,8 @@ export interface CredentialList extends CredentialResponse {
   display: CredentialsSupportedDisplay;
 }
 
+type ShowType = 'all' | 'archived';
+
 @Component({
   selector: 'lib-credentials-list',
   standalone: true,
@@ -44,11 +46,22 @@ export class CredentialsListComponent implements OnInit {
 
   render: 'image' | 'card' = 'card';
 
+  type: ShowType = 'all';
+
   constructor(private credentialsApiService: CredentialsApiService) {}
 
   async ngOnInit(): Promise<void> {
+    this.loadCredentials();
+  }
+
+  /**
+   * Load credentials from the API
+   */
+  private async loadCredentials() {
     const credentials: CredentialList[] = await firstValueFrom(
-      this.credentialsApiService.credentialsControllerFindAll()
+      this.credentialsApiService.credentialsControllerFindAll(
+        this.type === 'archived' ? true : undefined
+      )
     );
     this.search.valueChanges.subscribe((value: string) => {
       if (!value) {
@@ -62,5 +75,10 @@ export class CredentialsListComponent implements OnInit {
       });
     });
     this.credentials = credentials;
+  }
+
+  show(type: ShowType) {
+    this.type = type;
+    this.loadCredentials();
   }
 }

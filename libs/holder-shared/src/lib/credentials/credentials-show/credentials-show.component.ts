@@ -33,7 +33,7 @@ export class CredentialsShowComponent implements OnInit {
   metadata!: CredentialSupportedSdJwtVc;
   credential!: CredentialResponse;
   claims: { key: string; value: unknown }[] = [];
-  status: 'valid' | 'expired' = 'valid';
+  status: 'valid' | 'expired' | 'revoked' | 'not valid yet' = 'valid';
 
   constructor(
     private credentialsApiService: CredentialsApiService,
@@ -60,11 +60,18 @@ export class CredentialsShowComponent implements OnInit {
     this.metadata = this.credential.metaData as CredentialSupportedSdJwtVc;
     //set the status of the credential. Right now we are only checking the expiration date since there is no other validation included. The validation should be done by the backend.
     if ((this.credential.credential as Record<string, unknown>)['exp']) {
-      const expired = new Date(
-        (this.credential.credential as Record<string, unknown>)['exp'] as number
-      );
-      if (expired < new Date()) {
+      const expired = (this.credential.credential as Record<string, unknown>)[
+        'exp'
+      ] as number;
+      const created = (this.credential.credential as Record<string, unknown>)[
+        'nbf'
+      ] as number;
+      if (this.credential.status === CredentialResponse.StatusEnum.revoked) {
+        this.status = 'revoked';
+      } else if (expired && new Date(expired) < new Date()) {
         this.status = 'expired';
+      } else if (created && new Date(created) > new Date()) {
+        this.status = 'not valid yet';
       }
     }
     const excluded = [
@@ -77,6 +84,7 @@ export class CredentialsShowComponent implements OnInit {
       'jti',
       'vct',
       'cnf',
+      'status',
     ];
     //TODO: right now we are ignoring the order of the claims that got provided in the metadata.
     this.claims = Object.keys(
@@ -95,6 +103,13 @@ export class CredentialsShowComponent implements OnInit {
     return (this.credential.credential as Record<string, unknown>)[
       key
     ] as string;
+  }
+
+  copyRaw() {
+    navigator.clipboard.writeText(this.credential.value);
+    this.snackBar.open('Credential copied to clipboard', 'Close', {
+      duration: 3000,
+    });
   }
 
   async delete() {

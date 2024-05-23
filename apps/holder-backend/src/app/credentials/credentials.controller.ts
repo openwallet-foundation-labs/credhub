@@ -6,9 +6,16 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOAuth2,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard, AuthenticatedUser } from 'nest-keycloak-connect';
 import { CredentialsService } from './credentials.service';
 import { CreateCredentialDto } from './dto/create-credential.dto';
@@ -33,9 +40,16 @@ export class CredentialsController {
   }
 
   @ApiOperation({ summary: 'get all credentials' })
+  @ApiQuery({ name: 'archive', required: false, type: Boolean })
   @Get()
-  async findAll(@AuthenticatedUser() user: KeycloakUser) {
-    const credentials = await this.credentialsService.findAll(user.sub);
+  async findAll(
+    @AuthenticatedUser() user: KeycloakUser,
+    @Query('archive') archive: boolean
+  ) {
+    const credentials = await this.credentialsService.findAll(
+      user.sub,
+      archive
+    );
     return credentials.map((credential) => ({
       id: credential.id,
       display: credential.metaData.display[0],

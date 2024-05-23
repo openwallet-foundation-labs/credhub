@@ -1,12 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {
+  IsNull,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Not,
+  Or,
+  Repository,
+} from 'typeorm';
 import { CreateCredentialDto } from './dto/create-credential.dto';
-import { Credential } from './entities/credential.entity';
+import { Credential, CredentialStatus } from './entities/credential.entity';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { digest } from '@sd-jwt/crypto-nodejs';
 import { CredentialResponse } from './dto/credential-response.dto';
 
+type DateKey = 'exp' | 'nbf';
 @Injectable()
 export class CredentialsService {
   instance: SDJwtVcInstance;
@@ -29,25 +37,57 @@ export class CredentialsService {
     credential.value = createCredentialDto.value;
     credential.metaData = createCredentialDto.metaData;
     credential.issuer = createCredentialDto.issuer;
-    credential.exp = await this.getExp(createCredentialDto.value);
+    credential.nbf = await this.getDate(createCredentialDto.value, 'nbf');
+    credential.exp = await this.getDate(createCredentialDto.value, 'exp');
     await this.credentialRepository.save(credential);
     return {
       id: credential.id,
     };
   }
 
-  private getExp(credential: string) {
+  /**
+   * Get the date from the credential, use key to get the correct value.
+   * @param credential
+   * @param key
+   */
+  private getDate(credential: string, key: DateKey) {
     return this.instance
       .decode(credential)
       .then((vc) =>
-        vc.jwt.payload.exp
-          ? new Date((vc.jwt.payload.exp as number) * 1000)
-          : undefined
+        vc.jwt.payload[key] ? (vc.jwt.payload[key] as number) : undefined
       );
   }
 
-  findAll(user: string) {
-    return this.credentialRepository.find({ where: { user } });
+  /**
+   * Find all credentials of a user. In case archive is set, return the revoked or expired credentials.
+   * @param user
+   * @param archive
+   * @returns
+   */
+  findAll(user: string, archive?: boolean) {
+    const date = Date.now();
+
+    if (!archive) {
+      return this.credentialRepository.find({
+        where: {
+          user,
+          status: IsNull(),
+          exp: Or(IsNull(), MoreThanOrEqual(date)),
+          nbf: Or(IsNull(), LessThanOrEqual(date)),
+        },
+      });
+    }
+    if (archive) {
+      return this.credentialRepository.find({
+        where: {
+          user,
+          status: Not(IsNull()),
+          exp: Or(IsNull(), LessThanOrEqual(date)),
+          nbf: Or(IsNull(), MoreThanOrEqual(date)),
+        },
+      });
+    }
+    //TODO: when to show the credentials that are not active yet?
   }
 
   findOne(id: string, user: string) {
@@ -70,16 +110,33 @@ export class CredentialsService {
     return this.credentialRepository.delete({ id, user });
   }
 
+  /**
+   * Updates the state of a credential. This is relevant for showing active credentials.
+   */
   async updateStatus() {
-    const credentials = await this.credentialRepository.find();
+    //TODO: should we also set the state on expired?
+
+    //we are going for all credentials where credentials are not expired. It could happen that the status of a revoked credential will change.
+    const credentials = await this.credentialRepository.find({
+      where: { exp: MoreThanOrEqual(Date.now()) },
+    });
     for (const credential of credentials) {
-      await this.instance.verify(credential.value).catch(async (err: Error) => {
-        if (err.message.includes('Status is not valid')) {
-          //update the status in the db.
-          credential.status = 'revoked';
-          await this.credentialRepository.save(credential);
+      await this.instance.verify(credential.value).then(
+        async () => {
+          // only update it if it was revoked before. Otherwhise we do not need to update the entry.
+          if (credential.status === CredentialStatus.REVOKED) {
+            credential.status = undefined;
+            await this.credentialRepository.save(credential);
+          }
+        },
+        async (err: Error) => {
+          if (err.message.includes('Status is not valid')) {
+            //update the status in the db.
+            credential.status = CredentialStatus.REVOKED;
+            await this.credentialRepository.save(credential);
+          }
         }
-      });
+      );
     }
   }
 }

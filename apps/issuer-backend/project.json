@@ -33,7 +33,6 @@
       "dependsOn": ["build"],
       "options": {
         "engine": "docker",
-        "push": false,
         "metadata": {
           "images": ["ghcr.io/cre8/wallet/issuer-backend"],
           "load": true,
