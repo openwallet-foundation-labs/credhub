@@ -13,6 +13,10 @@ class CredentialIssuer {
   logo?: IssuerMetadataLogo;
 }
 
+export enum CredentialStatus {
+  REVOKED = 'revoked',
+}
+
 @Entity()
 export class Credential {
   /**
@@ -47,14 +51,20 @@ export class Credential {
   issuer: MetadataDisplay;
 
   /**
+   * The not before date of the credential
+   */
+  @Column({ nullable: true })
+  nbf?: number;
+
+  /**
    * The expiration date of the credential
    */
   @Column({ nullable: true })
-  exp?: Date;
+  exp?: number;
 
   /**
-   * The status of the credential
+   * The status of the credential, if not set it's valid
    */
   @Column({ nullable: true })
-  status?: string;
+  status?: CredentialStatus;
 }

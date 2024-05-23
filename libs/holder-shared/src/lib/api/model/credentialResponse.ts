@@ -19,7 +19,15 @@ export interface CredentialResponse {
     user: string;
     value: string;
     metaData: object;
-    exp?: string;
-    status?: string;
+    nbf?: number;
+    exp?: number;
+    status?: CredentialResponse.StatusEnum;
 }
+export namespace CredentialResponse {
+    export type StatusEnum = 'revoked';
+    export const StatusEnum = {
+        revoked: 'revoked' as StatusEnum
+    };
+}
+
 
