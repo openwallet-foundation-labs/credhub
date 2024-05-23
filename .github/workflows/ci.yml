@@ -28,5 +28,6 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - uses: nrwl/nx-set-shas@v4
+      - run: git branch --track main origin/main
       - name: Lint, test, build, and container
         run: pnpm exec nx affected -t lint test container
