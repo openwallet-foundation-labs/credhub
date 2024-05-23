@@ -30,4 +30,4 @@ jobs:
       - uses: nrwl/nx-set-shas@v4
       - run: git branch --track main origin/main
       - name: Lint, test, build, and container
-        run: pnpm exec nx affected -t lint test container
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test container
