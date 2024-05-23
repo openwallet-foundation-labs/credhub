@@ -30,7 +30,4 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - uses: nrwl/nx-set-shas@v4
       - name: Build and push images
-        env:
-          INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INPUT_PUSH: true
-        run: pnpm exec nx affected -t container
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} INPUT_PUSH=true pnpm exec nx affected -t container
