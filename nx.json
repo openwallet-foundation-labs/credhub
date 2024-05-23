@@ -12,7 +12,10 @@
       "!{projectRoot}/src/test-setup.[jt]s",
       "!{projectRoot}/test-setup.[jt]s"
     ],
-    "sharedGlobals": []
+    "sharedGlobals": [
+      "{workspaceRoot}/.github/workflows/ci.yml",
+      "{workspaceRoot}/.github/workflows/cd.yml"
+    ]
   },
   "workspaceLayout": { "appsDir": "apps", "libsDir": "libs" },
   "nxCloudAccessToken": "NjQ2NjhiMWUtYjA1Ni00NTRjLWJjMjctMjkzNzA1NmRkMTgxfHJlYWQ=",
