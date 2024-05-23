@@ -7,7 +7,7 @@ import {
 import { HttpAdapterHost } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { ES256, digest, generateSalt } from '@sd-jwt/crypto-nodejs';
-import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
+import { SDJwtVcInstance, SdJwtVcPayload } from '@sd-jwt/sd-jwt-vc';
 import {
   CredentialRequestSdJwtVc,
   Jwt,
@@ -38,6 +38,13 @@ import { SessionRequestDto } from './dto/session-request.dto';
 import { CredentialsService } from '../credentials/credentials.service';
 import { KeyService } from '@my-wallet/relying-party-shared';
 import { IssuerMetadata } from './types';
+import { StatusService } from '../status/status.service';
+import { SessionResponseDto } from './dto/session-response.dto';
+
+interface CredentialDataSupplierInput {
+  credentialSubject: Record<string, unknown>;
+  exp: number;
+}
 
 @Injectable()
 export class IssuerService implements OnModuleInit {
@@ -47,7 +54,8 @@ export class IssuerService implements OnModuleInit {
     private adapterHost: HttpAdapterHost<ExpressAdapter>,
     @Inject('KeyService') private keyService: KeyService,
     private issuerDataService: IssuerDataService,
-    private credentialsService: CredentialsService
+    private credentialsService: CredentialsService,
+    private statusService: StatusService
   ) {
     this.express = this.getExpressInstance();
   }
@@ -68,27 +76,42 @@ export class IssuerService implements OnModuleInit {
     };
   }
 
-  async createRequest(values: SessionRequestDto) {
+  async createRequest(values: SessionRequestDto): Promise<SessionResponseDto> {
     const credentialId = values.credentialId;
     const sessionId = v4();
     try {
+      const credential = this.issuerDataService.getCredential(credentialId);
+      let exp: number | undefined;
+      // we either use the passed exp value or the ttl of the credential. If none is set, the credential will not expire.
+      if (values.exp) {
+        exp = values.exp;
+      } else if (credential.ttl) {
+        const expDate = new Date();
+        expDate.setSeconds(expDate.getSeconds() + credential.ttl);
+        exp = expDate.getTime();
+      }
+
+      const credentialDataSupplierInput: CredentialDataSupplierInput = {
+        credentialSubject: values.credentialSubject,
+        exp,
+      };
       const response = await this.vcIssuer.createCredentialOfferURI({
-        credentials: [
-          this.issuerDataService.getCredential(credentialId).id as string,
-        ],
+        credentials: [credential.schema.id as string],
         grants: {
           'urn:ietf:params:oauth:grant-type:pre-authorized_code': {
             'pre-authorized_code': sessionId,
             user_pin_required: values.pin,
           },
         },
-        credentialDataSupplierInput: {
-          credentialSubject: values.credentialSubject,
-          //TODO: allow to pass more values like should a status list be used. These values are defined be the issuer, not the holder that should receive the credential.
-        },
+        credentialDataSupplierInput,
       });
       //we are returning the response to the client
-      return response;
+      return {
+        uri: response.uri,
+        id: sessionId,
+        userPin: response.userPin,
+        status: 'CREATED',
+      };
     } catch (error) {
       throw new ConflictException(error.message);
     }
@@ -132,12 +155,21 @@ export class IssuerService implements OnModuleInit {
      * @returns
      */
     const credentialDataSupplier: CredentialDataSupplier = async (args) => {
+      const status_list = await this.statusService.getEmptySlot();
+      const status = {
+        status_list,
+      };
+
       const credential: SdJwtDecodedVerifiableCredentialPayload = {
         iat: new Date().getTime(),
         iss: args.credentialOffer.credential_offer.credential_issuer,
         vct: (args.credentialRequest as CredentialRequestSdJwtVc).vct,
         jti: v4(),
-        ...args.credentialDataSupplierInput.credentialSubject,
+        ...(args.credentialDataSupplierInput as CredentialDataSupplierInput)
+          .credentialSubject,
+        //TODO: can be removed when correct type is set in PEX
+        status: status as any,
+        exp: args.credentialDataSupplierInput.exp,
       };
       return Promise.resolve({
         credential,
@@ -191,8 +223,8 @@ export class IssuerService implements OnModuleInit {
     const credentialSignerCallback: CredentialSignerCallback<
       DIDDocument
     > = async (args) => {
-      const jwt = await sdjwt.issue<{ iss: string; vct: string }>(
-        args.credential as SdJwtDecodedVerifiableCredentialPayload,
+      const jwt = await sdjwt.issue<SdJwtVcPayload>(
+        args.credential as unknown as SdJwtVcPayload,
         this.issuerDataService.getDisclosureFrame(
           args.credential.vct as string
         ),
@@ -235,12 +267,5 @@ export class IssuerService implements OnModuleInit {
         },
       },
     });
-
-    // start the webserver.
-    // expressSupport.start();
-    //print the routes, only for debugging purposes
-    // if (process.env.NODE_ENV === 'development') {
-    //   expressListRoutes(expressSupport.express);
-    // }
   }
 }

@@ -20,7 +20,6 @@ async function bootstrap() {
         clientCredentials: {
           tokenUrl: `${process.env.KEYCLOAK_AUTH_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
           authorizationUrl: `${process.env.KEYCLOAK_AUTH_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/auth`,
-          refreshUrl: `${process.env.KEYCLOAK_AUTH_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
           scopes: {},
         },
       },

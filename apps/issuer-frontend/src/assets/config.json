@@ -3,5 +3,5 @@
   "credentialId": "Identity",
   "tokenEndpoint": "http://localhost:8080/realms/wallet/protocol/openid-connect/token",
   "clientId": "issuer",
-  "clientSecret": "Lwo4XCBBdWEKWJctgEqAEhWTrP6EUy2G"
+  "clientSecret": "Y9HTaTWPy8eppYBqUbmtKuxlib5rrjXe"
 }

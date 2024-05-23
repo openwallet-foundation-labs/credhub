@@ -18,5 +18,7 @@ export interface IssuerMetadata {
  */
 export interface CredentialSchema {
   schema: CredentialSupported;
-  sd: DisclosureFrame<object>;
+  sd: DisclosureFrame<Record<string, unknown | boolean>>;
+  // time to live in seconds, it will be added on the current time to get the expiration time.
+  ttl?: number;
 }

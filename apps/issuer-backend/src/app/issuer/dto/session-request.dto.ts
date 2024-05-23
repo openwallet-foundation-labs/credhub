@@ -1,4 +1,10 @@
-import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 export class SessionRequestDto {
   /**
    * The subject of the credential that should be issued.
@@ -19,4 +25,11 @@ export class SessionRequestDto {
   @IsBoolean()
   @IsOptional()
   pin: boolean;
+
+  /**
+   * The expiration time of the credential; seconds since unix epoch.
+   */
+  @IsNumber()
+  @IsOptional()
+  exp?: number;
 }

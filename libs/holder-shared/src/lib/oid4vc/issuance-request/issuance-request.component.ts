@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Oid4vciApiService } from '../../api/kms';
+import { Oid4vciApiService } from '../../api/';
 import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { CredentialSupported, MetadataDisplay } from '@sphereon/oid4vci-common';

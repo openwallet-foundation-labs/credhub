@@ -10,8 +10,16 @@ import {
 } from '@nestjs/common';
 import { IssuerService } from './issuer.service';
 import { SessionRequestDto } from './dto/session-request.dto';
-import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOAuth2,
+  ApiOkResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from 'nest-keycloak-connect';
+import { SessionResponseDto } from './dto/session-response.dto';
+import { SessionStatus } from './dto/session-status.dto';
 
 @UseGuards(AuthGuard)
 @ApiOAuth2([])
@@ -22,18 +30,22 @@ export class IssuerController {
 
   @ApiOperation({ summary: 'Returns the status for a session' })
   @Get(':id')
-  async getSession(@Param('id') id: string) {
+  async getSession(@Param('id') id: string): Promise<SessionStatus> {
     const session =
       await this.issuerService.vcIssuer.credentialOfferSessions.get(id);
     if (!session) {
       throw new NotFoundException(`Session with id ${id} not found`);
     }
-    return session;
+    return {
+      status: session.status,
+    };
   }
 
   @ApiOperation({ summary: 'Creates a new session request' })
   @Post()
-  async request(@Body() values: SessionRequestDto) {
+  async request(
+    @Body() values: SessionRequestDto
+  ): Promise<SessionResponseDto> {
     return this.issuerService.createRequest(values);
   }
 

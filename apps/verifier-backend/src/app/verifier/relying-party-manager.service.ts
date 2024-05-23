@@ -30,6 +30,9 @@ import { EventEmitter } from 'node:events';
 import { ConfigService } from '@nestjs/config';
 import { KeyService } from '@my-wallet/relying-party-shared';
 import { ResolverService } from '../resolver/resolver.service';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import { number } from 'joi';
 
 @Injectable()
 export class RelyingPartyManagerService {
@@ -42,7 +45,8 @@ export class RelyingPartyManagerService {
   constructor(
     @Inject('KeyService') private keyService: KeyService,
     private resolverService: ResolverService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private httpSerivce: HttpService
   ) {
     this.sessionManager = new InMemoryRPSessionManager(this.eventEmitter, {
       // maxAgeInSeconds: 10,
@@ -140,12 +144,13 @@ export class RelyingPartyManagerService {
         did,
         SigningAlgo.ES256
       )
-      .withRevocationVerification(RevocationVerification.NEVER)
       .withSessionManager(this.sessionManager)
       .withEventEmitter(this.eventEmitter)
       .withPresentationDefinition({
         definition: verifier.request,
       })
+      //we are doing the revocation check inside the presentation check
+      .withRevocationVerification(RevocationVerification.NEVER)
       .withPresentationVerification(this.getCall(verifier))
       .build();
     return {
@@ -219,17 +224,36 @@ export class RelyingPartyManagerService {
           );
         };
 
+        /**
+         * Fetch the status list from the uri.
+         * @param uri
+         * @returns
+         */
+        const statusListFetcher: (uri: string) => Promise<string> = async (
+          uri: string
+        ) => {
+          const response = await firstValueFrom(this.httpSerivce.get(uri));
+          return response.data;
+        };
+
+        const statusValidator: (status: number) => Promise<void> = async (
+          number: number
+        ) => {
+          console.log(number);
+        };
+
         // initialize the sdjwt instance.
         sdjwtInstance = new SDJwtVcInstance({
           hasher: digest,
           verifier,
           kbVerifier,
+          statusListFetcher,
+          // statusValidator,
         });
         // verify the presentation.
         await sdjwtInstance.verify(args as CompactJWT, requiredClaimKeys, true);
         return Promise.resolve({ verified: true });
       } catch (e) {
-        console.error(e);
         return Promise.reject({ verified: false, error: (e as Error).message });
       }
     };

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { History, HistoryApiService } from '../../api/kms';
+import { History, HistoryApiService } from '../../api/';
 import { firstValueFrom } from 'rxjs';
 import { MatListModule } from '@angular/material/list';
 import { CommonModule } from '@angular/common';

@@ -7,7 +7,7 @@ import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatListModule } from '@angular/material/list';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { SettingsApiService } from '../api/kms';
+import { SettingsApiService } from '../api';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export declare namespace globalThis {

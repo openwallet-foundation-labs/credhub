@@ -45,4 +45,16 @@ export class Credential {
   @Column({ nullable: true, type: 'json' })
   @ApiProperty({ type: CredentialIssuer })
   issuer: MetadataDisplay;
+
+  /**
+   * The expiration date of the credential
+   */
+  @Column({ nullable: true })
+  exp?: Date;
+
+  /**
+   * The status of the credential
+   */
+  @Column({ nullable: true })
+  status?: string;
 }

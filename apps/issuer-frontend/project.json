@@ -86,12 +86,20 @@
       "dependsOn": ["build"],
       "options": {
         "engine": "docker",
-        "push": true,
+        "push": false,
         "metadata": {
           "images": ["ghcr.io/cre8/wallet/issuer-frontend"],
           "load": true,
           "tags": ["latest"]
         }
+      }
+    },
+    "api": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx @openapitools/openapi-generator-cli generate -g typescript-angular --skip-validate-spec -i http://localhost:3001/api-json -o apps/issuer-frontend/src/app/api --additional-properties=supportsES6=true,enumPropertyNaming=original,serviceSuffix=ApiService"
+        ]
       }
     }
   }

@@ -9,6 +9,7 @@ import { Oid4vcModule } from './oid4vc/oid4vc.module';
 import { HistoryModule } from './history/history.module';
 import { AppController } from './app.controller';
 import { SettingsModule } from './settings/settings.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { SettingsModule } from './settings/settings.module';
         ...DB_VALIDATION_SCHEMA,
       }),
     }),
+    ScheduleModule.forRoot(),
     AuthModule,
     DbModule,
     KeysModule.forRootSync(),

@@ -1,4 +1,4 @@
-export * from './lib/api/kms';
+export * from './lib/api/';
 export * from './lib/settings/settings.component';
 export * from './lib/oid4vc/issuance-request/issuance-request.component';
 export * from './lib/oid4vc/verify-request/verify-request.component';
