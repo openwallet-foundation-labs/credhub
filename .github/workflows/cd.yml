@@ -39,4 +39,4 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push images
-        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} INPUT_PUSH=true pnpm exec nx affected -t container
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t container
