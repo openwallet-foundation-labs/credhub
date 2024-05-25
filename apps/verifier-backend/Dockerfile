@@ -19,6 +19,8 @@ COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=deps /usr/src/app/package.json ./package.json
 COPY dist/apps/verifier-backend .
 RUN chown -R node:node .
+RUN mkdir /usr/src/app/tmp
+RUN chmod 777 /usr/src/app/tmp
 USER node
 EXPOSE 3000
 CMD ["dumb-init", "node", "main.js"]
