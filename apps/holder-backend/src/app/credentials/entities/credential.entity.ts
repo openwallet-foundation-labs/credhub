@@ -53,13 +53,13 @@ export class Credential {
   /**
    * The not before date of the credential
    */
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'bigint' })
   nbf?: number;
 
   /**
    * The expiration date of the credential
    */
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'bigint' })
   exp?: number;
 
   /**
