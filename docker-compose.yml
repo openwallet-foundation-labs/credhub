@@ -96,10 +96,14 @@ services:
     env_file:
       - .env
     environment:
-      PORT: $ISSUER_PORT
+      - PORT=$ISSUER_PORT
+      - DB_TYPE=sqlite
+      - DB_NAME=data/db.sqlite
+      - KM_FOLDER=data
+      - CREDENTIALS_FOLDER=templates
     volumes:
-      - issuer_tmp:/app/tmp
-      - ./config/issuer-backend:/app/templates
+      - issuer_tmp:/home/node/app/data:rw
+      - ./config/issuer-backend:/home/node/app/templates
     ports:
       - 3001:3000
     healthcheck:
