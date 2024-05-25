@@ -222,7 +222,7 @@ export class StatusService {
     const jwt = await this.keyService.signJWT(values.payload, values.header);
     return {
       jwt,
-      exp: payload.exp,
+      exp: payload.exp as number,
     };
   }
 

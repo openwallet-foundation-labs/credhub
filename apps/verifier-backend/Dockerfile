@@ -1,24 +1,48 @@
-# Install dependencies only when needed
-FROM docker.io/node:lts-alpine as deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+# Stage 1: Install dependencies
+FROM docker.io/node:lts-alpine AS deps
+
+ARG FOLDER=dist/apps/verifier-backend
+
+# Install necessary packages
 RUN apk add --no-cache libc6-compat
-WORKDIR /usr/src/app
-COPY dist/apps/verifier-backend/package.json ./
+
+# Set working directory
+WORKDIR /home/node/app
+
+# Copy dependency definitions
+COPY ${FOLDER}/package.json ./
 COPY pnpm-lock.yaml ./
 COPY patches ./patches
-RUN npm install -g pnpm@8.15.8
-RUN pnpm install --prod
 
-# Production image, copy all the files and run nest
-FROM docker.io/node:lts-alpine as runner
+# Install pnpm and dependencies
+RUN npm install -g pnpm@8.15.8 && \
+    pnpm install --prod
+
+# Stage 2: Prepare the runtime image
+FROM docker.io/node:lts-alpine AS runner
+
+ARG FOLDER=dist/apps/verifier-backend
+
+# Install dumb-init
 RUN apk add --no-cache dumb-init
+
+# Set environment variables
 ENV NODE_ENV production
 ENV PORT 3000
-WORKDIR /usr/src/app
-COPY --from=deps /usr/src/app/node_modules ./node_modules
-COPY --from=deps /usr/src/app/package.json ./package.json
-COPY dist/apps/verifier-backend .
-RUN chown -R node:node .
+
+# Set working directory
+WORKDIR /home/node/app
+
+# Copy dependencies and production files
+COPY --from=deps /home/node/app/node_modules ./node_modules
+COPY --from=deps /home/node/app/package.json ./package.json
+COPY --chown=node:node ${FOLDER} .
+
+# Set the user to 'node' to avoid permission issues
 USER node
+
+# Expose the application port
 EXPOSE 3000
+
+# Start the application
 CMD ["dumb-init", "node", "main.js"]
