@@ -1,4 +1,4 @@
-import { TestBed, async, ComponentFixture } from '@angular/core/testing';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { CheckForUpdatesService } from './check-for-updates.service';
@@ -22,7 +22,7 @@ describe('AppComponent', () => {
     });
   });
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, AppComponent],
       providers: [
@@ -34,7 +34,7 @@ describe('AppComponent', () => {
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
     checkForUpdatesService = TestBed.inject(CheckForUpdatesService);
-  }));
+  });
 
   it('should create the app', () => {
     expect(component).toBeTruthy();
