@@ -5,11 +5,7 @@ import { SettingsService } from './settings.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatListModule } from '@angular/material/list';
-import {
-  HttpClient,
-  provideHttpClient,
-  withInterceptorsFromDi,
-} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { SettingsApiService } from '../api';
 
@@ -20,8 +16,6 @@ export declare namespace globalThis {
     keycloakHost: string;
     keycloakClient: string;
     keycloakRealm: string;
-    demoIssuer: string;
-    demoVerifier: string;
   };
 }
 

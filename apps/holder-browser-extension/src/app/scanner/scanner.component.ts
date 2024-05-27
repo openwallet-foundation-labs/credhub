@@ -8,8 +8,6 @@ import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
-import { environment } from '../../environments/environment';
 import {
   IssuanceRequestComponent,
   VerifyRequestComponent,
@@ -72,29 +70,5 @@ export class ScannerComponent implements OnInit {
     } else {
       this.action = 'verify';
     }
-  }
-
-  async presentCredential() {
-    const response = await firstValueFrom(
-      this.httpClient.post<{ uri: string }>(
-        `${environment.demoVerifier}/request`,
-        {
-          id: 'Identity',
-        }
-      )
-    );
-    this.urlField.patchValue(response.uri);
-  }
-
-  async getCredential() {
-    const response = await firstValueFrom(
-      this.httpClient.post<{ uri: string }>(
-        `${environment.demoIssuer}/request`,
-        {
-          credentialId: 'Identity',
-        }
-      )
-    );
-    this.urlField.patchValue(response.uri);
   }
 }
