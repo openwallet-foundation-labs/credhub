@@ -5,7 +5,7 @@ import { SettingsService } from './settings.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatListModule } from '@angular/material/list';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { SettingsApiService } from '../api';
 
@@ -16,8 +16,6 @@ export declare namespace globalThis {
     keycloakHost: string;
     keycloakClient: string;
     keycloakRealm: string;
-    demoIssuer: string;
-    demoVerifier: string;
   };
 }
 
@@ -28,16 +26,16 @@ export abstract class AuthServiceInterface {
 @Component({
   selector: 'lib-settings',
   standalone: true,
+  templateUrl: './settings.component.html',
+  styleUrl: './settings.component.scss',
   imports: [
     MatButtonModule,
     MatSlideToggleModule,
     ReactiveFormsModule,
     FlexLayoutModule,
     MatListModule,
-    HttpClientModule,
   ],
-  templateUrl: './settings.component.html',
-  styleUrl: './settings.component.scss',
+  // providers: [provideHttpClient()],
 })
 export class SettingsComponent implements OnInit {
   automateControl!: FormControl<boolean | null>;

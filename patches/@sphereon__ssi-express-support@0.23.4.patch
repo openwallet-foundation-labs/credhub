@@ -1,0 +1,15 @@
+diff --git a/dist/index.js b/dist/index.js
+index d1f2d7555fe6503e4cbef92358f458f6f91a9da3..067d51132530d030f1d74c3bb19ff561c54d3c82 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -27,8 +27,8 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.jsonErrorHandler = exports.sendErrorResponse = void 0;
+-const dotenv = __importStar(require("dotenv-flow"));
+-dotenv.config();
++// const dotenv = __importStar(require("dotenv-flow"));
++// dotenv.config();
+ __exportStar(require("./entra-id-auth"), exports);
+ __exportStar(require("./static-bearer-auth"), exports);
+ __exportStar(require("./auth-utils"), exports);

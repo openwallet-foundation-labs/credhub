@@ -6,6 +6,14 @@
   "sourceRoot": "apps/issuer-frontend/src",
   "tags": [],
   "targets": {
+    "init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cp apps/issuer-frontend/src/assets/config.example.json apps/issuer-frontend/src/assets/config.json"
+        ]
+      }
+    },
     "build": {
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],

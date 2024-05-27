@@ -5,8 +5,6 @@ export declare namespace globalThis {
     keycloakHost: string;
     keycloakClient: string;
     keycloakRealm: string;
-    demoIssuer: string;
-    demoVerifier: string;
   };
 }
 
@@ -15,8 +13,6 @@ export const environment = {
   keycloakHost: 'http://localhost:8080',
   keycloakClient: 'browser',
   keycloakRealm: 'wallet',
-  demoIssuer: 'http://localhost:3001',
-  demoVerifier: 'http://localhost:3002',
 };
 
 globalThis.environment = environment;

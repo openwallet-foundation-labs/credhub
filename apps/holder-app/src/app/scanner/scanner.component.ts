@@ -3,14 +3,12 @@ import { CameraDevice, Html5Qrcode } from 'html5-qrcode';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { firstValueFrom } from 'rxjs';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import {
   VerifyRequestComponent,
   IssuanceRequestComponent,
 } from '@my-wallet/-holder-shared';
-import { environment } from '../../environments/environment';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FlexLayoutModule } from 'ng-flex-layout';
@@ -29,7 +27,6 @@ type Status = 'scanning' | 'showRequest' | 'showVerificationRequest';
     MatIconModule,
     MatDividerModule,
     MatProgressSpinnerModule,
-    HttpClientModule,
     FlexLayoutModule,
     IssuanceRequestComponent,
     VerifyRequestComponent,
@@ -145,35 +142,6 @@ export class ScannerComponent implements OnInit, OnDestroy {
     if (this.scanner?.isScanning) {
       await this.scanner.stop();
     }
-  }
-
-  /**
-   * Send a credential request to the demo issuer
-   */
-  getCredential() {
-    //TODO: maybe move these demo calls in a demo service
-    firstValueFrom(
-      this.httpClient.post<{ uri: string }>(
-        `${environment.demoIssuer}/request`,
-        {
-          credentialId: 'Identity',
-        }
-      )
-    ).then((response) => this.showRequest(response.uri, 'receive'));
-  }
-
-  /**
-   * Send a verification request to the demo verifier
-   */
-  presentCredential() {
-    firstValueFrom(
-      this.httpClient.post<{ uri: string }>(
-        `${environment.demoVerifier}/request`,
-        {
-          id: 'Identity',
-        }
-      )
-    ).then((response) => this.showRequest(response.uri, 'send'));
   }
 
   /**

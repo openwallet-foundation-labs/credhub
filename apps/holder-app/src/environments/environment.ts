@@ -5,8 +5,6 @@ export declare namespace globalThis {
     keycloakHost: string;
     keycloakClient: string;
     keycloakRealm: string;
-    demoIssuer: string;
-    demoVerifier: string;
   };
 }
 
@@ -22,11 +20,5 @@ export const environment = {
   },
   get keycloakRealm() {
     return globalThis.environment?.keycloakRealm;
-  },
-  get demoIssuer() {
-    return globalThis.environment?.demoIssuer;
-  },
-  get demoVerifier() {
-    return globalThis.environment?.demoVerifier;
   },
 };
