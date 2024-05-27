@@ -8,6 +8,9 @@ patchedDependencies:
   '@sphereon/pex@3.3.3':
     hash: bzkrsrlwcpq6eepymelnbd2pca
     path: patches/@sphereon__pex@3.3.3.patch
+  '@sphereon/ssi-express-support@0.23.4':
+    hash: tpbu4tlseyturmm3mamihb4kae
+    path: patches/@sphereon__ssi-express-support@0.23.4.patch
 
 dependencies:
   '@angular/animations':
@@ -105,7 +108,7 @@ dependencies:
     version: 2.2.4
   '@sphereon/ssi-express-support':
     specifier: ^0.23.4
-    version: 0.23.4
+    version: 0.23.4(patch_hash=tpbu4tlseyturmm3mamihb4kae)
   '@sphereon/ssi-types':
     specifier: ^0.23.4
     version: 0.23.4
@@ -5956,7 +5959,7 @@ packages:
     dependencies:
       '@sphereon/oid4vci-common': 0.10.3
       '@sphereon/oid4vci-issuer': 0.10.3
-      '@sphereon/ssi-express-support': 0.23.4
+      '@sphereon/ssi-express-support': 0.23.4(patch_hash=tpbu4tlseyturmm3mamihb4kae)
       '@sphereon/ssi-types': 0.23.4
       body-parser: 1.20.2
       cookie-parser: 1.4.6
@@ -6017,7 +6020,7 @@ packages:
     dev: false
     patched: true
 
-  /@sphereon/ssi-express-support@0.23.4:
+  /@sphereon/ssi-express-support@0.23.4(patch_hash=tpbu4tlseyturmm3mamihb4kae):
     resolution: {integrity: sha512-IFPrShzWZ/hlKB604iSGylLOBiN7nRwiogBAmNEJ7zOyAKPEb4lMGBRfOqKINlXsGFbZ3CTNWFPJtyPZiVGgQA==}
     peerDependencies:
       '@noble/hashes': 1.2.0
@@ -6047,6 +6050,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: false
+    patched: true
 
   /@sphereon/ssi-types@0.22.0:
     resolution: {integrity: sha512-YPJAZlKmzNALXK8ohP3ETxj1oVzL4+M9ljj3fD5xrbacvYax1JPCVKc8BWSubGcQckKHPbgbpcS7LYEeghyT9Q==}
