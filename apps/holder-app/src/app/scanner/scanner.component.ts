@@ -4,7 +4,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { firstValueFrom } from 'rxjs';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import {
+  HttpClient,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import {
   VerifyRequestComponent,
@@ -29,7 +33,6 @@ type Status = 'scanning' | 'showRequest' | 'showVerificationRequest';
     MatIconModule,
     MatDividerModule,
     MatProgressSpinnerModule,
-    HttpClientModule,
     FlexLayoutModule,
     IssuanceRequestComponent,
     VerifyRequestComponent,
