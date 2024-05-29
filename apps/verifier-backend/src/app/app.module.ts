@@ -21,7 +21,7 @@ import { AuthModule, KeyModule } from '@my-wallet/relying-party-shared';
       }),
     }),
     VerifierModule,
-    KeyModule.forRootSync(),
+    KeyModule.forRoot(),
   ],
   controllers: [AppController],
 })

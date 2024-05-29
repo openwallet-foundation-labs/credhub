@@ -23,7 +23,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ScheduleModule.forRoot(),
     AuthModule,
     DbModule,
-    KeysModule.forRootSync(),
+    KeysModule.forRoot(),
     CredentialsModule,
     Oid4vcModule,
     HistoryModule,

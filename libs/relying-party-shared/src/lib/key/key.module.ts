@@ -31,7 +31,7 @@ export const KEY_VALIDATION_SCHEMA = {
 @Global()
 @Module({})
 export class KeyModule {
-  static forRootSync(): DynamicModule {
+  static forRoot(): DynamicModule {
     return {
       module: KeyModule,
       imports: [HttpModule, ConfigModule],

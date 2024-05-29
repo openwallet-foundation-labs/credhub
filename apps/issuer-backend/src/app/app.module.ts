@@ -29,7 +29,7 @@ import { IssuerModule } from './issuer/issuer.module';
         ...KEY_VALIDATION_SCHEMA,
       }),
     }),
-    KeyModule.forRootSync(),
+    KeyModule.forRoot(),
     ScheduleModule.forRoot(),
     IssuerModule,
     AuthModule,
