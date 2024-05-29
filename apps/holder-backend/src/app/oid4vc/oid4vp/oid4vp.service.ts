@@ -200,7 +200,6 @@ export class Oid4vpService {
           },
         }
       );
-    console.log(authenticationResponseWithJWT);
     await session.op.submitAuthorizationResponse(authenticationResponseWithJWT);
     const response = authenticationResponseWithJWT.response.payload
       .vp_token as CompactSdJwtVc;
