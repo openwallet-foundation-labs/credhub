@@ -22,9 +22,13 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+
       - run: pnpm install --frozen-lockfile
 
       - uses: nrwl/nx-set-shas@v4
+
+      - name: Run license check
+        run: npx license-checker --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;0BSD"
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3

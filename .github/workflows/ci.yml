@@ -30,8 +30,13 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+
       - run: pnpm install --frozen-lockfile
+
       - uses: nrwl/nx-set-shas@v4
-      - run: git branch --track main origin/main
+
+      - name: Run license check
+        run: npx license-checker --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;0BSD"
+
       - name: Lint, test, build, and container
         run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test container
