@@ -34,7 +34,7 @@
       "options": {
         "engine": "docker",
         "metadata": {
-          "images": ["ghcr.io/cre8/wallet/holder-backend"],
+          "images": ["ghcr.io/openwallet-foundation-labs/holder-backend"],
           "load": true,
           "tags": ["latest"]
         }
