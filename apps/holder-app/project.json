@@ -95,7 +95,7 @@
       "options": {
         "engine": "docker",
         "metadata": {
-          "images": ["ghcr.io/openwallet-foundation-labs/holder-app"],
+          "images": ["ghcr.io/openwallet-foundation-labs/credhub/holder-app"],
           "load": true,
           "tags": ["latest"]
         }
