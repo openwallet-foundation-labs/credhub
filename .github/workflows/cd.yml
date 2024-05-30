@@ -8,6 +8,10 @@ on:
 jobs:
   main:
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,7 +39,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GH_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push images
-        run: INPUT_GITHUB_TOKEN=${{ secrets.GH_TOKEN }} INPUT_PUSH=true pnpm exec nx affected -t container
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} INPUT_PUSH=true pnpm exec nx affected -t container

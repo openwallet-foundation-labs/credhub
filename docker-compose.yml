@@ -92,7 +92,7 @@ services:
       - '5432:5432'
 
   issuer-backend:
-    image: ghcr.io/cre8/wallet/issuer-backend
+    image: ghcr.io/openwallet-foundation-labs/issuer-backend
     env_file:
       - .env
     environment:
@@ -114,14 +114,14 @@ services:
       start_period: 2m
 
   issuer-frontend:
-    image: ghcr.io/cre8/wallet/issuer-frontend
+    image: ghcr.io/openwallet-foundation-labs/issuer-frontend
     volumes:
       - ./config/issuer-frontend/config.json:/usr/share/nginx/html/config.json
     ports:
       - 81:80
 
   verifier-backend:
-    image: ghcr.io/cre8/wallet/verifier-backend
+    image: ghcr.io/openwallet-foundation-labs/verifier-backend
     volumes:
       - verifier_tmp:/app/tmp
       - ./config/verifier-backend:/app/templates
@@ -137,14 +137,14 @@ services:
       start_period: 2m
 
   verifier-frontend:
-    image: ghcr.io/cre8/wallet/verifier-frontend
+    image: ghcr.io/openwallet-foundation-labs/verifier-frontend
     volumes:
       - ./config/verifier-frontend/config.json:/usr/share/nginx/html/config.json
     ports:
       - 82:80
 
   holder-backend:
-    image: ghcr.io/cre8/wallet/holder-backend
+    image: ghcr.io/openwallet-foundation-labs/holder-backend
     env_file:
       - .env
     ports:
@@ -157,7 +157,7 @@ services:
       start_period: 2m
 
   holder-frontend:
-    image: ghcr.io/cre8/wallet/holder-app
+    image: ghcr.io/openwallet-foundation-labs/holder-app
     volumes:
       - ./config/holder-frontend:/usr/share/nginx/html/assets/config
     ports:
