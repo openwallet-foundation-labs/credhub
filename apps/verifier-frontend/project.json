@@ -95,7 +95,9 @@
       "options": {
         "engine": "docker",
         "metadata": {
-          "images": ["ghcr.io/openwallet-foundation-labs/verifier-frontend"],
+          "images": [
+            "ghcr.io/openwallet-foundation-labs/credhub/verifier-frontend"
+          ],
           "load": true,
           "tags": ["latest"]
         }
