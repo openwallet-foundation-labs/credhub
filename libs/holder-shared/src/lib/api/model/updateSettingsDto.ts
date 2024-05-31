@@ -13,5 +13,6 @@
 
 export interface UpdateSettingsDto { 
     auto: boolean;
+    darkTheme: boolean;
 }
 

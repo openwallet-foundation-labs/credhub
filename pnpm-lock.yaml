@@ -34,9 +34,6 @@ dependencies:
   '@angular/material':
     specifier: 18.0.0
     version: 18.0.0(@angular/animations@18.0.0)(@angular/cdk@18.0.0)(@angular/common@18.0.0)(@angular/core@18.0.0)(@angular/forms@18.0.0)(@angular/platform-browser@18.0.0)(rxjs@7.8.1)
-  '@angular/material-experimental':
-    specifier: ^18.0.0
-    version: 18.0.0(@angular/animations@18.0.0)(@angular/cdk@18.0.0)(@angular/common@18.0.0)(@angular/core@18.0.0)(@angular/forms@18.0.0)(@angular/material@18.0.0)(@angular/platform-browser@18.0.0)
   '@angular/platform-browser':
     specifier: 18.0.0
     version: 18.0.0(@angular/animations@18.0.0)(@angular/common@18.0.0)(@angular/core@18.0.0)
@@ -884,75 +881,6 @@ packages:
     resolution: {integrity: sha512-L504d6ca/uExGc58gTSi0T6c1nibM7zGNKL4iWVsB2uS1Ic8B/JsKsoxtYKwBuPgcgDbyD5QhXHOR4yJORIK6g==}
     engines: {node: ^18.13.0 || >=20.9.0}
     dev: true
-
-  /@angular/material-experimental@18.0.0(@angular/animations@18.0.0)(@angular/cdk@18.0.0)(@angular/common@18.0.0)(@angular/core@18.0.0)(@angular/forms@18.0.0)(@angular/material@18.0.0)(@angular/platform-browser@18.0.0):
-    resolution: {integrity: sha512-5JFMKHXanX5bDBRNr7iLWG6DwjUzrWs3pf8Qg0pJIfGGFdU1UHtgFkSE/h1rob4opUbPI0pOGW3v/N81MnyDiw==}
-    peerDependencies:
-      '@angular/animations': ^18.0.0 || ^19.0.0
-      '@angular/cdk': 18.0.0
-      '@angular/common': ^18.0.0 || ^19.0.0
-      '@angular/core': ^18.0.0 || ^19.0.0
-      '@angular/forms': ^18.0.0 || ^19.0.0
-      '@angular/material': 18.0.0
-      '@angular/platform-browser': ^18.0.0 || ^19.0.0
-    dependencies:
-      '@angular/animations': 18.0.0(@angular/core@18.0.0)
-      '@angular/cdk': 18.0.0(@angular/common@18.0.0)(@angular/core@18.0.0)(rxjs@7.8.1)
-      '@angular/common': 18.0.0(@angular/core@18.0.0)(rxjs@7.8.1)
-      '@angular/core': 18.0.0(rxjs@7.8.1)(zone.js@0.14.5)
-      '@angular/forms': 18.0.0(@angular/common@18.0.0)(@angular/core@18.0.0)(@angular/platform-browser@18.0.0)(rxjs@7.8.1)
-      '@angular/material': 18.0.0(@angular/animations@18.0.0)(@angular/cdk@18.0.0)(@angular/common@18.0.0)(@angular/core@18.0.0)(@angular/forms@18.0.0)(@angular/platform-browser@18.0.0)(rxjs@7.8.1)
-      '@angular/platform-browser': 18.0.0(@angular/animations@18.0.0)(@angular/common@18.0.0)(@angular/core@18.0.0)
-      '@material/animation': 15.0.0-canary.7f224ddd4.0
-      '@material/auto-init': 15.0.0-canary.7f224ddd4.0
-      '@material/banner': 15.0.0-canary.7f224ddd4.0
-      '@material/base': 15.0.0-canary.7f224ddd4.0
-      '@material/button': 15.0.0-canary.7f224ddd4.0
-      '@material/card': 15.0.0-canary.7f224ddd4.0
-      '@material/checkbox': 15.0.0-canary.7f224ddd4.0
-      '@material/chips': 15.0.0-canary.7f224ddd4.0
-      '@material/circular-progress': 15.0.0-canary.7f224ddd4.0
-      '@material/data-table': 15.0.0-canary.7f224ddd4.0
-      '@material/density': 15.0.0-canary.7f224ddd4.0
-      '@material/dialog': 15.0.0-canary.7f224ddd4.0
-      '@material/dom': 15.0.0-canary.7f224ddd4.0
-      '@material/drawer': 15.0.0-canary.7f224ddd4.0
-      '@material/elevation': 15.0.0-canary.7f224ddd4.0
-      '@material/fab': 15.0.0-canary.7f224ddd4.0
-      '@material/feature-targeting': 15.0.0-canary.7f224ddd4.0
-      '@material/floating-label': 15.0.0-canary.7f224ddd4.0
-      '@material/form-field': 15.0.0-canary.7f224ddd4.0
-      '@material/icon-button': 15.0.0-canary.7f224ddd4.0
-      '@material/image-list': 15.0.0-canary.7f224ddd4.0
-      '@material/layout-grid': 15.0.0-canary.7f224ddd4.0
-      '@material/line-ripple': 15.0.0-canary.7f224ddd4.0
-      '@material/linear-progress': 15.0.0-canary.7f224ddd4.0
-      '@material/list': 15.0.0-canary.7f224ddd4.0
-      '@material/menu': 15.0.0-canary.7f224ddd4.0
-      '@material/menu-surface': 15.0.0-canary.7f224ddd4.0
-      '@material/notched-outline': 15.0.0-canary.7f224ddd4.0
-      '@material/radio': 15.0.0-canary.7f224ddd4.0
-      '@material/ripple': 15.0.0-canary.7f224ddd4.0
-      '@material/rtl': 15.0.0-canary.7f224ddd4.0
-      '@material/segmented-button': 15.0.0-canary.7f224ddd4.0
-      '@material/select': 15.0.0-canary.7f224ddd4.0
-      '@material/shape': 15.0.0-canary.7f224ddd4.0
-      '@material/slider': 15.0.0-canary.7f224ddd4.0
-      '@material/snackbar': 15.0.0-canary.7f224ddd4.0
-      '@material/switch': 15.0.0-canary.7f224ddd4.0
-      '@material/tab': 15.0.0-canary.7f224ddd4.0
-      '@material/tab-bar': 15.0.0-canary.7f224ddd4.0
-      '@material/tab-indicator': 15.0.0-canary.7f224ddd4.0
-      '@material/tab-scroller': 15.0.0-canary.7f224ddd4.0
-      '@material/textfield': 15.0.0-canary.7f224ddd4.0
-      '@material/theme': 15.0.0-canary.7f224ddd4.0
-      '@material/tokens': 15.0.0-canary.7f224ddd4.0
-      '@material/tooltip': 15.0.0-canary.7f224ddd4.0
-      '@material/top-app-bar': 15.0.0-canary.7f224ddd4.0
-      '@material/touch-target': 15.0.0-canary.7f224ddd4.0
-      '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
-    dev: false
 
   /@angular/material@18.0.0(@angular/animations@18.0.0)(@angular/cdk@18.0.0)(@angular/common@18.0.0)(@angular/core@18.0.0)(@angular/forms@18.0.0)(@angular/platform-browser@18.0.0)(rxjs@7.8.1):
     resolution: {integrity: sha512-4WfMcr4cX3cF7dKz+cXf9YIvhWOJGTP24rbMF5C6eC5K20IK6zgA//Qn0VSTwZkm54Tu9C7kF+CfNLeLy6i5uQ==}

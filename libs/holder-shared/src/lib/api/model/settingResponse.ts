@@ -13,5 +13,6 @@
 
 export interface SettingResponse { 
     auto: boolean;
+    darkTheme: boolean;
 }
 
