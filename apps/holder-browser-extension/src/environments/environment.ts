@@ -9,9 +9,9 @@ export declare namespace globalThis {
 }
 
 export const environment = {
-  backendUrl: 'http://localhost:3000',
-  keycloakHost: 'http://localhost:8080',
-  keycloakClient: 'browser',
+  backendUrl: 'https://backend.credhub.eu',
+  keycloakHost: 'http://auth.credhub.eu',
+  keycloakClient: 'wallet',
   keycloakRealm: 'wallet',
 };
 
