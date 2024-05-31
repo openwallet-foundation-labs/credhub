@@ -11,7 +11,7 @@ export declare namespace globalThis {
 export const environment = {
   backendUrl: 'http://localhost:3000',
   keycloakHost: 'http://localhost:8080',
-  keycloakClient: 'browser',
+  keycloakClient: 'wallet',
   keycloakRealm: 'wallet',
 };
 

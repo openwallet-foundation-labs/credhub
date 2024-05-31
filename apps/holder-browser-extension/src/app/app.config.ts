@@ -1,7 +1,7 @@
 import { type ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import {} from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { provideOAuthClient } from 'angular-oauth2-oidc';
@@ -35,6 +35,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     provideAnimations(),
+    provideHttpClient(),
     provideOAuthClient(),
     importProvidersFrom(ApiModule),
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true } },
