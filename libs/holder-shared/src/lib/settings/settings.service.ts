@@ -14,13 +14,13 @@ export class SettingsService {
     ).then((res) => res.auto);
   }
 
-  getDarkTheme() {
+  private getDarkTheme() {
     return firstValueFrom(
       this.settingsService.settingsControllerGetSettings()
     ).then((res) => res.darkTheme);
   }
 
-  setTheme() {
+  setThemeToApplication() {
     this.getDarkTheme().then((darkTheme) => {
       if (darkTheme) {
         document.body.classList.add('dark-theme');

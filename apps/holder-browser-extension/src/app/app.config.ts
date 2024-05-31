@@ -10,25 +10,9 @@ import {
   ApiModule,
   Configuration,
   AuthServiceInterface,
-} from '@my-wallet/-holder-shared';
+} from '@my-wallet/holder-shared';
 import { AuthService } from './auth/auth.service';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
-
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export declare namespace globalThis {
-  let token: string;
-}
-
-function getConfiguration() {
-  return new Configuration({
-    //TODO: the basepath is static, therefore we can not set it during the login process.
-    basePath: environment.backendUrl,
-    credentials: {
-      // we fetch the token via globalThis since we can not access it via the chrome.storage API since it's async.
-      oauth2: () => globalThis.token,
-    },
-  });
-}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -44,8 +28,18 @@ export const appConfig: ApplicationConfig = {
       useClass: AuthService,
     },
     {
+      //TODO: maybe instead of a factory, we can use a class where we inject a provider to fetch the token.
       provide: Configuration,
-      useFactory: getConfiguration,
+      useFactory: (authService: AuthService) =>
+        new Configuration({
+          //TODO: the basepath is static, therefore we can not set it during the login process.
+          basePath: environment.backendUrl,
+          credentials: {
+            oauth2: authService.getToken.bind(authService),
+          },
+        }),
+      deps: [AuthService],
+      multi: false,
     },
   ],
 };

@@ -9,17 +9,8 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { SettingsApiService } from '../api';
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export declare namespace globalThis {
-  let environment: {
-    backendUrl: string;
-    keycloakHost: string;
-    keycloakClient: string;
-    keycloakRealm: string;
-  };
-}
-
 export abstract class AuthServiceInterface {
+  abstract getSettingsLink(): string;
   abstract logout(): void;
 }
 
@@ -50,7 +41,7 @@ export class SettingsComponent implements OnInit {
       auto: new FormControl(false),
       darkTheme: new FormControl(false),
     });
-    this.keycloakLink = `${globalThis.environment.keycloakHost}/realms/${globalThis.environment.keycloakRealm}/account`;
+    this.keycloakLink = this.authService.getSettingsLink();
   }
 
   async ngOnInit(): Promise<void> {

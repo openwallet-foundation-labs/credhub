@@ -53,7 +53,13 @@
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
-          "watch": true
+          "watch": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/holder-browser-extension/src/environments/environment.ts",
+              "with": "apps/holder-browser-extension/src/environments/environment.development.ts"
+            }
+          ]
         }
       },
       "defaultConfiguration": "production"

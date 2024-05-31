@@ -7,7 +7,7 @@ import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { CheckForUpdatesService } from './check-for-updates.service';
-import { SettingsService } from 'libs/holder-shared/src/lib/settings/settings.service';
+import { SettingsService } from '@my-wallet/holder-shared';
 
 @Component({
   selector: 'app-root',
@@ -28,12 +28,11 @@ import { SettingsService } from 'libs/holder-shared/src/lib/settings/settings.se
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  darkTheme = false;
   constructor(
     private checkForUpdatesService: CheckForUpdatesService,
     private settingsService: SettingsService
   ) {}
   async ngOnInit(): Promise<void> {
-    this.settingsService.setTheme();
+    this.settingsService.setThemeToApplication();
   }
 }

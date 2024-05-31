@@ -1,18 +1,17 @@
 import { inject } from '@angular/core';
 import { CanActivateFn } from '@angular/router';
 import { AuthService } from './auth.service';
-
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export declare namespace globalThis {
-  let token: string;
-}
+import { SettingsService } from '@my-wallet/holder-shared';
 
 export const authGuard: CanActivateFn = async () => {
   const authService: AuthService = inject(AuthService);
+  const settingsService = inject(SettingsService);
   return authService
     .isAuthenticated()
     .then(async () => {
-      globalThis.token = await authService.getToken();
+      await authService.setToken();
+      //set the theme here. We can not do this in the app.component because it gets loaded before the login process is finished.
+      settingsService.setThemeToApplication();
       return true;
     })
     .catch(() => {

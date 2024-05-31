@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { decodeJwt } from 'jose';
-import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { AuthServiceInterface } from '@my-wallet/holder-shared';
 
 interface Storage {
   access_token: string;
@@ -13,10 +13,22 @@ interface Storage {
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class AuthService implements AuthServiceInterface {
   changed: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  constructor(private router: Router) {}
+  private token?: string;
+
+  getToken() {
+    return this.token as string;
+  }
+
+  /**
+   * Returns the settings link to manage authentication.
+   * @returns
+   */
+  getSettingsLink(): string {
+    return `${environment.keycloakHost}/realms/${environment.keycloakRealm}/account`;
+  }
 
   /**
    * Checks if the access token exists and if it is expired
@@ -40,11 +52,12 @@ export class AuthService {
    * Gets the access token from the storage
    * @returns
    */
-  getToken(): Promise<string> {
+  setToken(): Promise<void> {
     return new Promise((resolve) => {
       chrome.storage.local.get('access_token', (values) => {
         const token = (values as Storage).access_token;
-        resolve(token);
+        this.token = token;
+        resolve();
       });
     });
   }
@@ -54,6 +67,7 @@ export class AuthService {
    */
   async login() {
     if (typeof chrome.identity !== 'undefined') {
+      console.log(this.getAuthUrl());
       await chrome.identity
         .launchWebAuthFlow({
           interactive: true,
@@ -169,7 +183,9 @@ export class AuthService {
           `${environment.keycloakHost}/realms/${environment.keycloakRealm}/protocol/openid-connect/logout` +
           `?client_id=${environment.keycloakClient}` +
           `&id_token_hint=${idToken}` +
-          `&post_logout_redirect_uri=${encodeURIComponent(chrome.identity.getRedirectURL(''))}`;
+          `&post_logout_redirect_uri=${encodeURIComponent(
+            chrome.identity.getRedirectURL('')
+          )}`;
         resolve(logoutUrl);
       });
     });

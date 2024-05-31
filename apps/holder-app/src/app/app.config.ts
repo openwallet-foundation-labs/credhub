@@ -16,7 +16,7 @@ import {
   ApiModule,
   Configuration,
   AuthServiceInterface,
-} from '@my-wallet/-holder-shared';
+} from '@my-wallet/holder-shared';
 import { AuthService } from './auth/auth.service';
 import { provideServiceWorker } from '@angular/service-worker';
 
