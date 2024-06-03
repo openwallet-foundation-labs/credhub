@@ -100,7 +100,6 @@ services:
       - DB_TYPE=sqlite
       - DB_NAME=data/db.sqlite
       - KM_FOLDER=data
-      - CREDENTIALS_FOLDER=templates
     volumes:
       - issuer_tmp:/home/node/app/data:rw
       - ./config/issuer-backend:/home/node/app/templates
