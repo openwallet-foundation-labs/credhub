@@ -34,7 +34,6 @@ $dark-theme: mat.define-theme((
 }
 
 html {
-  // Apply the dark theme by default
   @include mat.all-component-themes($light-theme);
   @include background($light-theme);
   .dark-theme {
