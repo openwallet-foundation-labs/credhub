@@ -33,7 +33,7 @@
           "apps/verifier-frontend/src/styles.scss"
         ],
         "scripts": [],
-        "allowedCommonJsDependencies": "qrcode"
+        "allowedCommonJsDependencies": ["qrcode"]
       },
       "configurations": {
         "production": {
