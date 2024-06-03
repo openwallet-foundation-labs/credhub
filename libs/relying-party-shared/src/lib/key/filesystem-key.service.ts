@@ -13,7 +13,6 @@ import { KeyService } from './key.service';
 import { Injectable } from '@nestjs/common';
 import { Signer } from '@sd-jwt/types';
 import { ConfigService } from '@nestjs/config';
-import { join } from 'node:path';
 
 //TODO: implement a vault integration like in the backend
 /**
