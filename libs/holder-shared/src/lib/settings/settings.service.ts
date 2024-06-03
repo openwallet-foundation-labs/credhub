@@ -13,4 +13,20 @@ export class SettingsService {
       this.settingsService.settingsControllerGetSettings()
     ).then((res) => res.auto);
   }
+
+  private getDarkTheme() {
+    return firstValueFrom(
+      this.settingsService.settingsControllerGetSettings()
+    ).then((res) => res.darkTheme);
+  }
+
+  setThemeToApplication() {
+    this.getDarkTheme().then((darkTheme) => {
+      if (darkTheme) {
+        document.body.classList.add('dark-theme');
+      } else {
+        document.body.classList.remove('dark-theme');
+      }
+    });
+  }
 }

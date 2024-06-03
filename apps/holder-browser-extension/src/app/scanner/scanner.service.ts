@@ -5,10 +5,7 @@ import {
   CredentialsSupportedDisplay,
   MetadataDisplay,
 } from '@sphereon/oid4vci-common';
-import {
-  Oid4vciApiService,
-  Oid4vcpApiService,
-} from '@my-wallet/-holder-shared';
+import { Oid4vciApiService, Oid4vcpApiService } from '@my-wallet/holder-shared';
 import { firstValueFrom } from 'rxjs';
 
 export interface ResultScan {

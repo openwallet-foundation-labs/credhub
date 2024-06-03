@@ -8,7 +8,7 @@ import {
   HistoryListComponent,
   HistoryShowComponent,
   SettingsComponent,
-} from '@my-wallet/-holder-shared';
+} from '@my-wallet/holder-shared';
 
 export const routes: Routes = [
   {

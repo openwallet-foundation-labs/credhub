@@ -6,7 +6,8 @@ import { OAuthService } from 'angular-oauth2-oidc';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { authConfig } from '../authConfig';
-import { AuthServiceInterface } from '@my-wallet/-holder-shared';
+import { AuthServiceInterface } from '@my-wallet/holder-shared';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService implements AuthServiceInterface {
@@ -38,6 +39,10 @@ export class AuthService implements AuthServiceInterface {
 
   constructor(private oauthService: OAuthService, private router: Router) {
     this.init();
+  }
+
+  getSettingsLink(): string {
+    return `${environment.keycloakHost}/realms/${environment.keycloakRealm}/account`;
   }
 
   private init() {
