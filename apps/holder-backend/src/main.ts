@@ -31,7 +31,7 @@ async function bootstrap() {
       persistAuthorization: true,
       initOAuth: {
         clientId: process.env.KEYCLOAK_CLIENT_ID,
-        clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
+        // clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
         realm: process.env.KEYCLOAK_REALM,
         scopes: [],
       },

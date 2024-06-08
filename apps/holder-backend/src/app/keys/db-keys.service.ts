@@ -20,6 +20,8 @@ import { ProofRequest } from './dto/proof-request.dto';
 import { SignRequest } from './dto/sign-request.dto';
 import { Key } from './entities/key.entity';
 import { KeysService } from './keys.service';
+import { OnEvent } from '@nestjs/event-emitter';
+import { USER_DELETED_EVENT, UserDeletedEvent } from '../auth/auth.service';
 
 @Injectable()
 export class DbKeysService extends KeysService {
@@ -118,5 +120,14 @@ export class DbKeysService extends KeysService {
     return new SignJWT({ ...kbJwt.payload, aud })
       .setProtectedHeader({ typ: kbJwt.header.typ, alg: 'ES256' })
       .sign(jwk);
+  }
+
+  /**
+   * Handle the user deleted event. This will remove all keys of a user.
+   * @param payload
+   */
+  @OnEvent(USER_DELETED_EVENT)
+  handleUserDeletedEvent(payload: UserDeletedEvent) {
+    this.keyRepository.delete({ user: payload.id });
   }
 }

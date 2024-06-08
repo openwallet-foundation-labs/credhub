@@ -214,7 +214,6 @@ export class AuthService implements AuthServiceInterface {
     return this.oauthService.getIdToken();
   }
   public get logoutUrl() {
-    alert(this.oauthService.logoutUrl);
     return this.oauthService.logoutUrl;
   }
 }

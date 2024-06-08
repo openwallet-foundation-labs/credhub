@@ -11,11 +11,18 @@ import {
   RoleGuard,
   TokenValidation,
 } from 'nest-keycloak-connect';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import {
+  OIDC_CLIENT_SCHEMA,
+  OidcClientModule,
+} from './oidc-client/oidcclient.module';
 
 export const KEYCLOAK_VALIDATION_SCHEMA = {
+  //TODO: rename to oidc auth url to be independant from keycloak
   KEYCLOAK_AUTH_URL: Joi.string().required(),
   KEYCLOAK_REALM: Joi.string().required(),
-  KEYCLOAK_CLIENT_ID: Joi.string().required(),
+  ...OIDC_CLIENT_SCHEMA,
 };
 
 @Global()
@@ -33,8 +40,9 @@ export const KEYCLOAK_VALIDATION_SCHEMA = {
           //TODO: set this to online
           tokenValidation: TokenValidation.OFFLINE,
           //TODO: maybe setting verifyTokenAudience could work with the localhost problem
-        }) as KeycloakConnectOptions,
+        } as KeycloakConnectOptions),
     }),
+    OidcClientModule.forRoot(),
   ],
   providers: [
     {
@@ -49,7 +57,9 @@ export const KEYCLOAK_VALIDATION_SCHEMA = {
       provide: APP_GUARD,
       useClass: RoleGuard,
     },
+    AuthService,
   ],
   exports: [KeycloakConnectModule],
+  controllers: [AuthController],
 })
 export class AuthModule {}

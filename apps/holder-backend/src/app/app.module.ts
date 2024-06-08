@@ -10,6 +10,7 @@ import { HistoryModule } from './history/history.module';
 import { AppController } from './app.controller';
 import { SettingsModule } from './settings/settings.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       }),
     }),
     ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
     AuthModule,
     DbModule,
     KeysModule.forRoot(),

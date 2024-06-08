@@ -145,6 +145,7 @@ services:
   holder-backend:
     image: ghcr.io/openwallet-foundation-labs/credhub/holder-backend
     env_file:
+      # TODO: variables should be passed not by the referenced file, but one by one. So we make sure a variable that was not designed to be used for this service is passed to it.
       - .env
     ports:
       - 3000:3000

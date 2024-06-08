@@ -8,6 +8,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { CheckForUpdatesService } from './check-for-updates.service';
 import { SettingsService } from '@my-wallet/holder-shared';
+import { AuthService } from './auth/auth.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -28,11 +30,21 @@ import { SettingsService } from '@my-wallet/holder-shared';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
+  loggedIn = false;
   constructor(
     private checkForUpdatesService: CheckForUpdatesService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private authService: AuthService
   ) {}
   async ngOnInit(): Promise<void> {
-    this.settingsService.setThemeToApplication();
+    const loggedIn = await firstValueFrom(
+      this.authService.canActivateProtectedRoutes$
+    );
+    if (loggedIn) {
+      this.loggedIn = true;
+      this.settingsService.setThemeToApplication();
+    } else {
+      document.getElementById('content')?.removeAttribute('class');
+    }
   }
 }
