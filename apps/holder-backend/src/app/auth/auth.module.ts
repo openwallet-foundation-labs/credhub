@@ -19,7 +19,6 @@ import {
 } from './oidc-client/oidcclient.module';
 
 export const OIDC_VALIDATION_SCHEMA = {
-  //TODO: rename to oidc auth url to be independant from keycloak
   OIDC_AUTH_URL: Joi.string().required(),
   OIDC_REALM: Joi.string().required(),
   ...OIDC_CLIENT_SCHEMA,
@@ -34,6 +33,7 @@ export const OIDC_VALIDATION_SCHEMA = {
       useFactory: (configService: ConfigService) =>
         ({
           authServerUrl: configService.get('OIDC_AUTH_URL'),
+          //when referencing the realm, it is not possible to use another oidc than keycloak for now
           realm: configService.get('OIDC_REALM'),
           clientId: configService.get('OIDC_PUBLIC_CLIENT_ID'),
           policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
