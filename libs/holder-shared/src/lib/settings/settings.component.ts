@@ -5,9 +5,10 @@ import { SettingsService } from './settings.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatListModule } from '@angular/material/list';
-import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { SettingsApiService } from '../api';
+import { AuthApiService, SettingsApiService } from '../api';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { LicensesComponent } from './licenses/licenses.component';
 
 export abstract class AuthServiceInterface {
   abstract getSettingsLink(): string;
@@ -25,6 +26,7 @@ export abstract class AuthServiceInterface {
     ReactiveFormsModule,
     FlexLayoutModule,
     MatListModule,
+    MatDialogModule,
   ],
 })
 export class SettingsComponent implements OnInit {
@@ -33,9 +35,10 @@ export class SettingsComponent implements OnInit {
 
   constructor(
     public authService: AuthServiceInterface,
+    private authApiService: AuthApiService,
     public settingsService: SettingsService,
-    private httpClient: HttpClient,
-    private settingsApiService: SettingsApiService
+    private settingsApiService: SettingsApiService,
+    private matDialog: MatDialog
   ) {
     this.form = new FormGroup({
       auto: new FormControl(false),
@@ -66,11 +69,13 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  async deleteAccount() {
+    if (!confirm('Are you sure you want to delete your account?')) return;
+    await firstValueFrom(this.authApiService.authControllerDeleteAccount());
+    this.authService.logout();
+  }
+
   async showLicense() {
-    const licencse = await firstValueFrom(
-      this.httpClient.get('/3rdpartylicenses.txt', { responseType: 'text' })
-    );
-    //TODO: print this in a dialog since alert is limited to the size
-    alert(licencse);
+    this.matDialog.open(LicensesComponent);
   }
 }

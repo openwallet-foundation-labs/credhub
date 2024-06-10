@@ -9,6 +9,7 @@ import {
   HistoryShowComponent,
   SettingsComponent,
 } from '@my-wallet/holder-shared';
+import { guestGuard } from './auth/guest.guard';
 
 export const routes: Routes = [
   {
@@ -48,6 +49,7 @@ export const routes: Routes = [
   },
   {
     path: 'login',
+    canActivate: [guestGuard],
     component: LoginComponent,
   },
 ];

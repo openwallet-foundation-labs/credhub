@@ -28,11 +28,10 @@ export const appConfig: ApplicationConfig = {
       useClass: AuthService,
     },
     {
-      //TODO: maybe instead of a factory, we can use a class where we inject a provider to fetch the token.
       provide: Configuration,
       useFactory: (authService: AuthService) =>
         new Configuration({
-          //TODO: the basepath is static, therefore we can not set it during the login process.
+          //TODO: the basepath is static, therefore we can not set it during the login process. We could update the config so the baseBath will be fetched dynamically.
           basePath: environment.backendUrl,
           credentials: {
             oauth2: authService.getToken.bind(authService),

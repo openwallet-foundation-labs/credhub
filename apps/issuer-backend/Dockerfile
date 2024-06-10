@@ -38,6 +38,9 @@ COPY --from=deps /home/node/app/node_modules ./node_modules
 COPY --from=deps /home/node/app/package.json ./package.json
 COPY --chown=node:node ${FOLDER} .
 
+# install curl
+RUN apk add --no-cache curl
+
 # create a folder for persisting data that can be mounted as a volume
 RUN mkdir -p ./data && chown -R node:node ./data
 

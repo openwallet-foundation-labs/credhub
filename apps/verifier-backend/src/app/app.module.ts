@@ -3,7 +3,11 @@ import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { VerifierModule } from './verifier/verifier.module';
-import { AuthModule, KeyModule } from '@my-wallet/relying-party-shared';
+import {
+  AuthModule,
+  KeyModule,
+  OIDC_VALIDATION_SCHEMA,
+} from '@my-wallet/relying-party-shared';
 
 @Module({
   imports: [
@@ -18,6 +22,7 @@ import { AuthModule, KeyModule } from '@my-wallet/relying-party-shared';
           .valid('development', 'production')
           .default('development'),
         CREDENTIALS_FOLDER: Joi.string().required(),
+        ...OIDC_VALIDATION_SCHEMA,
       }),
     }),
     VerifierModule,

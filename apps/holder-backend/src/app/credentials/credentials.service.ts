@@ -13,6 +13,8 @@ import { Credential, CredentialStatus } from './entities/credential.entity';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { digest } from '@sd-jwt/crypto-nodejs';
 import { CredentialResponse } from './dto/credential-response.dto';
+import { OnEvent } from '@nestjs/event-emitter';
+import { USER_DELETED_EVENT, UserDeletedEvent } from '../auth/auth.service';
 
 type DateKey = 'exp' | 'nbf';
 @Injectable()
@@ -138,5 +140,14 @@ export class CredentialsService {
         }
       );
     }
+  }
+
+  /**
+   * Handle the user deleted event. This will remove all credentials of a user.
+   * @param payload
+   */
+  @OnEvent(USER_DELETED_EVENT)
+  handleUserDeletedEvent(payload: UserDeletedEvent) {
+    this.credentialRepository.delete({ user: payload.id });
   }
 }

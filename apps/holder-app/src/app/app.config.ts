@@ -7,11 +7,14 @@ import {
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { HttpClientModule } from '@angular/common/http';
+import {
+  HttpClient,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { OAuthModuleConfig, provideOAuthClient } from 'angular-oauth2-oidc';
-import { environment } from '../environments/environment';
 import {
   ApiModule,
   Configuration,
@@ -19,37 +22,60 @@ import {
 } from '@my-wallet/holder-shared';
 import { AuthService } from './auth/auth.service';
 import { provideServiceWorker } from '@angular/service-worker';
-
-function authAppInitializerFactory(
-  authService: AuthService
-): () => Promise<void> {
-  return () => authService.runInitialLoginSequence();
-}
-
-const authModuleConfig: OAuthModuleConfig = {
-  resourceServer: {
-    allowedUrls: [environment.backendUrl],
-    sendAccessToken: true,
-  },
-};
+import { ConfigService } from './config.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideAnimations(),
     provideOAuthClient(),
-    importProvidersFrom(ApiModule, HttpClientModule),
+    provideHttpClient(withInterceptorsFromDi()),
+    importProvidersFrom(ApiModule),
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true } },
     {
       provide: APP_INITIALIZER,
-      useFactory: authAppInitializerFactory,
-      deps: [AuthService],
+      useFactory:
+        (
+          authService: AuthService,
+          configService: ConfigService,
+          httpClient: HttpClient
+        ) =>
+        async () => {
+          await configService.appConfigLoader(httpClient);
+          authService.init();
+          await authService.runInitialLoginSequence();
+        },
+      deps: [AuthService, ConfigService, HttpClient],
       multi: true,
     },
-    { provide: OAuthModuleConfig, useValue: authModuleConfig },
+    {
+      provide: OAuthModuleConfig,
+      useFactory: (configService: ConfigService) => {
+        return {
+          resourceServer: {
+            sendAccessToken: true,
+            customUrlValidation: (url: string) => {
+              // we need to ignore calls to assets to fetch the config file
+              if (url.startsWith('/assets')) return true;
+              return url.startsWith(configService.getConfig('backendUrl'));
+            },
+          },
+        };
+      },
+      deps: [ConfigService],
+      multi: false,
+    },
     {
       provide: Configuration,
-      useValue: new Configuration({ basePath: environment.backendUrl }),
+      useFactory: (configService: ConfigService, authService: AuthService) =>
+        new Configuration({
+          basePath: configService.getConfig('backendUrl'),
+          credentials: {
+            oauth2: () => authService.accessToken,
+          },
+        }),
+      deps: [ConfigService, AuthService],
+      multi: false,
     },
     {
       provide: AuthServiceInterface,

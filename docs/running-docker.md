@@ -1,12 +1,14 @@
 # Running Docker images
-To run the docker compose setup, copy the `.env.example` to `.env` in the root folder. Modify the values if required.
+To run the docker compose setup, copy the `.env.example` to `.env` in the root folder. The example file comes with an example configuration that should be changed when used in production.
+
+Most of the services are validating if the required environment variables are set, if not the process will exit with an error message.
 
 ## Building containers
 The containers are built via the tasks in each nx app like:
 ```bash
 nx run holder-app:container
 ```	
-To build multiple project at once, you can use the run many command:
+To build multiple projects at once, you can use the `run-many` command:
 ```bash
 nx run-many --target=container --all
 ```
@@ -17,8 +19,8 @@ By default the containers are built with the `latest` tag and will not be pushed
 The configuration of the pwa client is mounted from the `config/holder-frontend/config.js` file, this allows to change the endpoints to the different services without the need to recompile the app.
 
 ## Known limitations
-right now running it locally via docker can cause some problems since `localhost` is used to interact with some services. The web application want a JWT with the audience of `http://localhost:8080`, the keycloak instance. But the backendends that are running in docker communicate with the keycloak instance via `http://keycloak:8080`. This problem can be solved by
-- using a public available keycloak instance
+right now running it locally via docker can cause some problems since `localhost` is used to interact with some services. The web application want a JWT with the audience of `http://localhost:8080`, the keycloak instance. But the backends that are running in docker communicate with the keycloak instance via `http://keycloak:8080`. This problem can be solved by
+- using a public available keycloak instance (there are also proxy services to realize this locally)
 - running the backend services locally as a node application and not inside docker
 
 ## Vault

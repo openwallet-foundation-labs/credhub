@@ -1,0 +1,50 @@
+services:
+  db:
+    image: 'postgres:14.4'
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', '$DB_USERNAME']
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: $DB_USERNAME
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_HOST: $DB_HOST
+    # publish ports for debugging, not recommended for production
+    ports:
+      - '5432:5432'
+
+  holder-backend:
+    image: ghcr.io/openwallet-foundation-labs/credhub/holder-backend
+    ports:
+      - $BACKEND_PORT:3000
+    environment:
+      - OIDC_AUTH_URL=${OIDC_AUTH_URL}
+      - OIDC_REALM=${OIDC_REALM}
+      - OIDC_ADMIN_CLIENT_ID=${OIDC_ADMIN_CLIENT_ID}
+      - OIDC_ADMIN_CLIENT_SECRET=${OIDC_ADMIN_CLIENT_SECRET}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 2m
+
+  holder-frontend:
+    image: ghcr.io/openwallet-foundation-labs/credhub/holder-app
+    volumes:
+      - ./config/holder-frontend:/usr/share/nginx/html/assets/config
+    ports:
+      - $FRONTEND_PORT:80
+
+volumes:
+  db:

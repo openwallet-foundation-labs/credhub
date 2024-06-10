@@ -6,6 +6,8 @@ import { CompactSdJwtVc } from '@sphereon/ssi-types';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { digest } from '@sd-jwt/crypto-nodejs';
 import { HistoryResponse } from './dto/history-response.dto';
+import { OnEvent } from '@nestjs/event-emitter';
+import { USER_DELETED_EVENT, UserDeletedEvent } from '../auth/auth.service';
 
 @Injectable()
 export class HistoryService {
@@ -87,5 +89,14 @@ export class HistoryService {
 
   delete(sub: string) {
     return this.historyRepository.delete({ user: sub });
+  }
+
+  /**
+   * Handle the user deleted event. This will remove all history entries of a user.
+   * @param payload
+   */
+  @OnEvent(USER_DELETED_EVENT)
+  handleUserDeletedEvent(payload: UserDeletedEvent) {
+    this.historyRepository.delete({ user: payload.id });
   }
 }

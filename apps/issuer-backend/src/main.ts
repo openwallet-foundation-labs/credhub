@@ -18,8 +18,8 @@ async function bootstrap() {
       type: 'oauth2',
       flows: {
         clientCredentials: {
-          tokenUrl: `${process.env.KEYCLOAK_AUTH_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/token`,
-          authorizationUrl: `${process.env.KEYCLOAK_AUTH_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/auth`,
+          tokenUrl: `${process.env.OIDC_AUTH_URL}/realms/${process.env.OIDC_REALM}/protocol/openid-connect/token`,
+          authorizationUrl: `${process.env.OIDC_AUTH_URL}/realms/${process.env.OIDC_REALM}/protocol/openid-connect/auth`,
           scopes: {},
         },
       },
@@ -30,9 +30,9 @@ async function bootstrap() {
     swaggerOptions: {
       persistAuthorization: true,
       initOAuth: {
-        clientId: process.env.KEYCLOAK_CLIENT_ID,
-        clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
-        realm: process.env.KEYCLOAK_REALM,
+        clientId: process.env.OIDC_CLIENT_ID,
+        clientSecret: process.env.OIDC_CLIENT_SECRET,
+        realm: process.env.OIDC_REALM,
         scopes: [],
       },
     },

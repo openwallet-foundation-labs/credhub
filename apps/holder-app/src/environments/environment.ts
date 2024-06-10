@@ -2,7 +2,7 @@
 export declare namespace globalThis {
   let environment: {
     backendUrl: string;
-    keycloakHost: string;
+    oidcUrl: string;
     keycloakClient: string;
     keycloakRealm: string;
   };
@@ -12,13 +12,10 @@ export const environment = {
   get backendUrl() {
     return globalThis.environment?.backendUrl;
   },
-  get keycloakHost() {
-    return globalThis.environment?.keycloakHost;
+  get oidcUrl() {
+    return globalThis.environment?.oidcUrl;
   },
   get keycloakClient() {
     return globalThis.environment?.keycloakClient;
-  },
-  get keycloakRealm() {
-    return globalThis.environment?.keycloakRealm;
   },
 };

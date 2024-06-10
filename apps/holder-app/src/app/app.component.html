@@ -1,7 +1,11 @@
-<div class="content">
+<div id="content" class="content">
   <router-outlet></router-outlet>
 </div>
-<mat-toolbar fxLayout="row" fxLayoutAlign="space-between center">
+<mat-toolbar
+  fxLayout="row"
+  fxLayoutAlign="space-between center"
+  *ngIf="loggedIn"
+>
   <div fxLayout="column" fxLayoutAlign=" center">
     <a mat-fab routerLink="/scan" routerLinkActive="active-link"
       ><mat-icon>qr_code_scanner</mat-icon></a

@@ -1,3 +1,5 @@
+export * from './auth.service';
+import { AuthApiService } from './auth.service';
 export * from './credentials.service';
 import { CredentialsApiService } from './credentials.service';
 export * from './default.service';
@@ -10,4 +12,4 @@ export * from './oid4vcp.service';
 import { Oid4vcpApiService } from './oid4vcp.service';
 export * from './settings.service';
 import { SettingsApiService } from './settings.service';
-export const APIS = [CredentialsApiService, DefaultApiService, HistoryApiService, Oid4vciApiService, Oid4vcpApiService, SettingsApiService];
+export const APIS = [AuthApiService, CredentialsApiService, DefaultApiService, HistoryApiService, Oid4vciApiService, Oid4vcpApiService, SettingsApiService];

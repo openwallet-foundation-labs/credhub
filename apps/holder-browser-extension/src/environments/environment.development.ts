@@ -2,7 +2,7 @@
 export declare namespace globalThis {
   let environment: {
     backendUrl: string;
-    keycloakHost: string;
+    oidcUrl: string;
     keycloakClient: string;
     keycloakRealm: string;
   };
@@ -10,7 +10,7 @@ export declare namespace globalThis {
 
 export const environment = {
   backendUrl: 'http://localhost:3000',
-  keycloakHost: 'http://localhost:8080',
+  oidcUrl: 'http://host.docker.internal:8080',
   keycloakClient: 'wallet',
   keycloakRealm: 'wallet',
 };

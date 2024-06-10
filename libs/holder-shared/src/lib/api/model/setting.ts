@@ -12,7 +12,6 @@
 
 
 export interface Setting { 
-    user: string;
     auto: boolean;
     darkTheme: boolean;
 }

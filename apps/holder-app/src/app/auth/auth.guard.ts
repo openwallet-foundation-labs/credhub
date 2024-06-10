@@ -1,16 +1,21 @@
 import { inject } from '@angular/core';
-import { CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from './auth.service';
-import { firstValueFrom, tap } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 
 export const authGuard: CanActivateFn = async () => {
   const authService = inject(AuthService);
+  const router = inject(Router);
   return firstValueFrom(
     authService.canActivateProtectedRoutes$.pipe(
-      tap((x) => {
+      map(async (x) => {
         if (!x) {
-          authService.login();
+          const targetUrl = router.url;
+          // we will pass the target URL to the login page
+          router.navigateByUrl(`/login?targetUrl=${targetUrl}`);
+          return false;
         }
+        return true;
       })
     )
   );

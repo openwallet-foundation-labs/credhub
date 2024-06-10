@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
-import { AuthModule, KEYCLOAK_VALIDATION_SCHEMA } from './auth/auth.module';
+import { AuthModule, OIDC_VALIDATION_SCHEMA } from './auth/auth.module';
 import { CredentialsModule } from './credentials/credentials.module';
 import { DB_VALIDATION_SCHEMA, DbModule } from './db/db.module';
 import { KEY_VALIDATION_SCHEMA, KeysModule } from './keys/keys.module';
@@ -10,17 +10,19 @@ import { HistoryModule } from './history/history.module';
 import { AppController } from './app.controller';
 import { SettingsModule } from './settings/settings.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       validationSchema: Joi.object({
-        ...KEYCLOAK_VALIDATION_SCHEMA,
+        ...OIDC_VALIDATION_SCHEMA,
         ...KEY_VALIDATION_SCHEMA,
         ...DB_VALIDATION_SCHEMA,
       }),
     }),
     ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
     AuthModule,
     DbModule,
     KeysModule.forRoot(),

@@ -3,7 +3,7 @@
 
 ARG KEYCLOAK_VERSION
 
-FROM quay.io/keycloak/keycloak:$KEYCLOAK_VERSION as builder
+FROM quay.io/keycloak/keycloak:$KEYCLOAK_VERSION AS builder
 
 # Configure postgres database vendor
 ENV KC_DB=postgres
@@ -31,7 +31,7 @@ RUN sed -i '/disabledAlgorithms/ s/ SHA1,//' /etc/crypto-policies/back-ends/java
 USER keycloak
 
 # copy the default realm config
-COPY ./docker/realm.json /opt/keycloak/data/import/realm.json
+COPY ./realm.json /opt/keycloak/data/import/realm.json
 
 RUN /opt/keycloak/bin/kc.sh show-config
 

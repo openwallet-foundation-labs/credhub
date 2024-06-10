@@ -10,13 +10,7 @@ import {
 } from '@nestjs/common';
 import { IssuerService } from './issuer.service';
 import { SessionRequestDto } from './dto/session-request.dto';
-import {
-  ApiOAuth2,
-  ApiOkResponse,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'nest-keycloak-connect';
 import { SessionResponseDto } from './dto/session-response.dto';
 import { SessionStatus } from './dto/session-status.dto';

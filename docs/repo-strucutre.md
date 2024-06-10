@@ -4,7 +4,7 @@ The repository is structured as follows:
 - `.github` includes specific GitHub actions workflows.
 - `.vscode` includes specific settings for Visual Studio Code.
 - `apps` includes all applications.
-- `config` includes configuration files to run the docker containers. Each container has its own subfolder.
+- `deploys` includes deployment configurations for the different apps.
 - `docker` includes Dockerfile for specific dependencies like keycloak.
 - `docs` includes documentation for this repository.
 - `patches` includes patches for specific libraries.
