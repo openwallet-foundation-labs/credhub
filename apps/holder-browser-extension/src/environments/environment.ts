@@ -2,7 +2,7 @@
 export declare namespace globalThis {
   let environment: {
     backendUrl: string;
-    keycloakHost: string;
+    oidcUrl: string;
     keycloakClient: string;
     keycloakRealm: string;
   };
@@ -10,7 +10,7 @@ export declare namespace globalThis {
 
 export const environment = {
   backendUrl: 'https://backend.credhub.eu',
-  keycloakHost: 'http://auth.credhub.eu',
+  oidcUrl: 'http://auth.credhub.eu',
   keycloakClient: 'wallet',
   keycloakRealm: 'wallet',
 };

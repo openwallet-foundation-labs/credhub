@@ -27,7 +27,7 @@ export class AuthService implements AuthServiceInterface {
    * @returns
    */
   getSettingsLink(): string {
-    return `${environment.keycloakHost}/realms/${environment.keycloakRealm}/account`;
+    return `${environment.oidcUrl}/realms/${environment.keycloakRealm}/account`;
   }
 
   /**
@@ -112,7 +112,7 @@ export class AuthService implements AuthServiceInterface {
     const nonce = this.generateRandomString();
 
     const url = new URL(
-      `${environment.keycloakHost}/realms/${environment.keycloakRealm}/protocol/openid-connect/auth`
+      `${environment.oidcUrl}/realms/${environment.keycloakRealm}/protocol/openid-connect/auth`
     );
     const params = {
       client_id: environment.keycloakClient,
@@ -180,7 +180,7 @@ export class AuthService implements AuthServiceInterface {
       chrome.storage.local.get(['id_token'], (values) => {
         const idToken = (values as Storage).id_token;
         const logoutUrl =
-          `${environment.keycloakHost}/realms/${environment.keycloakRealm}/protocol/openid-connect/logout` +
+          `${environment.oidcUrl}/realms/${environment.keycloakRealm}/protocol/openid-connect/logout` +
           `?client_id=${environment.keycloakClient}` +
           `&id_token_hint=${idToken}` +
           `&post_logout_redirect_uri=${encodeURIComponent(

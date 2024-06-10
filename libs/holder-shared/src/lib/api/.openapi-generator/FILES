@@ -1,6 +1,7 @@
 README.md
 api.module.ts
 api/api.ts
+api/auth.service.ts
 api/credentials.service.ts
 api/default.service.ts
 api/history.service.ts

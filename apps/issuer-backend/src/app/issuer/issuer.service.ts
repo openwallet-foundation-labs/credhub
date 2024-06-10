@@ -81,6 +81,7 @@ export class IssuerService implements OnModuleInit {
     const sessionId = v4();
     try {
       const credential = this.issuerDataService.getCredential(credentialId);
+      console.log(credential);
       let exp: number | undefined;
       // we either use the passed exp value or the ttl of the credential. If none is set, the credential will not expire.
       if (values.exp) {

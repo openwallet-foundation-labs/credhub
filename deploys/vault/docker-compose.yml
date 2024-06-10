@@ -1,0 +1,14 @@
+services:
+  vault:
+    image: 'hashicorp/vault:1.16'
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'vault', 'status']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 2m
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: $VAULT_DEV_ROOT_TOKEN_ID
+    ports:
+      - '8200:8200'

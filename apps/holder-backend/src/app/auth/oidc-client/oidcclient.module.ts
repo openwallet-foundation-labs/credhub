@@ -8,12 +8,12 @@ export const oidcclientName = 'OidcClientService';
 
 export const OIDC_CLIENT_SCHEMA = {
   OIDC_TYPE: Joi.string().valid('keycloak').default('keycloak'),
-  KEYCLOAK_ADMIN_CLIENT_ID: Joi.string().when('OIDC_TYPE', {
+  OIDC_ADMIN_CLIENT_ID: Joi.string().when('OIDC_TYPE', {
     is: 'keycloak',
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
-  KEYCLOAK_ADMIN_CLIENT_SECRET: Joi.string().when('OIDC_TYPE', {
+  OIDC_ADMIN_CLIENT_SECRET: Joi.string().when('OIDC_TYPE', {
     is: 'keycloak',
     then: Joi.required(),
     otherwise: Joi.optional(),

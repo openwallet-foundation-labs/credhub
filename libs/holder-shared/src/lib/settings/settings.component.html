@@ -1,23 +1,34 @@
-<mat-list>
-  <form [formGroup]="form">
-    <mat-list-item>
-      <mat-slide-toggle formControlName="auto" labelPosition="before"
-        >Automate issuance and verify process</mat-slide-toggle
-      >
-    </mat-list-item>
-    <mat-list-item>
-      <mat-slide-toggle formControlName="darkTheme" labelPosition="before"
-        >Activate dark theme</mat-slide-toggle
-      >
-    </mat-list-item>
-  </form>
-  <mat-list-item>
-    <a [href]="keycloakLink" target="_blank">Update password</a>
-  </mat-list-item>
-  <mat-list-item>
-    <button mat-button (click)="authService.logout()">Logout</button>
-  </mat-list-item>
-  <mat-list-item>
-    <button mat-button (click)="showLicense()">Show license</button>
-  </mat-list-item>
-</mat-list>
+<h3>Settings</h3>
+<form [formGroup]="form">
+  <h4>Automation</h4>
+  <p>
+    Skip the acceptance step and let the wallet choose the first fitting
+    credential for issuance and presentation.
+  </p>
+  <mat-slide-toggle formControlName="auto" labelPosition="before"
+    >Automate process</mat-slide-toggle
+  >
+
+  <h4>Design</h4>
+  <p>The chosen design will be active on all your clients.</p>
+  <mat-slide-toggle formControlName="darkTheme" labelPosition="before"
+    >Dark theme</mat-slide-toggle
+  >
+</form>
+
+<h4>Update clients</h4>
+<p>You can manage your password, passkeys and registered clients here.</p>
+<a mat-stroked-button [href]="keycloakLink" target="_blank">Update login</a>
+
+<h4>Logout</h4>
+<p>If you want to logout of this client</p>
+<button mat-stroked-button (click)="authService.logout()">Logout</button>
+
+<h4>Delete account</h4>
+<p>Your account will be permanently deleted. All data will be lost.</p>
+<button mat-flat-button color="warn" (click)="deleteAccount()">
+  Delete account
+</button>
+
+<h4>Licenses</h4>
+<button mat-stroked-button (click)="showLicense()">Show license</button>

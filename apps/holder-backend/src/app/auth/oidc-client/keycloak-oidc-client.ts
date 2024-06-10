@@ -6,6 +6,9 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
+/**
+ * Keycloak OIDC client implementation
+ */
 @Injectable()
 export class KeycloakOIDCClient implements OIDCClient {
   private keycloakUrl: string;
@@ -17,10 +20,10 @@ export class KeycloakOIDCClient implements OIDCClient {
     private readonly httpService: HttpService,
     private readonly configService: ConfigService
   ) {
-    this.keycloakUrl = this.configService.get('KEYCLOAK_AUTH_URL');
-    this.realm = this.configService.get('KEYCLOAK_REALM');
-    this.clientId = this.configService.get('KEYCLOAK_ADMIN_CLIENT_ID');
-    this.clientSecret = this.configService.get('KEYCLOAK_ADMIN_CLIENT_SECRET');
+    this.keycloakUrl = this.configService.get('OIDC_AUTH_URL');
+    this.realm = this.configService.get('OIDC_REALM');
+    this.clientId = this.configService.get('OIDC_ADMIN_CLIENT_ID');
+    this.clientSecret = this.configService.get('OIDC_ADMIN_CLIENT_SECRET');
   }
 
   /**
@@ -45,36 +48,6 @@ export class KeycloakOIDCClient implements OIDCClient {
       throw new HttpException(
         'Failed to obtain access token',
         HttpStatus.UNAUTHORIZED
-      );
-    }
-  }
-
-  /**
-   * Get user ID from Keycloak
-   * @param username
-   * @param accessToken
-   * @returns
-   */
-  private async getUserId(
-    username: string,
-    accessToken: string
-  ): Promise<string> {
-    const userUrl = `${this.keycloakUrl}/admin/realms/${this.realm}/users?username=${username}`;
-
-    try {
-      const response = await firstValueFrom(
-        this.httpService.get(userUrl, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        })
-      );
-      if (response.data.length === 0) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
-      return response.data[0].id;
-    } catch (error) {
-      throw new HttpException(
-        'Failed to fetch user ID',
-        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -108,7 +81,7 @@ export class KeycloakOIDCClient implements OIDCClient {
   @OnEvent(USER_DELETED_EVENT)
   async userDeleteEvent(payload: UserDeletedEvent): Promise<void> {
     const accessToken = await this.getAccessToken();
-    const userId = await this.getUserId(payload.id, accessToken);
+    const userId = payload.id;
     await this.deleteUser(userId, accessToken);
   }
 }

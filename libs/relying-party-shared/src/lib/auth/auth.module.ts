@@ -12,10 +12,10 @@ import {
   TokenValidation,
 } from 'nest-keycloak-connect';
 
-export const KEYCLOAK_VALIDATION_SCHEMA = {
-  KEYCLOAK_AUTH_URL: Joi.string().required(),
-  KEYCLOAK_REALM: Joi.string().required(),
-  KEYCLOAK_CLIENT_ID: Joi.string().required(),
+export const OIDC_VALIDATION_SCHEMA = {
+  OIDC_AUTH_URL: Joi.string().required(),
+  OIDC_REALM: Joi.string().required(),
+  OIDC_CLIENT_ID: Joi.string().required(),
 };
 
 @Global()
@@ -26,14 +26,14 @@ export const KEYCLOAK_VALIDATION_SCHEMA = {
       inject: [ConfigService],
       useFactory: (configService: ConfigService) =>
         ({
-          authServerUrl: configService.get('KEYCLOAK_AUTH_URL'),
-          realm: configService.get('KEYCLOAK_REALM'),
-          clientId: configService.get('KEYCLOAK_CLIENT_ID'),
+          authServerUrl: configService.get('OIDC_AUTH_URL'),
+          realm: configService.get('OIDC_REALM'),
+          clientId: configService.get('OIDC_CLIENT_ID'),
           policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
           //TODO: set this to online
           tokenValidation: TokenValidation.OFFLINE,
           //TODO: maybe setting verifyTokenAudience could work with the localhost problem
-        }) as KeycloakConnectOptions,
+        } as KeycloakConnectOptions),
     }),
   ],
   providers: [

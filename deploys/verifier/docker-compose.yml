@@ -1,0 +1,31 @@
+services:
+  verifier-backend:
+    image: ghcr.io/openwallet-foundation-labs/credhub/verifier-backend
+    volumes:
+      - verifier:/home/node/app/data:rw
+      - ./config/verifier-backend:/home/node/app/templates
+    ports:
+      - $BACKEND_PORT:3000
+    environment:
+      - OIDC_AUTH_URL=$OIDC_AUTH_URL
+      - OIDC_REALM=$OIDC_REALM
+      - OIDC_CLIENT_ID=$OIDC_CLIENT_ID
+      - VERIFIER_BASE_URL=$VERIFIER_BASE_URL
+      - CREDENTIALS_FOLDER=$CREDENTIALS_FOLDER
+      - KM_FOLDER=$KM_FOLDER
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 2m
+
+  verifier-frontend:
+    image: ghcr.io/openwallet-foundation-labs/credhub/verifier-frontend
+    volumes:
+      - ./config/verifier-frontend/config.json:/usr/share/nginx/html/assets/config.json
+    ports:
+      - $FRONTEND_PORT:80
+
+volumes:
+  verifier:

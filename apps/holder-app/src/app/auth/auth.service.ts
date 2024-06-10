@@ -42,7 +42,7 @@ export class AuthService implements AuthServiceInterface {
   }
 
   getSettingsLink(): string {
-    return `${environment.keycloakHost}/realms/${environment.keycloakRealm}/account`;
+    return `${environment.oidcUrl}/account`;
   }
 
   private init() {

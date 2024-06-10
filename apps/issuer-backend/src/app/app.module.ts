@@ -6,6 +6,7 @@ import {
   AuthModule,
   KEY_VALIDATION_SCHEMA,
   KeyModule,
+  OIDC_VALIDATION_SCHEMA,
 } from '@my-wallet/relying-party-shared';
 import { DB_VALIDATION_SCHEMA, DbModule } from './db/db.module';
 import { CredentialsModule } from './credentials/credentials.module';
@@ -27,6 +28,7 @@ import { IssuerModule } from './issuer/issuer.module';
         CREDENTIALS_FOLDER: Joi.string().required(),
         ...DB_VALIDATION_SCHEMA,
         ...KEY_VALIDATION_SCHEMA,
+        ...OIDC_VALIDATION_SCHEMA,
       }),
     }),
     KeyModule.forRoot(),
