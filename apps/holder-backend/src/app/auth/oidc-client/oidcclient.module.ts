@@ -32,10 +32,7 @@ export class OidcClientModule {
           useFactory: (
             configService: ConfigService,
             httpService: HttpService
-          ) => {
-            // const oidcType = configService.get<string>('OIDC_TYPE');
-            return new KeycloakOIDCClient(httpService, configService);
-          },
+          ) => new KeycloakOIDCClient(httpService, configService),
           inject: [ConfigService, HttpService],
         },
       ],

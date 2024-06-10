@@ -40,9 +40,7 @@ export class AuthService implements AuthServiceInterface {
     private oauthService: OAuthService,
     private router: Router,
     private configService: ConfigService
-  ) {
-    // this.init();
-  }
+  ) {}
 
   getSettingsLink(): string {
     return `${this.configService.getConfig('oidcUrl')}/account`;
@@ -70,7 +68,7 @@ export class AuthService implements AuthServiceInterface {
       logoutUrl: `${this.configService.getConfig<string>(
         'oidcUrl'
       )}/protocol/openid-connect/logout`,
-      requireHttps: false,
+      requireHttps: this.configService.getConfig<boolean>('oidcRequireHttps'),
     };
   }
 
