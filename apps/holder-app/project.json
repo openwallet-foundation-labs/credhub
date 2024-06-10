@@ -10,7 +10,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "cp apps/holder-app/src/assets/config/config.example.js apps/holder-app/src/assets/config/config.js"
+          "cp apps/holder-app/src/assets/config/config.example.json apps/holder-app/src/assets/config/config.json"
         ]
       }
     },

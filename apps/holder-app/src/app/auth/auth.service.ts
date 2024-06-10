@@ -2,12 +2,11 @@
 
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { OAuthService } from 'angular-oauth2-oidc';
+import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { authConfig } from '../authConfig';
 import { AuthServiceInterface } from '@my-wallet/holder-shared';
-import { environment } from '../../environments/environment';
+import { ConfigService } from '../config.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService implements AuthServiceInterface {
@@ -37,15 +36,45 @@ export class AuthService implements AuthServiceInterface {
     this.router.navigateByUrl('/login');
   }
 
-  constructor(private oauthService: OAuthService, private router: Router) {
-    this.init();
+  constructor(
+    private oauthService: OAuthService,
+    private router: Router,
+    private configService: ConfigService
+  ) {
+    // this.init();
   }
 
   getSettingsLink(): string {
-    return `${environment.oidcUrl}/account`;
+    return `${this.configService.getConfig('oidcUrl')}/account`;
   }
 
-  private init() {
+  /**
+   * Returns the configuration for the OAuthService.
+   * @returns
+   */
+  private getConfig(): AuthConfig {
+    return {
+      issuer: this.configService.getConfig<string>('oidcUrl'),
+      clientId: this.configService.getConfig<string>('oidcClient'), // The "Auth Code + PKCE" client
+      responseType: 'code',
+      redirectUri: `${window.location.origin}/`,
+      silentRefreshRedirectUri: `${window.location.origin}/silent-refresh.html`,
+      scope: 'openid', // Ask offline_access to support refresh token refreshes
+      useSilentRefresh: false, // Needed for Code Flow to suggest using iframe-based refreshes
+      silentRefreshTimeout: 5000, // For faster testing
+      timeoutFactor: 0.25, // For faster testing
+      sessionChecksEnabled: true,
+      showDebugInformation: false, // Also requires enabling "Verbose" level in devtools
+      clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
+      nonceStateSeparator: 'semicolon', // Real semicolon gets mangled by Duende ID Server's URI encoding
+      logoutUrl: `${this.configService.getConfig<string>(
+        'oidcUrl'
+      )}/protocol/openid-connect/logout`,
+      requireHttps: false,
+    };
+  }
+
+  public init() {
     // Useful for debugging:
     // this.oauthService.events.subscribe((event) => {
     //   if (event instanceof OAuthErrorEvent) {
@@ -56,7 +85,7 @@ export class AuthService implements AuthServiceInterface {
     // });
 
     //TODO: allow the user to add a custom login url during the login process.
-    this.oauthService.configure(authConfig);
+    this.oauthService.configure(this.getConfig());
 
     // THe following cross-tab communication of fresh access tokens works usually in practice,
     // but if you need more robust handling the community has come up with ways to extend logic
@@ -101,6 +130,7 @@ export class AuthService implements AuthServiceInterface {
   }
 
   public runInitialLoginSequence(): Promise<void> {
+    this.init();
     // 0. LOAD CONFIG:
     // First we have to check to see how the IdServer is
     // currently configured:
@@ -162,10 +192,6 @@ export class AuthService implements AuthServiceInterface {
 
         .then(() => {
           this.isDoneLoadingSubject$.next(true);
-
-          // Check for the strings 'undefined' and 'null' just to be sure. Our current
-          // login(...) should never have this, but in case someone ever calls
-          // initImplicitFlow(undefined | null) this could happen.
           if (
             this.oauthService.state &&
             this.oauthService.state !== 'undefined' &&
