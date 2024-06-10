@@ -3,7 +3,7 @@
 
 ARG KEYCLOAK_VERSION
 
-FROM quay.io/keycloak/keycloak:$KEYCLOAK_VERSION as builder
+FROM quay.io/keycloak/keycloak:$KEYCLOAK_VERSION AS builder
 
 # Configure postgres database vendor
 ENV KC_DB=postgres
