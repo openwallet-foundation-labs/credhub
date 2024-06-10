@@ -22,4 +22,4 @@ When running the services via localhost, there is one problem to deal with. When
 To solve this problem in `Windows` and `MacOS`, you can use `host.docker.internal` instead of `localhost` inside the configs to reach the host machine.
 TODO: mention a workaround for Linux users.
 
-Going via `host.docker.internal` will trigger warnings since it requires a tls connection. When running in development mode, tls is disabled, but it is forced in the production build.
+Going via `host.docker.internal` will trigger warnings since it requires a tls connection. To allow `http` connections, you need to set the value `oidcAllowHttp` in the config.json to `true`.

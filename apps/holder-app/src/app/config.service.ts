@@ -6,7 +6,7 @@ class AppConfig {
   backendUrl!: string;
   oidcUrl!: string;
   oidcClient!: string;
-  oidcRequireHttps!: boolean;
+  oidcAllowHttp!: boolean;
 }
 
 @Injectable({

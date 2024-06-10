@@ -68,7 +68,8 @@ export class AuthService implements AuthServiceInterface {
       logoutUrl: `${this.configService.getConfig<string>(
         'oidcUrl'
       )}/protocol/openid-connect/logout`,
-      requireHttps: this.configService.getConfig<boolean>('oidcRequireHttps'),
+      requireHttps:
+        this.configService.getConfig<boolean>('oidcAllowHttp') !== true,
     };
   }
 
