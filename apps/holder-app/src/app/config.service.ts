@@ -30,7 +30,7 @@ export class ConfigService {
       (config) => this.loadConfig(config),
       (error) => {
         console.error('Error loading config file:', error);
-        return Promise.reject('Error loading config file');
+        return Promise.reject(new Error('Error loading config file'));
       }
     );
   }
