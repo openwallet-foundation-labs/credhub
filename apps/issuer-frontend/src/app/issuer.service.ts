@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config/config.service';
 import { firstValueFrom } from 'rxjs';
-import { SessionsApiService } from './api';
+import { SessionsApiService } from '@my-wallet/issuer-shared';
 
 export interface SessionCreationResponse {
   uri: string;

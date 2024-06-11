@@ -1,0 +1,28 @@
+{
+  "name": "issuer-shared",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/issuer-shared/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/issuer-shared/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "api": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx @openapitools/openapi-generator-cli generate -g typescript-angular --skip-validate-spec -i http://localhost:3001/api-json -o libs/issuer-shared/src/lib/api --additional-properties=supportsES6=true,enumPropertyNaming=original,serviceSuffix=ApiService"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+<mat-stepper [linear]="true">
+  <mat-step [stepControl]="issue">
+    <ng-template matStepLabel>Receive an ID</ng-template>
+    <div>Receive and ID</div>
+    <div>
+      <button
+        mat-flat-button
+        color="primary"
+        matStepperNext
+        [disabled]="issue.invalid"
+      >
+        Now present
+      </button>
+    </div>
+  </mat-step>
+  <mat-step [stepControl]="present">
+    <ng-template matStepLabel>Present the ID</ng-template>
+    <div>And now present it</div>
+  </mat-step>
+</mat-stepper>

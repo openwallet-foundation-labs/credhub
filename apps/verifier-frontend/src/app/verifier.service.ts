@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config/config.service';
 import { firstValueFrom } from 'rxjs';
-import { SiopApiService } from './api';
+import { SiopApiService } from '@my-wallet/verifier-shared';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VerifierService {
-  private accessToken?: string;
   loop?: NodeJS.Timer;
   status?: string;
   uri?: string;

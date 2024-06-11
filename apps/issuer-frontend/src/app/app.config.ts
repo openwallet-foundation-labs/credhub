@@ -6,7 +6,7 @@ import {
 import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { ConfigService } from './config/config.service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { ApiModule, Configuration } from './api';
+import { ApiModule, Configuration } from '@my-wallet/issuer-shared';
 
 export const appConfig: ApplicationConfig = {
   providers: [
