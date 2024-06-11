@@ -10,7 +10,7 @@ import {
   ApiModule,
   Configuration,
   AuthServiceInterface,
-} from '@my-wallet/holder-shared';
+} from '@credhub/holder-shared';
 import { AuthService } from './auth/auth.service';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 

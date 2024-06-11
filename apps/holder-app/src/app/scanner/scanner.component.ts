@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import {
   VerifyRequestComponent,
   IssuanceRequestComponent,
-} from '@my-wallet/holder-shared';
+} from '@credhub/holder-shared';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FlexLayoutModule } from 'ng-flex-layout';

@@ -8,7 +8,7 @@ import {
   HistoryListComponent,
   HistoryShowComponent,
   SettingsComponent,
-} from '@my-wallet/holder-shared';
+} from '@credhub/holder-shared';
 export const routes: Routes = [
   {
     path: '',

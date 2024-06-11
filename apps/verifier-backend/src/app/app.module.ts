@@ -7,7 +7,7 @@ import {
   AuthModule,
   KeyModule,
   OIDC_VALIDATION_SCHEMA,
-} from '@my-wallet/relying-party-shared';
+} from '@credhub/relying-party-shared';
 
 @Module({
   imports: [

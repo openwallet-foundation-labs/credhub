@@ -8,7 +8,7 @@ import {
   HistoryListComponent,
   HistoryShowComponent,
   SettingsComponent,
-} from '@my-wallet/holder-shared';
+} from '@credhub/holder-shared';
 import { guestGuard } from './auth/guest.guard';
 
 export const routes: Routes = [

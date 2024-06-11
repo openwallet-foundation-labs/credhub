@@ -11,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
 import {
   IssuanceRequestComponent,
   VerifyRequestComponent,
-} from '@my-wallet/holder-shared';
+} from '@credhub/holder-shared';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({

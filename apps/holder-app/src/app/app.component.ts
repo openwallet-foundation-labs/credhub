@@ -7,7 +7,7 @@ import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { CheckForUpdatesService } from './check-for-updates.service';
-import { SettingsService } from '@my-wallet/holder-shared';
+import { SettingsService } from '@credhub/holder-shared';
 import { AuthService } from './auth/auth.service';
 import { firstValueFrom } from 'rxjs';
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config/config.service';
 import { firstValueFrom } from 'rxjs';
-import { SiopApiService } from '@my-wallet/verifier-shared';
+import { SiopApiService } from '@credhub/verifier-shared';
 
 @Injectable({
   providedIn: 'root',

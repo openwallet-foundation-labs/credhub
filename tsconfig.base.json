@@ -16,12 +16,12 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@my-wallet/holder-shared": ["libs/holder-shared/src/index.ts"],
-      "@my-wallet/issuer-shared": ["libs/issuer-shared/src/index.ts"],
-      "@my-wallet/relying-party-shared": [
+      "@credhub/holder-shared": ["libs/holder-shared/src/index.ts"],
+      "@credhub/issuer-shared": ["libs/issuer-shared/src/index.ts"],
+      "@credhub/relying-party-shared": [
         "libs/relying-party-shared/src/index.ts"
       ],
-      "@my-wallet/verifier-shared": ["libs/verifier-shared/src/index.ts"]
+      "@credhub/verifier-shared": ["libs/verifier-shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
