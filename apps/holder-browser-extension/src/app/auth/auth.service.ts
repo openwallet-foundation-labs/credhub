@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { decodeJwt } from 'jose';
 import { BehaviorSubject } from 'rxjs';
-import { AuthServiceInterface } from '@my-wallet/holder-shared';
+import { AuthServiceInterface } from '@credhub/holder-shared';
 
 interface Storage {
   access_token: string;

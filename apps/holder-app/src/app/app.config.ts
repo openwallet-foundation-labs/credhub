@@ -19,7 +19,7 @@ import {
   ApiModule,
   Configuration,
   AuthServiceInterface,
-} from '@my-wallet/holder-shared';
+} from '@credhub/holder-shared';
 import { AuthService } from './auth/auth.service';
 import { provideServiceWorker } from '@angular/service-worker';
 import { ConfigService } from './config.service';

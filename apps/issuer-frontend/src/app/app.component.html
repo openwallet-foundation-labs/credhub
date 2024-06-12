@@ -14,5 +14,7 @@
       <mat-icon>content_copy</mat-icon>
     </button>
   </mat-form-field>
-  <p *ngIf="issuerService.status">Status: {{ issuerService.status }}</p>
+  <p *ngIf="issuerService.statusEvent.value">
+    Status: {{ issuerService.statusEvent.value }}
+  </p>
 </div>

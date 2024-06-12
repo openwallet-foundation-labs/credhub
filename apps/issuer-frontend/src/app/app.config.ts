@@ -4,16 +4,19 @@ import {
   importProvidersFrom,
 } from '@angular/core';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
-import { ConfigService } from './config/config.service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { ApiModule, Configuration } from './api';
+import { ApiModule, IssuerConfig, Configuration } from '@credhub/issuer-shared';
+import { ConfigService } from '@credhub/relying-party-frontend';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(),
     {
       provide: APP_INITIALIZER,
-      useFactory: ConfigService.appConfigLoader,
+      useFactory: (
+        configService: ConfigService<IssuerConfig>,
+        httpClient: HttpClient
+      ) => configService.appConfigLoader(httpClient),
       deps: [ConfigService, HttpClient],
       multi: true,
     },
@@ -22,7 +25,7 @@ export const appConfig: ApplicationConfig = {
     {
       provide: Configuration,
       deps: [ConfigService],
-      useFactory: (configService: ConfigService) => {
+      useFactory: (configService: ConfigService<IssuerConfig>) => {
         return new Configuration({
           basePath: configService.getConfig('issuerUrl'),
           credentials: {

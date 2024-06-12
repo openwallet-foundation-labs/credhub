@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn } from '@angular/router';
 import { AuthService } from './auth.service';
-import { SettingsService } from '@my-wallet/holder-shared';
+import { SettingsService } from '@credhub/holder-shared';
 
 export const authGuard: CanActivateFn = async () => {
   const authService: AuthService = inject(AuthService);

@@ -28,7 +28,7 @@ import { importJWK, jwtVerify } from 'jose';
 import { InMemoryRPSessionManager } from './session-manager';
 import { EventEmitter } from 'node:events';
 import { ConfigService } from '@nestjs/config';
-import { KeyService } from '@my-wallet/relying-party-shared';
+import { KeyService } from '@credhub/relying-party-shared';
 import { ResolverService } from '../resolver/resolver.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';

@@ -7,7 +7,7 @@ import {
   KEY_VALIDATION_SCHEMA,
   KeyModule,
   OIDC_VALIDATION_SCHEMA,
-} from '@my-wallet/relying-party-shared';
+} from '@credhub/relying-party-shared';
 import { DB_VALIDATION_SCHEMA, DbModule } from './db/db.module';
 import { CredentialsModule } from './credentials/credentials.module';
 import { StatusModule } from './status/status.module';

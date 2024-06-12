@@ -11,7 +11,7 @@ import {
 } from '@sd-jwt/jwt-status-list';
 import { JwtPayload } from '@sd-jwt/types';
 import { ConfigService } from '@nestjs/config';
-import { KeyService } from '@my-wallet/relying-party-shared';
+import { KeyService } from '@credhub/relying-party-shared';
 import { v4 } from 'uuid';
 import { SchedulerRegistry } from '@nestjs/schedule';
 
