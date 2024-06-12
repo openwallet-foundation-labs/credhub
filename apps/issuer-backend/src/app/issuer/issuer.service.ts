@@ -40,6 +40,7 @@ import { KeyService } from '@credhub/relying-party-shared';
 import { IssuerMetadata } from './types';
 import { StatusService } from '../status/status.service';
 import { SessionResponseDto } from './dto/session-response.dto';
+import { ConfigService } from '@nestjs/config';
 
 interface CredentialDataSupplierInput {
   credentialSubject: Record<string, unknown>;
@@ -55,7 +56,8 @@ export class IssuerService implements OnModuleInit {
     @Inject('KeyService') private keyService: KeyService,
     private issuerDataService: IssuerDataService,
     private credentialsService: CredentialsService,
-    private statusService: StatusService
+    private statusService: StatusService,
+    private configService: ConfigService
   ) {
     this.express = this.getExpressInstance();
   }
@@ -69,7 +71,7 @@ export class IssuerService implements OnModuleInit {
    */
   async getIssuerMetadata(): Promise<IssuerMetadata> {
     return {
-      issuer: process.env.ISSUER_BASE_URL as string,
+      issuer: this.configService.get<string>('ISSUER_BASE_URL'),
       jwks: {
         keys: [await this.keyService.getPublicKey()],
       },
@@ -81,7 +83,6 @@ export class IssuerService implements OnModuleInit {
     const sessionId = v4();
     try {
       const credential = this.issuerDataService.getCredential(credentialId);
-      console.log(credential);
       let exp: number | undefined;
       // we either use the passed exp value or the ttl of the credential. If none is set, the credential will not expire.
       if (values.exp) {
@@ -127,7 +128,7 @@ export class IssuerService implements OnModuleInit {
     const cors = new ExpressCorsConfigurer().allowOrigin('*');
     return ExpressBuilder.fromServerOpts({
       existingExpress: this.adapterHost.httpAdapter.getInstance(),
-      port: process.env.PORT ? Number.parseInt(process.env.PORT) : 3000,
+      port: this.configService.get<number>('PORT', 3000),
       hostname: '0.0.0.0',
     })
       .withCorsConfigurer(cors)
@@ -258,11 +259,11 @@ export class IssuerService implements OnModuleInit {
      */
     new OID4VCIServer(this.express, {
       issuer: this.vcIssuer,
-      baseUrl: process.env.ISSUER_BASE_URL,
+      baseUrl: this.configService.get<string>('ISSUER_BASE_URL'),
       endpointOpts: {
         tokenEndpointOpts: {
           accessTokenSignerCallback: signerCallback,
-          accessTokenIssuer: process.env.ISSUER_BASE_URL,
+          accessTokenIssuer: this.configService.get<string>('ISSUER_BASE_URL'),
           preAuthorizedCodeExpirationDuration: 1000 * 60 * 10,
           tokenExpiresIn: 300,
         },

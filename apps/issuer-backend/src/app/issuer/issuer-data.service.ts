@@ -33,7 +33,7 @@ export class IssuerDataService {
     this.metadata = JSON.parse(
       readFileSync(join(folder, 'metadata.json'), 'utf-8')
     ) as CredentialIssuerMetadataOpts;
-    this.metadata.credential_issuer = process.env.ISSUER_BASE_URL as string;
+    this.metadata.credential_issuer = this.configSerivce.get('ISSUER_BASE_URL');
 
     if (!this.metadata.credentials_supported) {
       this.metadata.credentials_supported = [];

@@ -32,7 +32,6 @@ import { KeyService } from '@credhub/relying-party-shared';
 import { ResolverService } from '../resolver/resolver.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { number } from 'joi';
 
 @Injectable()
 export class RelyingPartyManagerService {
@@ -62,7 +61,7 @@ export class RelyingPartyManagerService {
     let rp = this.rp.get(id);
     if (!rp) {
       rp = await this.buildRP(id);
-      if (process.env.CONFIG_RELOAD) {
+      if (this.configService.get<boolean>('CONFIG_RELOAD')) {
         // checks every minute if the rp has active sessions. If there is none, the rp is removed. We want to do this so we can update the rp with new input without losing state. This approach could be improved since we are waiting around 4 minutes for the last finished request until the entries are removed.
         setInterval(async () => {
           this.remove(id);

@@ -10,6 +10,8 @@ async function bootstrap() {
   app.useLogger(['error', 'warn']);
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
+  const configService = app.get(ConfigService);
+
   const config = new DocumentBuilder()
     .setTitle('API')
     .setExternalDoc('json format', '/api-json')
@@ -18,8 +20,16 @@ async function bootstrap() {
       type: 'oauth2',
       flows: {
         clientCredentials: {
-          tokenUrl: `${process.env.OIDC_AUTH_URL}/realms/${process.env.OIDC_REALM}/protocol/openid-connect/token`,
-          authorizationUrl: `${process.env.OIDC_AUTH_URL}/realms/${process.env.OIDC_REALM}/protocol/openid-connect/auth`,
+          tokenUrl: `${configService.get(
+            'OIDC_AUTH_URL'
+          )}/realms/${configService.get(
+            'OIDC_REALM'
+          )}/protocol/openid-connect/token`,
+          authorizationUrl: `${configService.get(
+            'OIDC_AUTH_URL'
+          )}/realms/${configService.get(
+            'OIDC_REALM'
+          )}/protocol/openid-connect/auth`,
           scopes: {},
         },
       },
@@ -30,15 +40,14 @@ async function bootstrap() {
     swaggerOptions: {
       persistAuthorization: true,
       initOAuth: {
-        clientId: process.env.OIDC_CLIENT_ID,
-        clientSecret: process.env.OIDC_CLIENT_SECRET,
-        realm: process.env.OIDC_REALM,
-        scopes: [],
+        clientId: configService.get('OIDC_CLIENT_ID'),
+        clientSecret: configService.get('OIDC_CLIENT_SECRET'),
+        realm: configService.get('OIDC_REALM'),
       },
+      scopes: [],
     },
   });
 
-  const configService = app.get(ConfigService);
   await app.listen(configService.get('PORT'));
 }
 bootstrap();

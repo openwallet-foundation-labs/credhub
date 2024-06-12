@@ -23,3 +23,8 @@ To solve this problem in `Windows` and `MacOS`, you can use `host.docker.interna
 TODO: mention a workaround for Linux users.
 
 Going via `host.docker.internal` will trigger warnings since it requires a tls connection. To allow `http` connections, you need to set the value `oidcAllowHttp` in the config.json to `true`.
+
+## Running in kubernetes
+Right now the services are not designed to be scaled horizontally. For development purposes or small use cases this should be fine for now.
+
+TODO: create helm charts so they can deployed in kubernetes.
