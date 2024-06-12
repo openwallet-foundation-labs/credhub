@@ -215,7 +215,7 @@ export class VaultKeysService extends KeysService {
     aud: string
   ): Promise<string> {
     const keyId = user;
-    const jwk = await this.getPublicKeyAsJwk(keyId);
+    // const jwk = await this.getPublicKeyAsJwk(keyId);
     // JWT header
     const header = {
       //alg has to be changed when we will support other algorithms
