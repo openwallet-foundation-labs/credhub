@@ -8,7 +8,7 @@ import { JwtPayload, Signer } from '@sd-jwt/types';
 
 @Injectable()
 export class VaultKeyService extends KeyService {
-  public signer: Signer;
+  public signer!: Signer;
   private keyId: string;
 
   // url to the vault instance
@@ -21,13 +21,15 @@ export class VaultKeyService extends KeyService {
     private configService: ConfigService
   ) {
     super();
-    this.vaultUrl = this.configService.get<string>('VAULT_URL');
+    this.vaultUrl = this.configService.get<string>('VAULT_URL') as string;
     this.headers = {
       headers: {
-        'X-Vault-Token': this.configService.get<string>('VAULT_TOKEN'),
+        'X-Vault-Token': this.configService.get<string>(
+          'VAULT_TOKEN'
+        ) as string,
       },
     };
-    this.keyId = this.configService.get<string>('VAULT_KEY_ID');
+    this.keyId = this.configService.get<string>('VAULT_KEY_ID') as string;
   }
 
   /**

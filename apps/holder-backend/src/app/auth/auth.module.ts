@@ -21,6 +21,7 @@ import {
 export const OIDC_VALIDATION_SCHEMA = {
   OIDC_AUTH_URL: Joi.string().required(),
   OIDC_REALM: Joi.string().required(),
+  OIDC_PUBLIC_CLIENT_ID: Joi.string().required(),
   ...OIDC_CLIENT_SCHEMA,
 };
 

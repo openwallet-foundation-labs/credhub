@@ -16,6 +16,7 @@ export const OIDC_VALIDATION_SCHEMA = {
   OIDC_AUTH_URL: Joi.string().required(),
   OIDC_REALM: Joi.string().required(),
   OIDC_CLIENT_ID: Joi.string().required(),
+  OIDC_CLIENT_SECRET: Joi.string().required(),
 };
 
 @Global()
@@ -29,10 +30,9 @@ export const OIDC_VALIDATION_SCHEMA = {
           authServerUrl: configService.get('OIDC_AUTH_URL'),
           realm: configService.get('OIDC_REALM'),
           clientId: configService.get('OIDC_CLIENT_ID'),
+          secret: configService.get('OIDC_CLIENT_SECRET'),
           policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
-          //TODO: set this to online
-          tokenValidation: TokenValidation.OFFLINE,
-          //TODO: maybe setting verifyTokenAudience could work with the localhost problem
+          tokenValidation: TokenValidation.ONLINE,
         } as KeycloakConnectOptions),
     }),
   ],

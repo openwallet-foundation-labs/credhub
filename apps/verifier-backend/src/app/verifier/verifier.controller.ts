@@ -10,7 +10,12 @@ import {
 } from '@nestjs/common';
 import { RelyingPartyManagerService } from './relying-party-manager.service';
 import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthGuard, Public } from 'nest-keycloak-connect';
+import {
+  AuthGuard,
+  Public,
+  RoleMatchingMode,
+  Roles,
+} from 'nest-keycloak-connect';
 import {
   AuthorizationResponsePayload,
   PresentationDefinitionLocation,
@@ -30,6 +35,7 @@ export class VerifierController {
     private configService: ConfigService
   ) {}
 
+  @Roles({ roles: ['realm:verifier'], mode: RoleMatchingMode.ALL })
   @ApiOperation({ summary: 'Create a session' })
   @Post(':id')
   async createSession(@Param('id') id: string) {
@@ -134,6 +140,7 @@ export class VerifierController {
   /**
    * This will remove a rp so it can be reloaded with new values
    */
+  @Roles({ roles: ['realm:verifier'], mode: RoleMatchingMode.ALL })
   @ApiOperation({ summary: 'Remove a relying party' })
   @Delete(':rp')
   async removeRP(@Param('rp') rp: string) {
