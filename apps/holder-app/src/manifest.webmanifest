@@ -8,6 +8,19 @@
   "id": "/",
   "scope": "./",
   "start_url": "./",
+  "screenshots": [
+    {
+      "src": "assets/screenshot/mobile.png",
+      "sizes": "1082x2402",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/screenshot/main-wide.png",
+      "sizes": "2047x2732",
+      "form_factor": "wide",
+      "type": "image/png"
+    }
+  ],
   "icons": [
     {
       "src": "assets/icons/icon-192.png",
@@ -20,13 +33,13 @@
       "type": "image/png"
     },
     {
-      "src": "assets/icons/maskable_icon-192.png",
+      "src": "assets/icons/icon-192-maskable.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "assets/icons/maskable_icon-512.png",
+      "src": "assets/icons/icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
