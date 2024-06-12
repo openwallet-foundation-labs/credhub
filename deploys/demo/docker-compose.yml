@@ -1,0 +1,10 @@
+services:
+  demo:
+    image: ghcr.io/openwallet-foundation-labs/credhub/demo
+    volumes:
+      - ./config/config.json:/usr/share/nginx/html/assets/config.json
+    ports:
+      - $PORT:80
+
+volumes:
+  verifier:

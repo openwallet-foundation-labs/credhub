@@ -4,16 +4,23 @@ import {
   importProvidersFrom,
 } from '@angular/core';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
-import { ConfigService } from './config/config.service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { ApiModule, Configuration } from '@credhub/verifier-shared';
+import {
+  ApiModule,
+  VerifierConfig,
+  Configuration,
+} from '@credhub/verifier-shared';
+import { ConfigService } from '@credhub/relying-party-frontend';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(),
     {
       provide: APP_INITIALIZER,
-      useFactory: ConfigService.appConfigLoader,
+      useFactory: (
+        configService: ConfigService<VerifierConfig>,
+        httpClient: HttpClient
+      ) => configService.appConfigLoader(httpClient),
       deps: [ConfigService, HttpClient],
       multi: true,
     },
@@ -23,9 +30,9 @@ export const appConfig: ApplicationConfig = {
     {
       provide: Configuration,
       deps: [ConfigService],
-      useFactory: (configService: ConfigService) => {
+      useFactory: (configService: ConfigService<VerifierConfig>) => {
         return new Configuration({
-          basePath: configService.getConfig('verifierUrl'),
+          basePath: configService.getConfig<string>('verifierUrl'),
           credentials: {
             oauth2: () => configService.getToken(),
           },

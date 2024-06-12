@@ -1,8 +1,71 @@
-<mat-stepper [linear]="true">
-  <mat-step [stepControl]="issue">
+<mat-stepper
+  [linear]="true"
+  (selectionChange)="onSelectionChange($event)"
+  #stepper
+>
+  <mat-step [stepControl]="registerForm" [editable]="false">
+    <ng-template matStepLabel>Register</ng-template>
+    <form
+      fxLayout="column"
+      fxLayoutGap="16px"
+      class="content"
+      [formGroup]="registerForm"
+    >
+      <div>Enter the values that should be included in the credential.</div>
+      <mat-form-field [appearance]="'outline'">
+        <input
+          placeholder="Prename"
+          matInput
+          formControlName="prename"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field [appearance]="'outline'">
+        <input
+          placeholder="Surname"
+          matInput
+          formControlName="surname"
+          required
+        />
+      </mat-form-field>
+      <button
+        type="submit"
+        mat-flat-button
+        color="primary"
+        matStepperNext
+        [disabled]="registerForm.invalid"
+      >
+        Request credential
+      </button>
+    </form>
+  </mat-step>
+  <mat-step [editable]="false" [stepControl]="issue">
     <ng-template matStepLabel>Receive an ID</ng-template>
-    <div>Receive and ID</div>
-    <div>
+    <div fxLayout="column" fxLayoutGap="16px" class="content">
+      <div>
+        Scan the QR-Code to get your credential issued or copy the link and
+        insert it into your wallet. Once issued, you can jump to the next step.
+      </div>
+      <img [src]="qrCodeIssueImage" *ngIf="qrCodeIssueImage" alt="QR-Code" />
+      <mat-form-field [appearance]="'outline'">
+        <input
+          placeholder="QR-Code Url"
+          matInput
+          readonly
+          [formControl]="qrCodeIssueField"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="copyValue(this.issuanceUrl)"
+          *ngIf="this.issuanceUrl"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </mat-form-field>
+      <div>
+        <span>Status: </span><b>{{ issuerService.statusEvent.value }}</b>
+      </div>
       <button
         mat-flat-button
         color="primary"
@@ -15,6 +78,50 @@
   </mat-step>
   <mat-step [stepControl]="present">
     <ng-template matStepLabel>Present the ID</ng-template>
-    <div>And now present it</div>
+    <div
+      fxLayout="column"
+      fxLayoutGap="16px"
+      class="content"
+      *ngIf="verifierService.statusEvent.value !== 'verified'"
+    >
+      <div>
+        Scan the QR-Code to present your credential or copy the link and insert
+        it into your wallet.
+      </div>
+      <img [src]="qrCodeVerifyImage" *ngIf="qrCodeVerifyImage" alt="QR-Code" />
+      <mat-form-field [appearance]="'outline'">
+        <input
+          placeholder="QR-Code Url"
+          matInput
+          readonly
+          [formControl]="qrCodeVerifyField"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="copyValue(this.verifierUrl)"
+          *ngIf="this.verifierUrl"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </mat-form-field>
+      <div>
+        <span>Status: </span><b>{{ verifierService.statusEvent.value }}</b>
+      </div>
+    </div>
+    <div
+      *ngIf="verifierService.statusEvent.value === 'verified'"
+      fxLayout="column"
+      fxLayoutGap="16px"
+      class="content"
+    >
+      <p>Verification completed!</p>
+      <div fxLayout="row" fxLayoutGap="16px">
+        <button (click)="reset()" mat-button color="primary">Reset</button>
+        <button routerLink="/" mat-flat-button color="primary">
+          Back to list
+        </button>
+      </div>
+    </div>
   </mat-step>
 </mat-stepper>
