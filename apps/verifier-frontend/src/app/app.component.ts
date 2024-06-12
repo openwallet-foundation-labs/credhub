@@ -29,22 +29,23 @@ import { VerifierService } from '@credhub/verifier-shared';
 export class AppComponent {
   qrCodeField = new FormControl('');
   qrCodeImage?: string;
+  url?: string;
 
   constructor(
-    private issuerService: VerifierService,
+    public verifierService: VerifierService,
     private snackBar: MatSnackBar
   ) {}
 
   async generate() {
-    await this.issuerService.getUrl();
-    this.qrCodeField.setValue(this.issuerService.uri as string);
-    this.qrCodeImage = await qrcode.toDataURL(this.issuerService.uri as string);
+    this.url = await this.verifierService.getUrl();
+    this.qrCodeField.setValue(this.url);
+    this.qrCodeImage = await qrcode.toDataURL(this.url);
     this.copyValue();
   }
 
   copyValue() {
-    if (!this.issuerService.uri) return;
-    navigator.clipboard.writeText(this.issuerService.uri);
+    if (!this.url) return;
+    navigator.clipboard.writeText(this.url);
     this.snackBar.open('URL copied to clipboard', 'Close', { duration: 3000 });
   }
 }

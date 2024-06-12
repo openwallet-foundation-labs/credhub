@@ -29,6 +29,7 @@ import { IssuerService } from '@credhub/issuer-shared';
 export class AppComponent {
   qrCodeField = new FormControl('');
   qrCodeImage?: string;
+  url?: string;
 
   constructor(
     public issuerService: IssuerService,
@@ -36,15 +37,18 @@ export class AppComponent {
   ) {}
 
   async generate() {
-    await this.issuerService.getUrl();
-    this.qrCodeField.setValue(this.issuerService.uri as string);
-    this.qrCodeImage = await qrcode.toDataURL(this.issuerService.uri as string);
+    this.url = await this.issuerService.getUrl(undefined, {
+      prename: 'Max',
+      surname: 'Mustermann',
+    });
+    this.qrCodeField.setValue(this.url);
+    this.qrCodeImage = await qrcode.toDataURL(this.url);
     this.copyValue();
   }
 
   copyValue() {
-    if (!this.issuerService.uri) return;
-    navigator.clipboard.writeText(this.issuerService.uri);
+    if (!this.url) return;
+    navigator.clipboard.writeText(this.url);
     this.snackBar.open('URL copied to clipboard', 'Close', { duration: 3000 });
   }
 }

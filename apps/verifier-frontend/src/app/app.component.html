@@ -14,4 +14,7 @@
       <mat-icon>content_copy</mat-icon>
     </button>
   </mat-form-field>
+  <p *ngIf="verifierService.statusEvent.value">
+    Status: {{ verifierService.statusEvent.value }}
+  </p>
 </div>
