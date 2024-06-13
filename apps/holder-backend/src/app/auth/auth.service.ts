@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 export const USER_DELETED_EVENT = 'user.deleted';
@@ -5,7 +6,7 @@ export const USER_DELETED_EVENT = 'user.deleted';
 export class UserDeletedEvent {
   id: string;
 }
-
+@Injectable()
 export class AuthService {
   constructor(private eventEmitter: EventEmitter2) {}
 
