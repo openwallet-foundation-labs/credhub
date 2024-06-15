@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["keycloak", "siop", "sphereon"],
+  "cSpell.words": ["credhub", "keycloak", "openwallet", "siop", "sphereon"],
 
   "yaml.schemas": {
     "https://squidfunk.github.io/mkdocs-material/schema.json": "mkdocs.yml"
