@@ -1,10 +1,36 @@
-/* eslint-disable */
-var __TEARDOWN_MESSAGE__: string;
+import { Network } from 'testcontainers';
+import { Keycloak } from './keycloak';
+import { HolderBackend } from './holder-backend';
 
 module.exports = async function () {
-  // Start services that that the app needs to run (e.g. database, docker-compose, etc.).
-  console.log('\nSetting up...\n');
+  //create a newtwork
+  globalThis.network = await new Network().start();
 
-  // Hint: Use `globalThis` to pass variables to global teardown.
-  globalThis.__TEARDOWN_MESSAGE__ = '\nTearing down...\n';
+  //start keycloak
+  await Keycloak.start(globalThis.network);
+
+  //create a user in keycloak
+  const accessToken = await Keycloak.getAccessToken(
+    `http://localhost:${globalThis.keycloak.getMappedPort(8080)}`,
+    'master',
+    'admin',
+    'admin'
+  );
+  await Keycloak.createUser(
+    accessToken,
+    `http://localhost:${globalThis.keycloak.getMappedPort(8080)}`,
+    'wallet',
+    'test@test.de',
+    'password'
+  );
+
+  const userAccessToken = await Keycloak.getAccessToken(
+    `http://localhost:${globalThis.keycloak.getMappedPort(8080)}`,
+    'wallet',
+    'test@test.de',
+    'password'
+  );
+
+  //start backend
+  await HolderBackend.start(globalThis.network);
 };

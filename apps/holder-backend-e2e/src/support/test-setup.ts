@@ -1,10 +1,12 @@
 /* eslint-disable */
 
 import axios from 'axios';
+import { StartedGenericContainer } from 'testcontainers/build/generic-container/started-generic-container';
 
 module.exports = async function () {
-  // Configure axios for tests to use.
-  const host = process.env.HOST ?? 'localhost';
-  const port = process.env.PORT ?? '3000';
+  const host = 'localhost';
+  const port = (globalThis.backend as StartedGenericContainer).getMappedPort(
+    3000
+  );
   axios.defaults.baseURL = `http://${host}:${port}`;
 };
