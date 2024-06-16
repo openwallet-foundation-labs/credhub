@@ -1,22 +1,40 @@
 import { PostgreSqlContainer } from '@testcontainers/postgresql';
-import { GenericContainer, StartedNetwork, Wait } from 'testcontainers';
+import {
+  GenericContainer,
+  Network,
+  StartedNetwork,
+  TestContainers,
+  Wait,
+} from 'testcontainers';
 import axios from 'axios';
 
 export class Keycloak {
-  static async start(network: StartedNetwork) {
+  // Keycloak admin credentials
+  static ADMIN_USERNAME = 'admin';
+  static ADMIN_PASSWORD = 'admin';
+  // Keycloak network
+  static network: StartedNetwork;
+
+  /**
+   * Start the keycloak container and its dependencies
+   */
+  static async start() {
+    this.network = await new Network().start();
+
     //create a keycloak database
     globalThis.postgresKeycloakContainer = await new PostgreSqlContainer()
-      .withNetwork(network)
+      .withNetwork(this.network)
       .withName('postgres-keycloak')
       .start();
 
+    const hostPort = 8080;
     //create a keycloak instance
     globalThis.keycloak = await new GenericContainer(
       'ghcr.io/openwallet-foundation-labs/credhub/keycloak'
     )
-      .withNetwork(network)
-      .withExposedPorts(8080)
-      .withWaitStrategy(Wait.forHttp('/health', 8080).forStatusCode(200))
+      .withNetwork(this.network)
+      .withExposedPorts({ container: 8080, host: hostPort })
+      .withWaitStrategy(Wait.forHttp('/health/ready', 8080).forStatusCode(200))
       .withName('keycloak')
       .withEnvironment({
         JAVA_OPTS_APPEND: '-Dkeycloak.profile.feature.upload_scripts=enabled',
@@ -24,9 +42,9 @@ export class Keycloak {
         KC_HEALTH_ENABLED: 'true',
         KC_HTTP_ENABLED: 'true',
         KC_METRICS_ENABLED: 'true',
-        KC_HOSTNAME_URL: 'http://host.testcontainers.internal:8080',
-        KEYCLOAK_ADMIN: 'admin',
-        KEYCLOAK_ADMIN_PASSWORD: 'admin',
+        KC_HOSTNAME_URL: `http://host.testcontainers.internal:${hostPort}`,
+        KEYCLOAK_ADMIN: this.ADMIN_USERNAME,
+        KEYCLOAK_ADMIN_PASSWORD: this.ADMIN_PASSWORD,
         KEYCLOAK_IMPORT: '/opt/keycloak/data/import/realm-export.json',
       })
       .withCommand([
@@ -38,6 +56,8 @@ export class Keycloak {
         '--import-realm',
       ])
       .start();
+
+    await TestContainers.exposeHostPorts(8080);
   }
 
   /**
@@ -71,13 +91,27 @@ export class Keycloak {
       );
   }
 
+  /**
+   * Creates a user in Keycloak
+   * @param accessToken
+   * @param keycloakUrl
+   * @param realm
+   * @param username
+   * @param password
+   */
   static async createUser(
-    accessToken: string,
     keycloakUrl: string,
     realm: string,
     username: string,
     password: string
   ) {
+    const accessToken = await Keycloak.getAccessToken(
+      `http://localhost:${globalThis.keycloak.getMappedPort(8080)}`,
+      'master',
+      Keycloak.ADMIN_USERNAME,
+      Keycloak.ADMIN_PASSWORD
+    );
+
     await axios.post(
       `${keycloakUrl}/admin/realms/${realm}/users`,
       {
@@ -96,12 +130,19 @@ export class Keycloak {
     const userId = response.data[0].id;
 
     //set password
-    await axios
-      .put(
-        `${keycloakUrl}/admin/realms/${realm}/users/${userId}/reset-password`,
-        { type: 'password', value: password, temporary: false },
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      )
-      .catch((err) => console.log(err));
+    await axios.put(
+      `${keycloakUrl}/admin/realms/${realm}/users/${userId}/reset-password`,
+      { type: 'password', value: password, temporary: false },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+  }
+
+  /**
+   * Stops the keycloak instance and its dependencies.
+   */
+  static async stop() {
+    await globalThis.keycloak.stop();
+    await globalThis.postgresKeycloakContainer.stop();
+    await this.network.stop();
   }
 }
