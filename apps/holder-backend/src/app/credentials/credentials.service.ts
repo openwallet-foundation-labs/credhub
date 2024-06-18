@@ -15,6 +15,7 @@ import { digest } from '@sd-jwt/crypto-nodejs';
 import { CredentialResponse } from './dto/credential-response.dto';
 import { OnEvent } from '@nestjs/event-emitter';
 import { USER_DELETED_EVENT, UserDeletedEvent } from '../auth/auth.service';
+import { Interval } from '@nestjs/schedule';
 
 type DateKey = 'exp' | 'nbf';
 @Injectable()
@@ -29,6 +30,13 @@ export class CredentialsService {
       hasher: digest,
       verifier: () => Promise.resolve(true),
     });
+  }
+
+  /**
+   * Start an interval to update the status of the credentials. This is relevant for showing active credentials.
+   */
+  @Interval(1000 * 10)
+  updateStatusInterval() {
     this.updateStatus();
   }
 
