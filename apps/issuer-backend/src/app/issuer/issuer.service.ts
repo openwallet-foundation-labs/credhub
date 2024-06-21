@@ -6,12 +6,11 @@ import {
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import { ES256, digest, generateSalt } from '@sd-jwt/crypto-nodejs';
+import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
 import { SDJwtVcInstance, SdJwtVcPayload } from '@sd-jwt/sd-jwt-vc';
 import {
   CredentialRequestSdJwtVc,
   Jwt,
-  Alg,
   JwtVerifyResult,
   CredentialOfferSession,
   CNonceState,
@@ -36,7 +35,11 @@ import {
 import { IssuerDataService } from './issuer-data.service';
 import { SessionRequestDto } from './dto/session-request.dto';
 import { CredentialsService } from '../credentials/credentials.service';
-import { KeyService } from '@credhub/relying-party-shared';
+import {
+  CryptoImplementation,
+  CryptoService,
+  KeyService,
+} from '@credhub/relying-party-shared';
 import { IssuerMetadata } from './types';
 import { StatusService } from '../status/status.service';
 import { SessionResponseDto } from './dto/session-response.dto';
@@ -51,15 +54,20 @@ interface CredentialDataSupplierInput {
 export class IssuerService implements OnModuleInit {
   private express: ExpressSupport;
   vcIssuer: VcIssuer<DIDDocument>;
+
+  private crypto: CryptoImplementation;
+
   constructor(
     private adapterHost: HttpAdapterHost<ExpressAdapter>,
     @Inject('KeyService') private keyService: KeyService,
     private issuerDataService: IssuerDataService,
     private credentialsService: CredentialsService,
     private statusService: StatusService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private cryptoService: CryptoService
   ) {
     this.express = this.getExpressInstance();
+    this.crypto = this.cryptoService.getCrypto();
   }
   async onModuleInit() {
     await this.init();
@@ -136,8 +144,7 @@ export class IssuerService implements OnModuleInit {
   }
 
   async init() {
-    // get verifier. Only ES256 is supported for now.
-    const verifier = await ES256.getVerifier(
+    const verifier = await this.crypto.getVerifier(
       await this.keyService.getPublicKey()
     );
 
@@ -145,7 +152,7 @@ export class IssuerService implements OnModuleInit {
     const sdjwt = new SDJwtVcInstance({
       signer: this.keyService.signer,
       verifier,
-      signAlg: 'ES256',
+      signAlg: this.crypto.alg,
       hasher: digest,
       hashAlg: 'SHA-256',
       saltGenerator: generateSalt,
@@ -188,7 +195,7 @@ export class IssuerService implements OnModuleInit {
     const signerCallback = async (jwt: Jwt, kid?: string): Promise<string> => {
       return this.keyService.signJWT(jwt.payload, {
         ...jwt.header,
-        alg: Alg.ES256,
+        alg: this.crypto.alg,
         kid: await this.keyService.getKid(),
       });
     };

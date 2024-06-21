@@ -5,6 +5,7 @@ import * as Joi from 'joi';
 import { VerifierModule } from './verifier/verifier.module';
 import {
   AuthModule,
+  CRYPTO_VALIDATION_SCHEMA,
   KeyModule,
   OIDC_VALIDATION_SCHEMA,
 } from '@credhub/relying-party-shared';
@@ -23,6 +24,7 @@ import {
           .default('development'),
         CREDENTIALS_FOLDER: Joi.string().required(),
         ...OIDC_VALIDATION_SCHEMA,
+        ...CRYPTO_VALIDATION_SCHEMA,
       }),
     }),
     VerifierModule,

@@ -1,4 +1,3 @@
-import { ES256 } from '@sd-jwt/crypto-nodejs';
 import { existsSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import {
   JWK,
@@ -13,6 +12,8 @@ import { KeyService } from './key.service';
 import { Injectable } from '@nestjs/common';
 import { Signer } from '@sd-jwt/types';
 import { ConfigService } from '@nestjs/config';
+import { CryptoImplementation } from '../crypto/crypto-implementation';
+import { CryptoService } from '../crypto/crypto.service';
 
 //TODO: implement a vault integration like in the backend
 /**
@@ -24,12 +25,18 @@ export class FileSystemKeyService implements KeyService {
   private privateKey!: JWK;
   private publicKey!: JWK;
   private privateKeyInstance!: KeyLike;
+  private crypto: CryptoImplementation;
 
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private cryptoService: CryptoService
+  ) {
+    this.crypto = this.cryptoService.getCrypto();
+  }
 
   async onModuleInit(): Promise<void> {
     await this.init();
-    this.signer = await ES256.getSigner(this.privateKey);
+    this.signer = await this.crypto.getSigner(this.privateKey);
     this.privateKeyInstance = (await importJWK(this.privateKey)) as KeyLike;
   }
   async init() {
@@ -54,7 +61,7 @@ export class FileSystemKeyService implements KeyService {
       !existsSync(`${folder}/private.json`) &&
       !existsSync(`${folder}/public.json`)
     ) {
-      const keys = await ES256.generateKeyPair();
+      const keys = await this.crypto.generateKeyPair();
       privateKey = keys.privateKey as JWK;
       publicKey = keys.publicKey as JWK;
       //add a random key id for reference

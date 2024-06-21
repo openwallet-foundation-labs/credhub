@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ES256, digest } from '@sd-jwt/crypto-nodejs';
+import { digest } from '@sd-jwt/crypto-nodejs';
 import {
   JWK,
   JWTPayload,
@@ -28,7 +28,7 @@ import { importJWK, jwtVerify } from 'jose';
 import { InMemoryRPSessionManager } from './session-manager';
 import { EventEmitter } from 'node:events';
 import { ConfigService } from '@nestjs/config';
-import { KeyService } from '@credhub/relying-party-shared';
+import { CryptoService, KeyService } from '@credhub/relying-party-shared';
 import { ResolverService } from '../resolver/resolver.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -45,7 +45,8 @@ export class RelyingPartyManagerService {
     @Inject('KeyService') private keyService: KeyService,
     private resolverService: ResolverService,
     private configService: ConfigService,
-    private httpSerivce: HttpService
+    private httpSerivce: HttpService,
+    private cryptoService: CryptoService
   ) {
     this.sessionManager = new InMemoryRPSessionManager(this.eventEmitter, {
       // maxAgeInSeconds: 10,
@@ -201,7 +202,9 @@ export class RelyingPartyManagerService {
             payload,
             header
           );
-          const verify = await ES256.getVerifier(publicKey);
+          //get the verifier based on the algorithm
+          const crypto = this.cryptoService.getCrypto(header.alg as string);
+          const verify = await crypto.getVerifier(publicKey);
           return verify(data, signature);
         };
 
