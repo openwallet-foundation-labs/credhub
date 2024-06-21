@@ -9,6 +9,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthApiService, SettingsApiService } from '../api';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { LicensesComponent } from './licenses/licenses.component';
+import { WebauthnService } from '../auth/webauthn.service';
 
 export abstract class AuthServiceInterface {
   abstract getSettingsLink(): string;
@@ -38,7 +39,8 @@ export class SettingsComponent implements OnInit {
     private authApiService: AuthApiService,
     public settingsService: SettingsService,
     private settingsApiService: SettingsApiService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    public webAuthnService: WebauthnService
   ) {
     this.form = new FormGroup({
       auto: new FormControl(false),

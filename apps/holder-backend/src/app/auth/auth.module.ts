@@ -17,6 +17,10 @@ import {
   OIDC_CLIENT_SCHEMA,
   OidcClientModule,
 } from './oidc-client/oidcclient.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Passkey } from './webauthn/entities/passkey.entity';
+import { WebAuthnController } from './webauthn/webauthn.controller';
+import { WebauthnService } from './webauthn/entities/webauthn.service';
 
 export const OIDC_VALIDATION_SCHEMA = {
   OIDC_AUTH_URL: Joi.string().required(),
@@ -44,6 +48,8 @@ export const OIDC_VALIDATION_SCHEMA = {
         } as KeycloakConnectOptions),
     }),
     OidcClientModule.forRoot(),
+    TypeOrmModule.forFeature([Passkey]),
+    ConfigModule,
   ],
   providers: [
     {
@@ -59,8 +65,9 @@ export const OIDC_VALIDATION_SCHEMA = {
       useClass: RoleGuard,
     },
     AuthService,
+    WebauthnService,
   ],
   exports: [KeycloakConnectModule],
-  controllers: [AuthController],
+  controllers: [AuthController, WebAuthnController],
 })
 export class AuthModule {}

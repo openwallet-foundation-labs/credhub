@@ -32,3 +32,11 @@
 
 <h4>Licenses</h4>
 <button mat-stroked-button (click)="showLicense()">Show license</button>
+
+<h4>Auth keys</h4>
+<button mat-stroked-button (click)="webAuthnService.register()">
+  Register
+</button>
+<button mat-stroked-button (click)="webAuthnService.authenticate()">
+  Authenticate
+</button>

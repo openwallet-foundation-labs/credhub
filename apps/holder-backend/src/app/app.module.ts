@@ -11,12 +11,14 @@ import { AppController } from './app.controller';
 import { SettingsModule } from './settings/settings.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { WEBAUTHN_VALIDATION_SCHEMA } from './auth/webauthn/entities/webauthn.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         ...OIDC_VALIDATION_SCHEMA,
+        ...WEBAUTHN_VALIDATION_SCHEMA,
         ...KEY_VALIDATION_SCHEMA,
         ...DB_VALIDATION_SCHEMA,
       }),
