@@ -32,7 +32,6 @@ export class AuthService implements AuthServiceInterface {
   ]).pipe(map((values) => values.every((b) => b)));
 
   private navigateToLoginPage() {
-    // TODO: Remember current URL
     this.router.navigateByUrl('/login');
   }
 
@@ -120,9 +119,7 @@ export class AuthService implements AuthServiceInterface {
       .subscribe(() => this.oauthService.loadUserProfile());
 
     this.oauthService.events
-      .pipe(
-        filter((e) => ['session_terminated', 'session_error'].includes(e.type))
-      )
+      .pipe(filter((e) => ['session_terminated'].includes(e.type)))
       .subscribe(() => this.navigateToLoginPage());
 
     this.oauthService.setupAutomaticSilentRefresh();

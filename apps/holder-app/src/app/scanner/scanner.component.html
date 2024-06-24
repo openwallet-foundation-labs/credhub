@@ -9,18 +9,17 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <!-- TODO: since the endpoints are protected, we need to pass the credentials into it -->
-      <!-- <button mat-menu-item (click)="getCredential()">
-        <mat-icon>download</mat-icon>
-        <span>Issue Demo</span>
-      </button>
-      <button mat-menu-item (click)="presentCredential()">
-        <mat-icon>upload</mat-icon>
-        <span>Present Demo</span>
-      </button> -->
-      <button mat-menu-item (click)="passFromClipboard()">
+      <button
+        mat-menu-item
+        (click)="passFromClipboard()"
+        *ngIf="readFromClipboard"
+      >
         <mat-icon>content_paste</mat-icon>
         <span>Insert from clipboard</span>
+      </button>
+      <button mat-menu-item (click)="openInput()" *ngIf="!readFromClipboard">
+        <mat-icon>content_paste</mat-icon>
+        <span>Insert string</span>
       </button>
       <mat-divider></mat-divider>
       @for (device of devices; track device) {

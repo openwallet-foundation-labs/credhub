@@ -138,6 +138,21 @@ export class Keycloak {
   }
 
   /**
+   * get all users from Keycloak
+   */
+  static async getUsers(keycloakUrl: string, realm: string) {
+    const accessToken = await Keycloak.getAccessToken(
+      `http://localhost:${globalThis.keycloak.getMappedPort(8080)}`,
+      'master',
+      Keycloak.ADMIN_USERNAME,
+      Keycloak.ADMIN_PASSWORD
+    );
+    return axios.get(`${keycloakUrl}/admin/realms/${realm}/users`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }).then((response) => response.data);
+  }
+
+  /**
    * Stops the keycloak instance and its dependencies.
    */
   static async stop() {

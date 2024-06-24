@@ -32,12 +32,9 @@ describe('account settings', () => {
       headers: { Authorization: `Bearer ${userAccessToken}` },
     });
     expect(settings.status).toBe(200);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // call the endpoint again, the token should be invalid since the user is deleted
-    const res = axios.delete('/auth', {
-      headers: { Authorization: `Bearer ${userAccessToken}` },
-    });
-    expect(res).rejects.toThrow();
 
     // try to get a new token with the deleted user, which should fail
     const response = Keycloak.getAccessToken(

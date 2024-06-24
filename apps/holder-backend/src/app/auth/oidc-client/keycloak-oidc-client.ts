@@ -67,8 +67,32 @@ export class KeycloakOIDCClient implements OIDCClient {
         })
       );
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         'Failed to delete user',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  /**
+   * Logout user from Keycloak to invalidate all sessions
+   * @param userId
+   * @param accessToken
+   */
+  private async logoutUser(userId: string, accessToken: string): Promise<void> {
+    const logoutUrl = `${this.keycloakUrl}/admin/realms/${this.realm}/users/${userId}/logout`;
+
+    try {
+      await firstValueFrom(
+        this.httpService.post(logoutUrl, null, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+      );
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        'Failed to logout user',
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -78,10 +102,11 @@ export class KeycloakOIDCClient implements OIDCClient {
    * Handle user deleted event
    * @param payload
    */
-  @OnEvent(USER_DELETED_EVENT)
+  // @OnEvent(USER_DELETED_EVENT)
   async userDeleteEvent(payload: UserDeletedEvent): Promise<void> {
     const accessToken = await this.getAccessToken();
     const userId = payload.id;
+    await this.logoutUser(userId, accessToken);
     await this.deleteUser(userId, accessToken);
   }
 }
