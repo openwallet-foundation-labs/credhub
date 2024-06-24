@@ -1,6 +1,5 @@
 /* eslint-disable */
-import { HolderBackend } from './dependencies/holder-backend';
-import { Keycloak } from './dependencies/keycloak';
+import { HolderBackend, Keycloak } from '@credhub/testing';
 
 module.exports = async function () {
   await HolderBackend.stop();

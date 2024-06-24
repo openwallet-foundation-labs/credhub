@@ -1,5 +1,4 @@
-import { HolderBackend } from './dependencies/holder-backend';
-import { Keycloak } from './dependencies/keycloak';
+import { HolderBackend, Keycloak } from '@credhub/testing';
 
 module.exports = async function () {
   //start keycloak
@@ -27,5 +26,4 @@ module.exports = async function () {
     testUserEmail,
     testUserPassword
   );
-  globalThis.foo = 'bar';
 };

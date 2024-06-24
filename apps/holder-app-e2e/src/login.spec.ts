@@ -1,11 +1,32 @@
+import { Keycloak, HolderBackend } from '@credhub/testing';
 import { test, expect } from '@playwright/test';
 
 const username = 'mirko@gmx.de';
 const password = 'mirko';
 
-test.beforeAll(async ({ page }) => {});
+test.beforeAll(async () => {
+  //start keycloak
+  await Keycloak.start();
 
-test.afterAll(async ({ page }) => {});
+  //start backend
+  await HolderBackend.start();
+
+  const testUserEmail = 'test@test.de';
+  const testUserPassword = 'password';
+  // create a new user
+  await Keycloak.createUser(
+    `http://localhost:${globalThis.keycloak.getMappedPort(8080)}`,
+    'wallet',
+    testUserEmail,
+    testUserPassword
+  );
+});
+
+test.afterAll(async () => {
+  console.log(globalThis);
+  await HolderBackend.stop();
+  await Keycloak.stop();
+});
 
 test('register', async ({ page }) => {
   //generate a random email address

@@ -24,6 +24,7 @@
       "@credhub/relying-party-shared": [
         "libs/relying-party-shared/src/index.ts"
       ],
+      "@credhub/testing": ["libs/testing/src/index.ts"],
       "@credhub/verifier-shared": ["libs/verifier-shared/src/index.ts"]
     }
   },
