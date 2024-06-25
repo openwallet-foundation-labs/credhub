@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
+  '@sphereon/oid4vci-issuer@0.12.0':
+    hash: j2tsxztycpsbpydxzxawewd5du
+    path: patches/@sphereon__oid4vci-issuer@0.12.0.patch
   '@sphereon/pex@3.3.3':
     hash: bzkrsrlwcpq6eepymelnbd2pca
     path: patches/@sphereon__pex@3.3.3.patch
@@ -96,7 +99,7 @@ dependencies:
     version: 0.12.0
   '@sphereon/oid4vci-issuer':
     specifier: ^0.12.0
-    version: 0.12.0
+    version: 0.12.0(patch_hash=j2tsxztycpsbpydxzxawewd5du)
   '@sphereon/oid4vci-issuer-server':
     specifier: ^0.12.0
     version: 0.12.0
@@ -7274,7 +7277,7 @@ packages:
     engines: {node: '>=18'}
     dependencies:
       '@sphereon/oid4vci-common': 0.12.0
-      '@sphereon/oid4vci-issuer': 0.12.0
+      '@sphereon/oid4vci-issuer': 0.12.0(patch_hash=j2tsxztycpsbpydxzxawewd5du)
       '@sphereon/ssi-express-support': 0.25.1-unstable.87
       '@sphereon/ssi-types': 0.25.1-unstable.87
       body-parser: 1.20.2
@@ -7294,7 +7297,7 @@ packages:
       - supports-color
     dev: false
 
-  /@sphereon/oid4vci-issuer@0.12.0:
+  /@sphereon/oid4vci-issuer@0.12.0(patch_hash=j2tsxztycpsbpydxzxawewd5du):
     resolution: {integrity: sha512-aZxj9hlJ3aIoGLE0JmVqF5IJMJ50BpEACnyqtGQZK9sEGyOFotPD/xaDaJOR9C1Kw2Tj/VMmO6fONa7M+PlPwQ==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -7310,6 +7313,7 @@ packages:
       - encoding
       - supports-color
     dev: false
+    patched: true
 
   /@sphereon/pex-models@2.2.4:
     resolution: {integrity: sha512-pGlp+wplneE1+Lk3U48/2htYKTbONMeG5/x7vhO6AnPUOsnOXeJdftPrBYWVSzz/JH5GJptAc6+pAyYE1zMu4Q==}

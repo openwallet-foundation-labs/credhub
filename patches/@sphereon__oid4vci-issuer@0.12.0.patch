@@ -1,0 +1,23 @@
+diff --git a/dist/VcIssuer.js b/dist/VcIssuer.js
+index 31db1854f9b56f46cb736da64cc345a183a1b16b..30386be728cf06b5481aa90b6cbdee61e58dde23 100644
+--- a/dist/VcIssuer.js
++++ b/dist/VcIssuer.js
+@@ -471,15 +471,15 @@ class VcIssuer {
+                 throw new Error(oid4vci_common_1.ISSUER_CONFIG_ERROR);
+             }
+             const credential = issuerCallback ? yield issuerCallback(opts) : yield this._credentialSignerCallback(opts);
+-            const uniform = ssi_types_1.CredentialMapper.toUniformCredential(credential);
+-            const issuer = uniform.issuer ? (typeof uniform.issuer === 'string' ? uniform.issuer : uniform.issuer.id) : '<unknown>';
++            // const uniform = ssi_types_1.CredentialMapper.toUniformCredential(credential);
++            // const issuer = uniform.issuer ? (typeof uniform.issuer === 'string' ? uniform.issuer : uniform.issuer.id) : '<unknown>';
+             // TODO: Create builder
+             events_1.EVENTS.emit(events_1.CredentialEventNames.OID4VCI_CREDENTIAL_ISSUED, {
+                 eventName: events_1.CredentialEventNames.OID4VCI_CREDENTIAL_ISSUED,
+                 id: (0, uuid_1.v4)(),
+                 data: credential,
+                 // TODO: Format, request etc
+-                initiator: issuer !== null && issuer !== void 0 ? issuer : '<unknown>',
++                // initiator: issuer !== null && issuer !== void 0 ? issuer : '<unknown>',
+                 initiatorType: ssi_types_1.InitiatorType.EXTERNAL,
+                 system: ssi_types_1.System.OID4VCI,
+                 subsystem: ssi_types_1.SubSystem.VC_ISSUER,
