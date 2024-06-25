@@ -16,6 +16,7 @@ import {
   CredentialOfferSession,
   CNonceState,
   URIState,
+  TxCode,
 } from '@sphereon/oid4vci-common';
 import {
   CredentialDataSupplier,
@@ -24,7 +25,11 @@ import {
   MemoryStates,
 } from '@sphereon/oid4vci-issuer';
 import { OID4VCIServer } from '@sphereon/oid4vci-issuer-server';
-import { SdJwtDecodedVerifiableCredentialPayload } from '@sphereon/ssi-types';
+import {
+  CompactSdJwtVc,
+  SdJwtDecodedVerifiableCredentialPayload,
+  decodeSdJwtVc,
+} from '@sphereon/ssi-types';
 import { DIDDocument } from 'did-resolver';
 import { importJWK, decodeProtectedHeader, JWK, jwtVerify } from 'jose';
 import { v4 } from 'uuid';
@@ -97,12 +102,21 @@ export class IssuerService implements OnModuleInit {
         credentialSubject: values.credentialSubject,
         exp,
       };
+      let tx_code: TxCode;
+      if (values.pin) {
+        tx_code = {
+          input_mode: 'numeric',
+          length: 6,
+          description: 'Please enter the code',
+        };
+      }
+
       const response = await this.vcIssuer.createCredentialOfferURI({
-        credentials: [credential.schema.id as string],
+        credential_configuration_ids: [credential.schema.id as string],
         grants: {
           'urn:ietf:params:oauth:grant-type:pre-authorized_code': {
             'pre-authorized_code': sessionId,
-            user_pin_required: values.pin,
+            tx_code,
           },
         },
         credentialDataSupplierInput,
@@ -237,6 +251,7 @@ export class IssuerService implements OnModuleInit {
         id: args.credential.jti as string,
       });
       return jwt;
+      // return decodeSdJwtVc(jwt, digest) as unknown as Promise<CompactSdJwtVc>;
     };
 
     //create the issuer instance

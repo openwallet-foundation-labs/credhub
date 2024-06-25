@@ -4,8 +4,11 @@ import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { OpenID4VCIClient } from '@sphereon/oid4vci-client';
 import {
   Alg,
+  CredentialOfferPayloadV1_0_13,
+  EndpointMetadataResultV1_0_13,
+  IssuerMetadataV1_0_13,
   JwtVerifyResult,
-  type CredentialSupported,
+  type CredentialConfigurationSupported,
   type CredentialSupportedSdJwtVc,
   type Jwt,
   type MetadataDisplay,
@@ -23,7 +26,7 @@ type Session = {
   //instead of storing the client, we could also generate it on demand. In this case we need to store the uri
   client: OpenID4VCIClient;
   relyingParty: string;
-  credentials: CredentialSupported[];
+  credentials: CredentialConfigurationSupported[];
   issuer: MetadataDisplay;
   created: Date;
 };
@@ -48,17 +51,17 @@ export class Oid4vciService {
         retrieveServerMetadata: true,
       });
       // get the credential offer
-      const metadata = await client.retrieveServerMetadata();
-      const supportedCredentials = metadata.credentialIssuerMetadata
-        .credentials_supported as CredentialSupported[];
-      const credentials =
-        client.credentialOffer.credential_offer.credentials.map(
-          (credential) => {
-            return supportedCredentials.find(
-              (supportedCredential) => supportedCredential.id === credential
-            ) as CredentialSupported;
-          }
-        );
+      const metadata =
+        (await client.retrieveServerMetadata()) as EndpointMetadataResultV1_0_13;
+      const supportedCredentials = (
+        metadata.credentialIssuerMetadata as IssuerMetadataV1_0_13
+      ).credential_configurations_supported;
+      const credentials = (
+        client.credentialOffer.credential_offer as CredentialOfferPayloadV1_0_13
+      ).credential_configuration_ids.map(
+        (credential) => supportedCredentials[credential]
+      );
+      console.log(credentials);
       const id = uuid();
       if (!data.noSession) {
         this.sessions.set(id, {

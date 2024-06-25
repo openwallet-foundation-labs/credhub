@@ -1,4 +1,4 @@
-import { CredentialIssuerMetadataOpts } from '@sphereon/oid4vci-common';
+import { CredentialIssuerMetadataOptsV1_0_13 } from '@sphereon/oid4vci-common';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { CredentialSchema } from './types.js';
@@ -14,7 +14,7 @@ export class IssuerDataService {
   /**
    * The metadata of the issuer.
    */
-  private metadata!: CredentialIssuerMetadataOpts;
+  private metadata!: CredentialIssuerMetadataOptsV1_0_13;
 
   /**
    * The credentials supported by the issuer.
@@ -23,6 +23,7 @@ export class IssuerDataService {
 
   constructor(private configSerivce: ConfigService) {
     this.loadConfig();
+    console.log(this.metadata);
   }
 
   public loadConfig() {
@@ -32,11 +33,11 @@ export class IssuerDataService {
     //instead of reading at the beginning, we could implement a read on demand.
     this.metadata = JSON.parse(
       readFileSync(join(folder, 'metadata.json'), 'utf-8')
-    ) as CredentialIssuerMetadataOpts;
+    ) as CredentialIssuerMetadataOptsV1_0_13;
     this.metadata.credential_issuer = this.configSerivce.get('ISSUER_BASE_URL');
 
-    if (!this.metadata.credentials_supported) {
-      this.metadata.credentials_supported = [];
+    if (!this.metadata.credential_configurations_supported) {
+      this.metadata.credential_configurations_supported = {};
     }
 
     const files = readdirSync(join(folder, 'credentials'));
@@ -52,7 +53,9 @@ export class IssuerDataService {
         );
       }
       this.credentials.set(content.schema.id as string, content);
-      this.metadata.credentials_supported.push(content.schema);
+      this.metadata.credential_configurations_supported[
+        content.schema.id as string
+      ] = content.schema;
     }
   }
 

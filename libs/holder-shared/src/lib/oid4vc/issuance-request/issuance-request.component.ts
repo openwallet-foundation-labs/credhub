@@ -2,7 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Oid4vciApiService } from '../../api/';
 import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { CredentialSupported, MetadataDisplay } from '@sphereon/oid4vci-common';
+import {
+  CredentialConfigurationSupported,
+  MetadataDisplay,
+} from '@sphereon/oid4vci-common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
@@ -28,7 +31,7 @@ import { SettingsService } from '../../settings/settings.service';
 export class IssuanceRequestComponent implements OnInit {
   @Input() url!: string;
   session?: string;
-  credentials?: CredentialSupported[];
+  credentials?: CredentialConfigurationSupported[];
   issuer?: MetadataDisplay[];
   auto!: boolean;
 
@@ -48,7 +51,7 @@ export class IssuanceRequestComponent implements OnInit {
     ).then((res) => {
       this.session = res.sessionId;
       this.issuer = res.issuer as MetadataDisplay[];
-      this.credentials = res.credentials as CredentialSupported[];
+      this.credentials = res.credentials as CredentialConfigurationSupported[];
       if (this.auto) {
         this.accept();
       }

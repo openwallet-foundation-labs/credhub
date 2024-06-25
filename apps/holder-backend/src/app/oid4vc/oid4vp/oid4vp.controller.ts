@@ -21,7 +21,7 @@ import { KeycloakUser } from '../../auth/user';
 
 @UseGuards(AuthGuard)
 @ApiOAuth2([])
-@ApiTags('oid4vcp')
+@ApiTags('oid4vp')
 @Controller('oid4vp')
 export class Oid4vpController {
   constructor(private readonly oid4vciService: Oid4vpService) {}

@@ -1,4 +1,7 @@
-import { CredentialSupported, MetadataDisplay } from '@sphereon/oid4vci-common';
+import {
+  CredentialConfigurationSupported,
+  MetadataDisplay,
+} from '@sphereon/oid4vci-common';
 import { IsArray, IsString } from 'class-validator';
 
 export class Oid4vciParseRepsonse {
@@ -6,7 +9,7 @@ export class Oid4vciParseRepsonse {
   sessionId: string;
 
   @IsArray()
-  credentials: CredentialSupported[];
+  credentials: CredentialConfigurationSupported[];
 
   @IsArray()
   issuer: MetadataDisplay[];
