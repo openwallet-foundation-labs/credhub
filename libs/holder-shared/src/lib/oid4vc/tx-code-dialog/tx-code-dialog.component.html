@@ -1,0 +1,19 @@
+<h1 mat-dialog-title>Transaction code</h1>
+<mat-dialog-content>
+  <p>
+    {{ data.description }}
+  </p>
+  <mat-form-field [appearance]="'outline'">
+    <input matInput placeholder="Transaction code" [formControl]="input" />
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
+  <button mat-button [mat-dialog-close]="null">Cancel</button>
+  <button
+    mat-flat-button
+    [mat-dialog-close]="input.value"
+    [disabled]="input.invalid"
+  >
+    Ok
+  </button>
+</mat-dialog-actions>
