@@ -26,6 +26,8 @@ model/oid4vciParseRepsonse.ts
 model/oid4vciParseRequest.ts
 model/oid4vpParseRepsonse.ts
 model/oid4vpParseRequest.ts
+model/passkey.ts
+model/registrationResponse.ts
 model/relyingParty.ts
 model/setting.ts
 model/settingResponse.ts

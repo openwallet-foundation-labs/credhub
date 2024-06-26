@@ -6,9 +6,10 @@ import { Oid4vpController } from './oid4vp/oid4vp.controller';
 import { Oid4vpService } from './oid4vp/oid4vp.service';
 import { CredentialsModule } from '../credentials/credentials.module';
 import { HistoryModule } from '../history/history.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [HttpModule, CredentialsModule, HistoryModule],
+  imports: [HttpModule, CredentialsModule, HistoryModule, AuthModule],
   controllers: [Oid4vciController, Oid4vpController],
   providers: [Oid4vciService, Oid4vpService],
 })

@@ -16,6 +16,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { SettingsService } from '../../settings/settings.service';
 import { Oid4vcpApiService } from '../../api/api/oid4vcp.service';
+import { WebauthnService } from '../../auth/webauthn.service';
 
 @Component({
   selector: 'lib-verify-request',
@@ -46,7 +47,8 @@ export class VerifyRequestComponent implements OnInit {
     private oid4vpApiService: Oid4vcpApiService,
     private router: Router,
     private snackBar: MatSnackBar,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private webauthnService: WebauthnService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -78,14 +80,30 @@ export class VerifyRequestComponent implements OnInit {
       values[key] = (this.form.value as Record<string, string[]>)[key][0];
     }
 
-    await firstValueFrom(
-      this.oid4vpApiService.oid4vpControllerSubmit(
-        (this.response as Oid4vpParseRepsonse).sessionId,
-        values
-      )
-    ).then(() => {
-      this.status = 'done';
-    });
+    if (await this.webauthnService.hasKeys()) {
+      const auth = await this.webauthnService.authenticate();
+      await firstValueFrom(
+        this.oid4vpApiService.oid4vpControllerSubmit(
+          (this.response as Oid4vpParseRepsonse).sessionId,
+          {
+            values,
+            auth,
+          }
+        )
+      ).then(() => {
+        this.status = 'done';
+      });
+      return;
+    } else {
+      await firstValueFrom(
+        this.oid4vpApiService.oid4vpControllerSubmit(
+          (this.response as Oid4vpParseRepsonse).sessionId,
+          { values }
+        )
+      ).then(() => {
+        this.status = 'done';
+      });
+    }
   }
 
   async cancel() {

@@ -11,6 +11,8 @@ export * from './oid4vciParseRepsonse';
 export * from './oid4vciParseRequest';
 export * from './oid4vpParseRepsonse';
 export * from './oid4vpParseRequest';
+export * from './passkey';
+export * from './registrationResponse';
 export * from './relyingParty';
 export * from './setting';
 export * from './settingResponse';

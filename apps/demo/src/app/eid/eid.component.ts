@@ -96,6 +96,7 @@ export class EidComponent implements OnDestroy {
       { pin: false }
     );
     this.qrCodeIssueField.setValue(res.uri);
+    this.issuanceUrl = res.uri;
     this.qrCodeIssueImage = await qrcode.toDataURL(res.uri);
     //TODO: show pin
     this.issuerService.statusEvent.subscribe((status) => {
