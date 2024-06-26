@@ -7,7 +7,6 @@ import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from './auth/auth.service';
-import { SettingsService } from '@credhub/holder-shared';
 
 @Component({
   selector: 'app-root',
