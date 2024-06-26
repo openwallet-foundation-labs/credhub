@@ -20,21 +20,7 @@ export class Passkey {
   //      Caution: Node ORM's may map this to a Buffer on retrieval,
   //      convert to Uint8Array as necessary
   @Column()
-  private _publicKey: string;
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  private convertPublicKey(): void {
-    this._publicKey = Buffer.from(this.publicKey).toString('base64');
-  }
-
-  get publicKey(): Uint8Array {
-    return Uint8Array.from(Buffer.from(this._publicKey, 'base64'));
-  }
-
-  set publicKey(publicKey: Uint8Array) {
-    this._publicKey = Buffer.from(publicKey).toString('base64');
-  }
+  publicKey: string;
 
   // SQL: Foreign Key to an instance of your internal user model
   @Column()

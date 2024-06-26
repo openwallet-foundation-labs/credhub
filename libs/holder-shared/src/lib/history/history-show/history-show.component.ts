@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
+import { WebauthnService } from '../../auth/webauthn.service';
 
 @Component({
   selector: 'lib-history-show',

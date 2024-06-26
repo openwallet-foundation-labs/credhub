@@ -12,7 +12,6 @@ configuration.ts
 encoder.ts
 git_push.sh
 index.ts
-model/authenticationResponse.ts
 model/acceptRequestDto.ts
 model/createCredentialDto.ts
 model/cred.ts
@@ -27,6 +26,7 @@ model/oid4vciParseRepsonse.ts
 model/oid4vciParseRequest.ts
 model/oid4vpParseRepsonse.ts
 model/oid4vpParseRequest.ts
+model/passkey.ts
 model/registrationResponse.ts
 model/relyingParty.ts
 model/setting.ts

@@ -8,23 +8,20 @@ import {
   PublicKeyCredentialCreationOptionsJSON,
   PublicKeyCredentialRequestOptionsJSON,
 } from '@simplewebauthn/types';
-import {
-  AuthApiService,
-  RegistrationResponse,
-  AuthenticationResponse,
-} from '../api';
+import { AuthApiService, RegistrationResponse } from '../api';
 
 @Injectable({ providedIn: 'root' })
 export class WebauthnService {
   constructor(private authService: AuthApiService) {}
 
+  /**
+   * Register a new credential
+   */
   async register() {
     const res = (await firstValueFrom(
       this.authService.webAuthnControllerGetRegistrationOptions()
     )) as PublicKeyCredentialCreationOptionsJSON;
-    console.log(res);
     const registrationResponse = await startRegistration(res);
-    console.log(registrationResponse);
     await firstValueFrom(
       this.authService.webAuthnControllerVerifyRegistration(
         registrationResponse as RegistrationResponse
@@ -32,15 +29,44 @@ export class WebauthnService {
     );
   }
 
+  /**
+   * Authenticate with a credential, use it to get a authenticated session for one action
+   * @returns
+   */
   async authenticate() {
     const res = (await firstValueFrom(
       this.authService.webAuthnControllerGetAuthenticationOptions()
-    )) as PublicKeyCredentialRequestOptionsJSON;
-    const authResponse = await startAuthentication(res);
-    await firstValueFrom(
-      this.authService.webAuthnControllerVerifyAuthentication(
-        authResponse as AuthenticationResponse
-      )
-    );
+    )) as { options: PublicKeyCredentialRequestOptionsJSON; session: string };
+    const authResponse = await startAuthentication(res.options);
+    return {
+      session: res.session,
+      response: authResponse,
+    };
+  }
+
+  /**
+   * Check if the user has any keys to authenticate with
+   * @returns
+   */
+  async hasKeys() {
+    const keys = await this.getKeys();
+    return keys.length > 0;
+  }
+
+  /**
+   * Get all keys for the user
+   * @returns
+   */
+  getKeys() {
+    return firstValueFrom(this.authService.webAuthnControllerGetKeys());
+  }
+
+  /**
+   * Delete a key
+   * @param id
+   * @returns
+   */
+  deleteKey(id: string) {
+    return firstValueFrom(this.authService.webAuthnControllerDeleteKey(id));
   }
 }
