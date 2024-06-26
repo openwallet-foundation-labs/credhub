@@ -1,5 +1,5 @@
 import { DisclosureFrame } from '@sd-jwt/types';
-import { CredentialSupported } from '@sphereon/oid4vci-common';
+import { CredentialConfigurationSupportedV1_0_13 } from '@sphereon/oid4vci-common';
 import { JWK } from 'jose';
 
 /**
@@ -17,7 +17,7 @@ export interface IssuerMetadata {
  * The schema of the credential.
  */
 export interface CredentialSchema {
-  schema: CredentialSupported;
+  schema: CredentialConfigurationSupportedV1_0_13;
   sd: DisclosureFrame<Record<string, unknown | boolean>>;
   // time to live in seconds, it will be added on the current time to get the expiration time.
   ttl?: number;

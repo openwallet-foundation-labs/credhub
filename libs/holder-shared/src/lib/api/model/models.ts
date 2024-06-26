@@ -1,4 +1,5 @@
 export * from './authenticationResponse';
+export * from './acceptRequestDto';
 export * from './createCredentialDto';
 export * from './cred';
 export * from './credentialIssuer';
@@ -15,5 +16,6 @@ export * from './registrationResponse';
 export * from './relyingParty';
 export * from './setting';
 export * from './settingResponse';
+export * from './txCodeInfo';
 export * from './updateSettingsDto';
 export * from './verifyRequestClaim';

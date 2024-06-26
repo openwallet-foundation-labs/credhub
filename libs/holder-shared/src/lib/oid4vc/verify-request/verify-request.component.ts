@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Oid4vcpApiService, Oid4vpParseRepsonse } from '../../api/';
+import { Oid4vpParseRepsonse } from '../../api/';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -15,6 +15,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { SettingsService } from '../../settings/settings.service';
+import { Oid4vcpApiService } from '../../api/api/oid4vcp.service';
 
 @Component({
   selector: 'lib-verify-request',
