@@ -25,11 +25,7 @@ import {
   MemoryStates,
 } from '@sphereon/oid4vci-issuer';
 import { OID4VCIServer } from '@sphereon/oid4vci-issuer-server';
-import {
-  CompactSdJwtVc,
-  SdJwtDecodedVerifiableCredentialPayload,
-  decodeSdJwtVc,
-} from '@sphereon/ssi-types';
+import { SdJwtDecodedVerifiableCredentialPayload } from '@sphereon/ssi-types';
 import { DIDDocument } from 'did-resolver';
 import { importJWK, decodeProtectedHeader, JWK, jwtVerify } from 'jose';
 import { v4 } from 'uuid';

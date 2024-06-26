@@ -21,3 +21,16 @@ index 31db1854f9b56f46cb736da64cc345a183a1b16b..30386be728cf06b5481aa90b6cbdee61
                  initiatorType: ssi_types_1.InitiatorType.EXTERNAL,
                  system: ssi_types_1.System.OID4VCI,
                  subsystem: ssi_types_1.SubSystem.VC_ISSUER,
+diff --git a/dist/tokens/index.js b/dist/tokens/index.js
+index 0e17ef188c5c3c3b5cb4b7bb6bf9f2b5952d5e3f..458d7531b6c796467bdd243db8bf71754434a163 100644
+--- a/dist/tokens/index.js
++++ b/dist/tokens/index.js
+@@ -66,7 +66,7 @@ const assertValidAccessTokenRequest = (request, opts) => __awaiter(void 0, void
+     invalid_request:
+     the Authorization Server does not expect a PIN in the pre-authorized flow but the client provides a PIN
+      */
+-    if (!((_f = (_e = (_d = credentialOfferSession.credentialOffer.credential_offer) === null || _d === void 0 ? void 0 : _d.grants) === null || _e === void 0 ? void 0 : _e[oid4vci_common_1.GrantTypes.PRE_AUTHORIZED_CODE]) === null || _f === void 0 ? void 0 : _f.user_pin_required) && request.user_pin) {
++    if (!((_f = (_e = (_d = credentialOfferSession.credentialOffer.credential_offer) === null || _d === void 0 ? void 0 : _d.grants) === null || _e === void 0 ? void 0 : _e[oid4vci_common_1.GrantTypes.PRE_AUTHORIZED_CODE]) === null || _f === void 0 ? void 0 : _f.tx_code) && request.user_pin) {
+         throw new oid4vci_common_1.TokenError(400, oid4vci_common_1.TokenErrorResponse.invalid_request, oid4vci_common_1.USER_PIN_NOT_REQUIRED_ERROR);
+     }
+     /*

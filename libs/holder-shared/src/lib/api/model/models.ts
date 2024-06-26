@@ -1,3 +1,4 @@
+export * from './acceptRequestDto';
 export * from './createCredentialDto';
 export * from './cred';
 export * from './credentialIssuer';
@@ -13,5 +14,6 @@ export * from './oid4vpParseRequest';
 export * from './relyingParty';
 export * from './setting';
 export * from './settingResponse';
+export * from './txCodeInfo';
 export * from './updateSettingsDto';
 export * from './verifyRequestClaim';

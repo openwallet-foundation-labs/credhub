@@ -23,7 +23,6 @@ export class IssuerDataService {
 
   constructor(private configSerivce: ConfigService) {
     this.loadConfig();
-    console.log(this.metadata);
   }
 
   public loadConfig() {

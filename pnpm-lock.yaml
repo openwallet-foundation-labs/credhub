@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   '@sphereon/oid4vci-issuer@0.12.0':
-    hash: j2tsxztycpsbpydxzxawewd5du
+    hash: b56rz3dojlfwokgvfk5khv2mfa
     path: patches/@sphereon__oid4vci-issuer@0.12.0.patch
   '@sphereon/pex@3.3.3':
     hash: bzkrsrlwcpq6eepymelnbd2pca
@@ -99,7 +99,7 @@ dependencies:
     version: 0.12.0
   '@sphereon/oid4vci-issuer':
     specifier: ^0.12.0
-    version: 0.12.0(patch_hash=j2tsxztycpsbpydxzxawewd5du)
+    version: 0.12.0(patch_hash=b56rz3dojlfwokgvfk5khv2mfa)
   '@sphereon/oid4vci-issuer-server':
     specifier: ^0.12.0
     version: 0.12.0
@@ -7277,7 +7277,7 @@ packages:
     engines: {node: '>=18'}
     dependencies:
       '@sphereon/oid4vci-common': 0.12.0
-      '@sphereon/oid4vci-issuer': 0.12.0(patch_hash=j2tsxztycpsbpydxzxawewd5du)
+      '@sphereon/oid4vci-issuer': 0.12.0(patch_hash=b56rz3dojlfwokgvfk5khv2mfa)
       '@sphereon/ssi-express-support': 0.25.1-unstable.87
       '@sphereon/ssi-types': 0.25.1-unstable.87
       body-parser: 1.20.2
@@ -7297,7 +7297,7 @@ packages:
       - supports-color
     dev: false
 
-  /@sphereon/oid4vci-issuer@0.12.0(patch_hash=j2tsxztycpsbpydxzxawewd5du):
+  /@sphereon/oid4vci-issuer@0.12.0(patch_hash=b56rz3dojlfwokgvfk5khv2mfa):
     resolution: {integrity: sha512-aZxj9hlJ3aIoGLE0JmVqF5IJMJ50BpEACnyqtGQZK9sEGyOFotPD/xaDaJOR9C1Kw2Tj/VMmO6fONa7M+PlPwQ==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -9502,8 +9502,8 @@ packages:
     engines: {node: '>=6.0'}
     dev: true
 
-  /chromedriver@126.0.3:
-    resolution: {integrity: sha512-4o+ZK8926/8lqIlnnvcljCHV88Z8IguEMB5PInOiS9/Lb6cyeZSj2Uvz+ky1Jgyw2Bn7qCLJFfbUslaWnvUUbg==}
+  /chromedriver@126.0.4:
+    resolution: {integrity: sha512-mIdJqdocfN/y9fl5BymIzM9WQLy64x078i5tS1jGFzbFAwXwXrj3zmA86Wf3R/hywPYpWqwXxFGBJHgqZTuGCA==}
     engines: {node: '>=18'}
     hasBin: true
     requiresBuild: true
@@ -13351,7 +13351,7 @@ packages:
     dependencies:
       jwk-to-pem: 2.0.5
     optionalDependencies:
-      chromedriver: 126.0.3
+      chromedriver: 126.0.4
     transitivePeerDependencies:
       - debug
       - supports-color

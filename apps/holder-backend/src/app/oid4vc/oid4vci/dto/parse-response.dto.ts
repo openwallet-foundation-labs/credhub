@@ -1,16 +1,25 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   CredentialConfigurationSupported,
+  InputCharSet,
   MetadataDisplay,
+  TxCode,
 } from '@sphereon/oid4vci-common';
-import { IsArray, IsString } from 'class-validator';
 
+export class TxCodeInfo implements TxCode {
+  @ApiProperty({ enum: ['numeric', 'text'] })
+  input_mode?: InputCharSet;
+
+  description?: string;
+
+  length?: number;
+}
 export class Oid4vciParseRepsonse {
-  @IsString()
   sessionId: string;
 
-  @IsArray()
   credentials: CredentialConfigurationSupported[];
 
-  @IsArray()
   issuer: MetadataDisplay[];
+
+  txCode: TxCodeInfo;
 }

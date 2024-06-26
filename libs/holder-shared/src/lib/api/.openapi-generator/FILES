@@ -6,12 +6,13 @@ api/credentials.service.ts
 api/default.service.ts
 api/history.service.ts
 api/oid4vci.service.ts
-api/oid4vcp.service.ts
+api/oid4vp.service.ts
 api/settings.service.ts
 configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/acceptRequestDto.ts
 model/createCredentialDto.ts
 model/cred.ts
 model/credentialIssuer.ts
@@ -28,6 +29,7 @@ model/oid4vpParseRequest.ts
 model/relyingParty.ts
 model/setting.ts
 model/settingResponse.ts
+model/txCodeInfo.ts
 model/updateSettingsDto.ts
 model/verifyRequestClaim.ts
 param.ts

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Oid4vciApiService } from '../../api/';
+import { Oid4vciApiService, TxCodeInfo } from '../../api/';
 import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import {
@@ -13,6 +13,8 @@ import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatListModule } from '@angular/material/list';
 import { SettingsService } from '../../settings/settings.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TxCodeDialogComponent } from '../tx-code-dialog/tx-code-dialog.component';
 
 @Component({
   selector: 'lib-issuance-request',
@@ -24,6 +26,7 @@ import { SettingsService } from '../../settings/settings.service';
     FlexLayoutModule,
     MatSnackBarModule,
     MatListModule,
+    MatDialogModule,
   ],
   templateUrl: './issuance-request.component.html',
   styleUrl: './issuance-request.component.scss',
@@ -34,12 +37,14 @@ export class IssuanceRequestComponent implements OnInit {
   credentials?: CredentialConfigurationSupported[];
   issuer?: MetadataDisplay[];
   auto!: boolean;
+  private code?: string;
 
   constructor(
     private oid4vciApiService: Oid4vciApiService,
     private router: Router,
     private snackbar: MatSnackBar,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private dialog: MatDialog
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -48,10 +53,26 @@ export class IssuanceRequestComponent implements OnInit {
       this.oid4vciApiService.oid4vciControllerParse({
         url: this.url,
       })
-    ).then((res) => {
+    ).then(async (res) => {
       this.session = res.sessionId;
       this.issuer = res.issuer as MetadataDisplay[];
       this.credentials = res.credentials as CredentialConfigurationSupported[];
+      if (res.txCode) {
+        this.code = await firstValueFrom(
+          this.dialog
+            .open(TxCodeDialogComponent, {
+              data: res.txCode,
+              disableClose: true,
+            })
+            .afterClosed()
+        );
+        if (!this.code) {
+          this.router.navigate(['/']);
+          this.snackbar.open('Issuance Request aborted', 'OK');
+        }
+        return;
+      }
+
       if (this.auto) {
         this.accept();
       }
@@ -66,7 +87,10 @@ export class IssuanceRequestComponent implements OnInit {
   }
   async accept() {
     await firstValueFrom(
-      this.oid4vciApiService.oid4vciControllerAccept(this.session as string)
+      this.oid4vciApiService.oid4vciControllerAccept({
+        id: this.session as string,
+        txCode: this.code,
+      })
     ).then((res) =>
       this.router
         .navigate(['/credentials', res.id])

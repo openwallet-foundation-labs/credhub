@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { digest } from '@sd-jwt/crypto-nodejs';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { OpenID4VCIClient } from '@sphereon/oid4vci-client';
@@ -6,6 +6,7 @@ import {
   Alg,
   CredentialOfferPayloadV1_0_13,
   EndpointMetadataResultV1_0_13,
+  GrantTypes,
   IssuerMetadataV1_0_13,
   JwtVerifyResult,
   type CredentialConfigurationSupported,
@@ -21,6 +22,7 @@ import { Oid4vciParseRequest } from './dto/parse-request.dto';
 import { decodeJwt } from 'jose';
 import { CredentialsService } from '../../credentials/credentials.service';
 import { KeysService } from '../../keys/keys.service';
+import { AcceptRequestDto } from './dto/accept-request.dto';
 
 type Session = {
   //instead of storing the client, we could also generate it on demand. In this case we need to store the uri
@@ -29,6 +31,7 @@ type Session = {
   credentials: CredentialConfigurationSupported[];
   issuer: MetadataDisplay;
   created: Date;
+  pinRequired: boolean;
 };
 
 @Injectable()
@@ -61,7 +64,6 @@ export class Oid4vciService {
       ).credential_configuration_ids.map(
         (credential) => supportedCredentials[credential]
       );
-      console.log(credentials);
       const id = uuid();
       if (!data.noSession) {
         this.sessions.set(id, {
@@ -71,18 +73,23 @@ export class Oid4vciService {
           //allows use to remove the session after a certain time
           created: new Date(),
           issuer: metadata.credentialIssuerMetadata.display[0],
+          pinRequired: client.credentialOffer.userPinRequired,
         });
       }
       return {
         sessionId: id,
         credentials,
         issuer: metadata.credentialIssuerMetadata.display,
+        txCode:
+          client.credentialOffer.credential_offer.grants?.[
+            GrantTypes.PRE_AUTHORIZED_CODE
+          ]?.tx_code,
       };
     }
   }
 
-  async accept(session: string, user: string) {
-    const data = this.sessions.get(session);
+  async accept(accept: AcceptRequestDto, user: string) {
+    const data = this.sessions.get(accept.id);
     if (!data) {
       throw new Error('Session not found');
     }
@@ -105,7 +112,12 @@ export class Oid4vciService {
           kid: key.id,
         }),
     };
-    await data.client.acquireAccessToken();
+
+    if (data.pinRequired && !accept.txCode) {
+      throw new ConflictException('PIN required');
+    }
+
+    await data.client.acquireAccessToken({ pin: accept.txCode });
     for (const credential of data.credentials) {
       const credentialResponse = await data.client.acquireCredentials({
         credentialTypes: (credential as CredentialSupportedSdJwtVc).vct,
@@ -127,7 +139,7 @@ export class Oid4vciService {
         user
       );
       //remove the old session
-      this.sessions.delete(session);
+      this.sessions.delete(accept.id);
       return { id: credentialEntry.id };
     }
   }
