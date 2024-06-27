@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Param,
@@ -51,12 +52,17 @@ export class Oid4vpController {
     @Req() req: Request
   ) {
     const origin = req.headers.origin;
-    await this.webauthnService.verifyAuthenticationResponse(
-      value.auth.session,
-      user.sub,
-      value.auth.response,
-      origin
-    );
+    if (await this.webauthnService.hasKeys(user.sub)) {
+      if (!value.auth) {
+        throw new ConflictException('No authentication provided');
+      }
+      await this.webauthnService.verifyAuthenticationResponse(
+        value.auth.session,
+        user.sub,
+        value.auth.response,
+        origin
+      );
+    }
     return this.oid4vciService.accept(id, user.sub, value.values);
   }
 

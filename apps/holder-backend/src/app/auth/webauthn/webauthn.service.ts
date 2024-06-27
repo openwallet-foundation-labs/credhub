@@ -189,17 +189,20 @@ export class WebauthnService {
     this.loginSessions.delete(key);
   }
 
+  /**
+   * Verify the authentication response
+   */
   async verifyAuthenticationResponse(
     session: string,
     user: string,
     body: AuthenticationResponseJSON,
     expectedOrigin: string
   ) {
-    // (Pseudocode) Get `options.challenge` that was saved above
     const currentOptions: PublicKeyCredentialRequestOptionsJSON =
       this.getCurrentAuthenticationOptions(session);
-    // (Pseudocode} Retrieve a passkey from the DB that
-    // should match the `id` in the returned credential
+    if (!currentOptions) {
+      throw new ConflictException('No authentication session found');
+    }
     const passkey: Passkey = await this.getUserPasskey(user, body.id);
 
     if (!passkey) {
@@ -241,6 +244,11 @@ export class WebauthnService {
     await this.saveUpdatedCounter(passkey, newCounter);
   }
 
+  /**
+   * Save the updated counter for a passkey
+   * @param passkey
+   * @param newCounter
+   */
   private async saveUpdatedCounter(passkey: Passkey, newCounter: number) {
     passkey.counter = newCounter;
     await this.passKeyRepository.save(passkey);
@@ -254,6 +262,15 @@ export class WebauthnService {
    */
   private getUserPasskey(user: string, id: string): Promise<Passkey> {
     return this.passKeyRepository.findOne({ where: { id, user } });
+  }
+
+  /**
+   * Check if a user has any keys
+   */
+  hasKeys(user: string) {
+    return this.passKeyRepository.count({ where: { user } }).then((count) => {
+      return count > 0;
+    });
   }
 
   /**
