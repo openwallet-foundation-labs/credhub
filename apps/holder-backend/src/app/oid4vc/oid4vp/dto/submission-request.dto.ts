@@ -5,7 +5,7 @@ export class CredentialSelection {
 }
 
 export class SubmissionRequest {
-  auth: {
+  auth?: {
     session: string;
     response: AuthenticationResponseJSON;
   };
