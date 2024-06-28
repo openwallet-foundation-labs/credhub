@@ -9,13 +9,16 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { TxCodeInfo } from './txCodeInfo';
 
 
-export interface Oid4vciParseRepsonse { 
-    sessionId: string;
-    credentials: Array<object>;
-    issuer: Array<object>;
-    txCode: TxCodeInfo;
+export interface Passkey { 
+    id: string;
+    publicKey: string;
+    user: string;
+    webauthnUserID: string;
+    counter: number;
+    deviceType: object;
+    backedUp: boolean;
+    transports?: Array<object>;
 }
 

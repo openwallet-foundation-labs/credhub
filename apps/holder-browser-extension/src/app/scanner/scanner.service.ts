@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { OpenID4VCIClient } from '@sphereon/oid4vci-client';
 import {
-  CredentialSupported,
+  CredentialConfigurationSupported,
   CredentialsSupportedDisplay,
   MetadataDisplay,
 } from '@sphereon/oid4vci-common';
@@ -14,7 +14,7 @@ export interface ResultScan {
   url: string;
   sessionId?: string;
   relyingParty: string;
-  credentials?: CredentialSupported[];
+  credentials?: CredentialConfigurationSupported[];
   purpose?: string;
 }
 
@@ -54,7 +54,7 @@ export class ScannerService {
         this.results.push({
           action: 'issue',
           url,
-          credentials: result.credentials as CredentialSupported[],
+          credentials: result.credentials as CredentialConfigurationSupported[],
           sessionId: result.sessionId,
           relyingParty: (result.issuer[0] as MetadataDisplay).name as string,
         });
@@ -75,7 +75,7 @@ export class ScannerService {
     }
   }
 
-  getNames(credentials: CredentialSupported[]) {
+  getNames(credentials: CredentialConfigurationSupported[]) {
     return credentials
       .map(
         (credential) =>

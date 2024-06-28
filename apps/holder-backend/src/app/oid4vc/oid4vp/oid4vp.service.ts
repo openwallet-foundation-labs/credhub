@@ -16,7 +16,10 @@ import {
 import { SdJwtDecodedVerifiableCredentialWithKbJwtInput } from '@sphereon/pex';
 import { v4 as uuid } from 'uuid';
 import { Oid4vpParseRepsonse } from './dto/parse-response.dto';
-import { SubmissionRequest } from './dto/submission-request.dto';
+import {
+  CredentialSelection,
+  SubmissionRequest,
+} from './dto/submission-request.dto';
 import { Oid4vpParseRequest } from './dto/parse-request.dto';
 import { Session } from './session';
 import { CompactSdJwtVc } from '@sphereon/ssi-types';
@@ -134,7 +137,7 @@ export class Oid4vpService {
   async accept(
     sessionId: string,
     user: string,
-    value: SubmissionRequest
+    value: CredentialSelection
   ): Promise<void> {
     // get the session, throw an error if not found
     const session = this.sessions.get(sessionId);

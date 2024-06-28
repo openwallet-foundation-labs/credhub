@@ -9,13 +9,19 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { TxCodeInfo } from './txCodeInfo';
 
 
-export interface Oid4vciParseRepsonse { 
-    sessionId: string;
-    credentials: Array<object>;
-    issuer: Array<object>;
-    txCode: TxCodeInfo;
+export interface TxCodeInfo { 
+    input_mode?: TxCodeInfo.InputModeEnum;
+    description?: string;
+    length?: number;
 }
+export namespace TxCodeInfo {
+    export type InputModeEnum = 'numeric' | 'text';
+    export const InputModeEnum = {
+        numeric: 'numeric' as InputModeEnum,
+        text: 'text' as InputModeEnum
+    };
+}
+
 
