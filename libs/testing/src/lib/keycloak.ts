@@ -11,6 +11,7 @@ import {
   Wait,
 } from 'testcontainers';
 import axios from 'axios';
+import { gt } from './holder-backend';
 
 export class Keycloak {
   // Keycloak admin credentials
@@ -32,13 +33,13 @@ export class Keycloak {
    */
   async start() {
     this.network = await new Network().start();
-
     //create a keycloak database
     this.db = await new PostgreSqlContainer()
       .withNetwork(this.network)
       .withName('postgres-keycloak')
       .start();
 
+    //TODO: define a random port so that multiple instances can run in parallel
     const hostPort = 8080;
     //create a keycloak instance
     this.instance = await new GenericContainer(
@@ -68,7 +69,6 @@ export class Keycloak {
         '--import-realm',
       ])
       .start();
-
     await TestContainers.exposeHostPorts(8080);
   }
 
@@ -174,4 +174,9 @@ export class Keycloak {
     await this.db.stop();
     await this.network.stop();
   }
+}
+
+// extend globalThis with the keycloak instance
+export interface KeycloakGlobalThis extends gt {
+  keycloak: Keycloak;
 }

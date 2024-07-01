@@ -39,7 +39,7 @@ jobs:
         run: npx license-checker --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;0BSD"
 
       - name: Lint, test, build, and container
-        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test container
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test container e2e-ci
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4

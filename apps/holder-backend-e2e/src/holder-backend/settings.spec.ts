@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { getInstance } from '../support/dependencies/requests';
+import { getInstance } from '@credhub/testing';
 
 describe('settings', () => {
   let axios: AxiosInstance;

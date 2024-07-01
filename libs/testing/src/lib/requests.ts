@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { KeycloakGlobalThis, gt } from './holder-backend';
+import { BackendGlobalThis, gt } from './holder-backend';
 
 interface TokenGlobalThis extends gt {
   userAccessToken: string;
@@ -11,9 +11,9 @@ interface TokenGlobalThis extends gt {
  */
 export function getInstance(): AxiosInstance {
   const host = 'localhost';
-  const port = (
-    globalThis as KeycloakGlobalThis
-  ).keycloak.instance.getMappedPort(3000);
+  const port = (globalThis as BackendGlobalThis).backend.instance.getMappedPort(
+    3000
+  );
   return axios.create({
     baseURL: `http://${host}:${port}`,
     headers: {

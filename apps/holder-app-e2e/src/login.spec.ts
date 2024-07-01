@@ -1,21 +1,38 @@
-import { Keycloak, HolderBackend } from '@credhub/testing';
+import {
+  Keycloak,
+  HolderBackend,
+  KeycloakGlobalThis,
+  BackendGlobalThis,
+  HolderFrontend,
+} from '@credhub/testing';
 import { test, expect } from '@playwright/test';
 
 const username = 'mirko@gmx.de';
 const password = 'mirko';
+let keycloak: Keycloak;
+let backend: HolderBackend;
+let frontend: HolderFrontend;
+let hostname: string;
 
 test.beforeAll(async () => {
   //start keycloak
-  await Keycloak.start();
+  keycloak = await Keycloak.init();
+  (globalThis as KeycloakGlobalThis).keycloak = keycloak;
 
   //start backend
-  await HolderBackend.start();
+  backend = await HolderBackend.init();
+  (globalThis as BackendGlobalThis).backend = backend;
+
+  //start frontend
+  frontend = await HolderFrontend.init();
+
+  hostname = `http://localhost:${frontend.instance.getMappedPort(80)}`;
 
   const testUserEmail = 'test@test.de';
   const testUserPassword = 'password';
   // create a new user
-  await Keycloak.createUser(
-    `http://localhost:${globalThis.keycloak.getMappedPort(8080)}`,
+  await keycloak.createUser(
+    `http://localhost:${keycloak.instance.getMappedPort(8080)}`,
     'wallet',
     testUserEmail,
     testUserPassword
@@ -23,16 +40,13 @@ test.beforeAll(async () => {
 });
 
 test.afterAll(async () => {
-  console.log(globalThis);
-  await HolderBackend.stop();
-  await Keycloak.stop();
+  await frontend.stop();
+  await backend.stop();
+  await keycloak.stop();
 });
 
 test('register', async ({ page }) => {
-  //generate a random email address
-  // const username = `${Math.random().toString(36).substring(7)}@mail.com`;
-
-  await page.goto('http://localhost:4200');
+  await page.goto(hostname);
 
   //click on the button
   await page.click('text=Login');
@@ -50,7 +64,7 @@ test('register', async ({ page }) => {
 });
 
 test('login', async ({ page }) => {
-  await page.goto('http://localhost:4200');
+  await page.goto(hostname);
 
   //click on the button
   await page.click('text=Login');
@@ -70,7 +84,7 @@ test('login', async ({ page }) => {
 });
 
 test('logout', async ({ page }) => {
-  await page.goto('http://localhost:4200');
+  await page.goto(hostname);
 
   //click on the button
   await page.click('text=Login');
@@ -81,7 +95,7 @@ test('logout', async ({ page }) => {
   await page.click('id=kc-login');
 
   await page.waitForSelector('text=Credentials');
-  await page.goto('http://localhost:4200/settings');
+  await page.goto(`${hostname}/settings`);
 
   await page.click('id=logout');
 

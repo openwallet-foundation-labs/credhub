@@ -10,12 +10,11 @@ import {
   Wait,
 } from 'testcontainers';
 import { Client } from 'pg';
-import { Keycloak } from './keycloak';
+import { KeycloakGlobalThis } from './keycloak';
 
 export type gt = typeof globalThis;
-// extend globalThis with the keycloak instance
-export interface KeycloakGlobalThis extends gt {
-  keycloak: Keycloak;
+export interface BackendGlobalThis extends gt {
+  backend: HolderBackend;
 }
 
 /**
@@ -26,7 +25,7 @@ export class HolderBackend {
   network!: StartedNetwork;
   private postgresContainer!: StartedPostgreSqlContainer;
   private postgresClient!: Client;
-  backend!: StartedTestContainer;
+  instance!: StartedTestContainer;
 
   static async init() {
     const instance = new HolderBackend();
@@ -43,14 +42,14 @@ export class HolderBackend {
 
     this.postgresContainer = await new PostgreSqlContainer()
       .withNetwork(this.network)
-      .withName('postgres')
+      .withName('postgres-backend')
       .start();
     this.postgresClient = new Client({
       connectionString: this.postgresContainer.getConnectionUri(),
     });
     await this.postgresClient.connect();
 
-    this.backend = await new GenericContainer(
+    this.instance = await new GenericContainer(
       'ghcr.io/openwallet-foundation-labs/credhub/holder-backend'
     )
       .withNetwork(this.network)
@@ -66,17 +65,19 @@ export class HolderBackend {
         OIDC_ADMIN_CLIENT_ID: 'wallet-admin',
         OIDC_ADMIN_CLIENT_SECRET: 'kwpCrguxUOn9gump77E0B3vAkiOhW8eL',
         DB_TYPE: 'postgres',
-        DB_HOST: 'postgres',
+        DB_HOST: 'postgres-backend',
         DB_PORT: '5432',
         DB_USERNAME: this.postgresContainer.getUsername(),
         DB_PASSWORD: this.postgresContainer.getPassword(),
         DB_NAME: this.postgresContainer.getDatabase(),
+        WEBAUTHN_RP_ID: 'localhost',
+        WEBAUTHN_RP_NAME: 'Holder Backend',
       })
       .start();
   }
 
   async stop() {
-    await this.backend.stop();
+    await this.instance.stop();
     await this.postgresClient.end();
     await this.postgresContainer.stop();
     await this.network.stop();
