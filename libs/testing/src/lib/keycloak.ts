@@ -1,8 +1,12 @@
-import { PostgreSqlContainer } from '@testcontainers/postgresql';
+import {
+  PostgreSqlContainer,
+  StartedPostgreSqlContainer,
+} from '@testcontainers/postgresql';
 import {
   GenericContainer,
   Network,
   StartedNetwork,
+  StartedTestContainer,
   TestContainers,
   Wait,
 } from 'testcontainers';
@@ -10,26 +14,34 @@ import axios from 'axios';
 
 export class Keycloak {
   // Keycloak admin credentials
-  static ADMIN_USERNAME = 'admin';
-  static ADMIN_PASSWORD = 'admin';
+  ADMIN_USERNAME = 'admin';
+  ADMIN_PASSWORD = 'admin';
   // Keycloak network
-  static network: StartedNetwork;
+  network!: StartedNetwork;
+  instance!: StartedTestContainer;
+  private db!: StartedPostgreSqlContainer;
+
+  static async init() {
+    const instance = new Keycloak();
+    await instance.start();
+    return instance;
+  }
 
   /**
    * Start the keycloak container and its dependencies
    */
-  static async start() {
+  async start() {
     this.network = await new Network().start();
 
     //create a keycloak database
-    globalThis.postgresKeycloakContainer = await new PostgreSqlContainer()
+    this.db = await new PostgreSqlContainer()
       .withNetwork(this.network)
       .withName('postgres-keycloak')
       .start();
 
     const hostPort = 8080;
     //create a keycloak instance
-    globalThis.keycloak = await new GenericContainer(
+    this.instance = await new GenericContainer(
       'ghcr.io/openwallet-foundation-labs/credhub/keycloak'
     )
       .withNetwork(this.network)
@@ -38,7 +50,7 @@ export class Keycloak {
       .withName('keycloak')
       .withEnvironment({
         JAVA_OPTS_APPEND: '-Dkeycloak.profile.feature.upload_scripts=enabled',
-        KC_DB_URL: `jdbc:postgresql://postgres-keycloak/${globalThis.postgresKeycloakContainer.getDatabase()}?user=${globalThis.postgresKeycloakContainer.getUsername()}&password=${globalThis.postgresKeycloakContainer.getPassword()}`,
+        KC_DB_URL: `jdbc:postgresql://postgres-keycloak/${this.db.getDatabase()}?user=${this.db.getUsername()}&password=${this.db.getPassword()}`,
         KC_HEALTH_ENABLED: 'true',
         KC_HTTP_ENABLED: 'true',
         KC_METRICS_ENABLED: 'true',
@@ -68,7 +80,7 @@ export class Keycloak {
    * @param password
    * @returns
    */
-  static async getAccessToken(
+  async getAccessToken(
     keycloakUrl: string,
     realm: string,
     username: string,
@@ -99,17 +111,17 @@ export class Keycloak {
    * @param username
    * @param password
    */
-  static async createUser(
+  async createUser(
     keycloakUrl: string,
     realm: string,
     username: string,
     password: string
   ) {
-    const accessToken = await Keycloak.getAccessToken(
-      `http://localhost:${globalThis.keycloak.getMappedPort(8080)}`,
+    const accessToken = await this.getAccessToken(
+      `http://localhost:${this.instance.getMappedPort(8080)}`,
       'master',
-      Keycloak.ADMIN_USERNAME,
-      Keycloak.ADMIN_PASSWORD
+      this.ADMIN_USERNAME,
+      this.ADMIN_PASSWORD
     );
 
     await axios.post(
@@ -140,24 +152,26 @@ export class Keycloak {
   /**
    * get all users from Keycloak
    */
-  static async getUsers(keycloakUrl: string, realm: string) {
-    const accessToken = await Keycloak.getAccessToken(
-      `http://localhost:${globalThis.keycloak.getMappedPort(8080)}`,
+  async getUsers(keycloakUrl: string, realm: string) {
+    const accessToken = await this.getAccessToken(
+      `http://localhost:${this.instance.getMappedPort(8080)}`,
       'master',
-      Keycloak.ADMIN_USERNAME,
-      Keycloak.ADMIN_PASSWORD
+      this.ADMIN_USERNAME,
+      this.ADMIN_PASSWORD
     );
-    return axios.get(`${keycloakUrl}/admin/realms/${realm}/users`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }).then((response) => response.data);
+    return axios
+      .get(`${keycloakUrl}/admin/realms/${realm}/users`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((response) => response.data);
   }
 
   /**
    * Stops the keycloak instance and its dependencies.
    */
-  static async stop() {
-    await globalThis.keycloak.stop();
-    await globalThis.postgresKeycloakContainer.stop();
+  async stop() {
+    await this.instance.stop();
+    await this.db.stop();
     await this.network.stop();
   }
 }

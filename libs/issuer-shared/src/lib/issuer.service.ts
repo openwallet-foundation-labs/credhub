@@ -4,7 +4,7 @@ import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { SessionResponseDto, SessionsApiService } from './api';
 
 export class IssuerConfig extends ConfigBasic {
-  issuerUrl!: string;
+  backendUrl!: string;
   credentialId!: string;
 }
 

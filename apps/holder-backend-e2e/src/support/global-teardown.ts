@@ -2,6 +2,6 @@
 import { HolderBackend, Keycloak } from '@credhub/testing';
 
 module.exports = async function () {
-  await HolderBackend.stop();
-  await Keycloak.stop();
+  (globalThis.backend as HolderBackend).stop();
+  (globalThis.keycloak as Keycloak).stop();
 };

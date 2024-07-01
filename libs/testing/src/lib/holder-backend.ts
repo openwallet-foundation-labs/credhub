@@ -6,36 +6,51 @@ import {
   GenericContainer,
   Network,
   StartedNetwork,
+  StartedTestContainer,
   Wait,
 } from 'testcontainers';
 import { Client } from 'pg';
-import { StartedGenericContainer } from 'testcontainers/build/generic-container/started-generic-container';
+import { Keycloak } from './keycloak';
+
+export type gt = typeof globalThis;
+// extend globalThis with the keycloak instance
+export interface KeycloakGlobalThis extends gt {
+  keycloak: Keycloak;
+}
 
 /**
  * HolderBackend to manage the holder backend container
  */
 export class HolderBackend {
   // Holder backend network
-  static network: StartedNetwork;
-  private static postgresContainer: StartedPostgreSqlContainer;
+  network!: StartedNetwork;
+  private postgresContainer!: StartedPostgreSqlContainer;
+  private postgresClient!: Client;
+  backend!: StartedTestContainer;
+
+  static async init() {
+    const instance = new HolderBackend();
+    await instance.start();
+    return instance;
+  }
 
   /**
    * Start the holder backend container
    * @param network
    */
-  static async start() {
+  async start() {
     this.network = await new Network().start();
 
     this.postgresContainer = await new PostgreSqlContainer()
       .withNetwork(this.network)
       .withName('postgres')
       .start();
-    globalThis.postgresClient = new Client({
+    this.postgresClient = new Client({
       connectionString: this.postgresContainer.getConnectionUri(),
     });
-    await globalThis.postgresClient.connect();
+    await this.postgresClient.connect();
 
-    globalThis.backend = await new GenericContainer(
+    this.backend = await new GenericContainer(
       'ghcr.io/openwallet-foundation-labs/credhub/holder-backend'
     )
       .withNetwork(this.network)
@@ -43,9 +58,9 @@ export class HolderBackend {
       .withWaitStrategy(Wait.forHttp('/health', 3000).forStatusCode(200))
       .withName('holder-backend')
       .withEnvironment({
-        OIDC_AUTH_URL: `http://host.testcontainers.internal:${globalThis.keycloak.getMappedPort(
-          8080
-        )}`,
+        OIDC_AUTH_URL: `http://host.testcontainers.internal:${(
+          globalThis as KeycloakGlobalThis
+        ).keycloak.instance.getMappedPort(8080)}`,
         OIDC_REALM: 'wallet',
         OIDC_PUBLIC_CLIENT_ID: 'wallet',
         OIDC_ADMIN_CLIENT_ID: 'wallet-admin',
@@ -60,10 +75,10 @@ export class HolderBackend {
       .start();
   }
 
-  static async stop() {
-    await (globalThis.backend as StartedGenericContainer).stop();
-    await (globalThis.postgresClient as Client).end();
-    await (this.postgresContainer as StartedPostgreSqlContainer).stop();
+  async stop() {
+    await this.backend.stop();
+    await this.postgresClient.end();
+    await this.postgresContainer.stop();
     await this.network.stop();
   }
 }

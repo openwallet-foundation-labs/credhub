@@ -4,7 +4,7 @@ import { SiopApiService } from './api';
 import { ConfigBasic, ConfigService } from '@credhub/relying-party-frontend';
 
 export class VerifierConfig extends ConfigBasic {
-  verifierUrl!: string;
+  backendUrl!: string;
   credentialId!: string;
 }
 

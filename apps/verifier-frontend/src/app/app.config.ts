@@ -32,7 +32,7 @@ export const appConfig: ApplicationConfig = {
       deps: [ConfigService],
       useFactory: (configService: ConfigService<VerifierConfig>) => {
         return new Configuration({
-          basePath: configService.getConfig<string>('verifierUrl'),
+          basePath: configService.getConfig<string>('backendUrl'),
           credentials: {
             oauth2: () => configService.getToken(),
           },

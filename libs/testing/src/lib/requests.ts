@@ -1,5 +1,9 @@
 import axios, { AxiosInstance } from 'axios';
-import { StartedGenericContainer } from 'testcontainers/build/generic-container/started-generic-container';
+import { KeycloakGlobalThis, gt } from './holder-backend';
+
+interface TokenGlobalThis extends gt {
+  userAccessToken: string;
+}
 
 /**
  * Get the axios instance with the endpoint and a valid token
@@ -7,11 +11,15 @@ import { StartedGenericContainer } from 'testcontainers/build/generic-container/
  */
 export function getInstance(): AxiosInstance {
   const host = 'localhost';
-  const port = (globalThis.backend as StartedGenericContainer).getMappedPort(
-    3000
-  );
+  const port = (
+    globalThis as KeycloakGlobalThis
+  ).keycloak.instance.getMappedPort(3000);
   return axios.create({
     baseURL: `http://${host}:${port}`,
-    headers: { Authorization: `Bearer ${globalThis.userAccessToken}` },
+    headers: {
+      Authorization: `Bearer ${
+        (globalThis as TokenGlobalThis).userAccessToken
+      }`,
+    },
   });
 }

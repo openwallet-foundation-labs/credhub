@@ -22,8 +22,12 @@ services:
 
   verifier-frontend:
     image: ghcr.io/openwallet-foundation-labs/credhub/verifier-frontend
-    volumes:
-      - ./config/verifier-frontend/config.json:/usr/share/nginx/html/assets/config.json
+    environment:
+      - BACKEND_URL=$VERIFIER_BASE_URL
+      - OIDC_AUTH_URL=$OIDC_AUTH_URL/realms/$OIDC_REALM
+      - OIDC_CLIENT_ID=$FRONTEND_OIDC_CLIENT_ID
+      - OIDC_CLIENT_SECRET=$FRONTEND_OIDC_CLIENT_SECRET
+      - CREDENTIAL_ID=$CREDENTIAL_ID
     ports:
       - $FRONTEND_PORT:80
 

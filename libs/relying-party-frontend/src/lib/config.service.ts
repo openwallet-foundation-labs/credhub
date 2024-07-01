@@ -2,6 +2,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
+interface OIDCResponse {
+  realm: string;
+  public_key: string;
+  'token-service': string;
+  'account-service': string;
+  'tokens-not-before': number;
+}
+
 interface AuthResponse {
   access_token: string;
   expires_in: number;
@@ -12,9 +20,9 @@ interface AuthResponse {
 }
 
 export class ConfigBasic {
-  clientId!: string;
-  clientSecret!: string;
-  tokenEndpoint!: string;
+  oidcClientSecret!: string;
+  oidcClientId!: string;
+  oidcUrl!: string;
 }
 
 @Injectable({
@@ -54,24 +62,29 @@ export class ConfigService<Config extends ConfigBasic> {
 
   private async authenticateWithKeycloak() {
     const body = `grant_type=client_credentials&client_id=${this.getConfig(
-      'clientId'
-    )}&client_secret=${this.getConfig<string>('clientSecret')}`;
+      'oidcClientId'
+    )}&client_secret=${this.getConfig<string>('oidcClientSecret')}`;
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded',
     });
 
+    const tokenUrl = await this.getTokenEndpoint();
     const response = await firstValueFrom(
-      this.httpClient.post<AuthResponse>(
-        this.getConfig('tokenEndpoint'),
-        body,
-        { headers }
-      )
+      this.httpClient.post<AuthResponse>(tokenUrl, body, {
+        headers,
+      })
     );
     this.accessToken = response.access_token;
     setTimeout(
       () => this.authenticateWithKeycloak(),
       response.expires_in * 1000 - 10000
     );
+  }
+
+  getTokenEndpoint() {
+    return firstValueFrom(
+      this.httpClient.get<OIDCResponse>(this.getConfig('oidcUrl'))
+    ).then((res) => `${res['token-service']}/token`);
   }
 }
