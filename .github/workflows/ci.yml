@@ -38,6 +38,9 @@ jobs:
       - name: Run license check
         run: npx license-checker --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;0BSD"
 
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
       - name: Lint, test, build, and container
         run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test container e2e-ci
 
