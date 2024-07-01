@@ -29,6 +29,8 @@ export class ConfigBasic {
   providedIn: 'root',
 })
 export class ConfigService<Config extends ConfigBasic> {
+  protected path = '/assets/config.json';
+
   private config!: Config;
   accessToken?: string;
 
@@ -44,7 +46,7 @@ export class ConfigService<Config extends ConfigBasic> {
 
   appConfigLoader(http: HttpClient) {
     return () => {
-      return firstValueFrom(http.get<Config>('/assets/config.json'))
+      return firstValueFrom(http.get<Config>(this.path))
         .then(async (config) => {
           this.loadConfig(config);
           await this.authenticateWithKeycloak();

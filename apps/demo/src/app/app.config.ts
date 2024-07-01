@@ -10,21 +10,14 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import {
   Configuration as IssuerConfiguration,
   ApiModule as IssuerApiModule,
-  IssuerConfig,
+  IssuerConfigService,
 } from '@credhub/issuer-shared';
 import {
   Configuration as VerifierConfiguration,
   ApiModule as VerifierApiModule,
-  VerifierConfig,
+  VerifierConfigService,
 } from '@credhub/verifier-shared';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
-import { ConfigBasic, ConfigService } from '@credhub/relying-party-frontend';
-
-class Config extends ConfigBasic {
-  issuerUrl!: string;
-  verifierUrl!: string;
-  credentialId!: string;
-}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,19 +29,29 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       // in case we add two different configServices, we could extend them. So we also do not have to pass the ConfigType to it
       useFactory: (
-        configService: ConfigService<Config>,
+        configService: IssuerConfigService,
         httpClient: HttpClient
       ) => configService.appConfigLoader(httpClient),
-      deps: [ConfigService, HttpClient],
+      deps: [IssuerConfigService, HttpClient],
+      multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      // in case we add two different configServices, we could extend them. So we also do not have to pass the ConfigType to it
+      useFactory: (
+        configService: VerifierConfigService,
+        httpClient: HttpClient
+      ) => configService.appConfigLoader(httpClient),
+      deps: [VerifierConfigService, HttpClient],
       multi: true,
     },
     importProvidersFrom(IssuerApiModule, VerifierApiModule),
     {
       provide: IssuerConfiguration,
-      deps: [ConfigService],
-      useFactory: (configService: ConfigService<IssuerConfig>) => {
+      deps: [IssuerConfigService],
+      useFactory: (configService: IssuerConfigService) => {
         return new IssuerConfiguration({
-          basePath: configService.getConfig('issuerUrl'),
+          basePath: configService.getConfig('backendUrl'),
           credentials: {
             oauth2: () => configService.getToken(),
           },
@@ -57,10 +60,10 @@ export const appConfig: ApplicationConfig = {
     },
     {
       provide: VerifierConfiguration,
-      deps: [ConfigService],
-      useFactory: (configService: ConfigService<VerifierConfig>) => {
+      deps: [VerifierConfigService],
+      useFactory: (configService: VerifierConfigService) => {
         return new VerifierConfiguration({
-          basePath: configService.getConfig('verifierUrl'),
+          basePath: configService.getConfig('backendUrl'),
           credentials: {
             oauth2: () => configService.getToken(),
           },
