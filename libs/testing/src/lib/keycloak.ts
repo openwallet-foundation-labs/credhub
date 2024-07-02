@@ -39,15 +39,16 @@ export class Keycloak {
       .withName('postgres-keycloak')
       .start();
 
-    //TODO: define a random port so that multiple instances can run in parallel
-    const hostPort = 8080;
+    //generate a random port between 7000 and 8000
+    const hostPort = Math.floor(Math.random() * 1000) + 7000;
     //create a keycloak instance
     this.instance = await new GenericContainer(
       'ghcr.io/openwallet-foundation-labs/credhub/keycloak'
     )
       .withNetwork(this.network)
       .withExposedPorts({ container: 8080, host: hostPort })
-      .withWaitStrategy(Wait.forHttp('/health/ready', 8080).forStatusCode(200))
+      //.withWaitStrategy(Wait.forHttp('/health/ready', 8080).forStatusCode(200))
+      .withStartupTimeout(5000)
       .withName('keycloak')
       .withEnvironment({
         JAVA_OPTS_APPEND: '-Dkeycloak.profile.feature.upload_scripts=enabled',
@@ -69,7 +70,7 @@ export class Keycloak {
         '--import-realm',
       ])
       .start();
-    await TestContainers.exposeHostPorts(8080);
+    await TestContainers.exposeHostPorts(this.instance.getMappedPort(8080));
   }
 
   /**
