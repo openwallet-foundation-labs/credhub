@@ -12,6 +12,7 @@ concurrency:
 permissions:
   actions: read
   contents: read
+  packages: read
 
 jobs:
   main:
@@ -46,6 +47,13 @@ jobs:
 
       - name: Add entry to /etc/hosts
         run: echo "127.0.0.1       host.testcontainers.internal" | sudo tee -a /etc/hosts
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lint, test, build, e2e
         run: INPUT_GITHUPB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test container e2e-ci
