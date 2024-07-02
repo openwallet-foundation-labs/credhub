@@ -47,7 +47,6 @@ export class Keycloak {
     )
       .withNetwork(this.network)
       .withExposedPorts({ container: 8080, host: hostPort })
-      //.withWaitStrategy(Wait.forHttp('/health/ready', 8080).forStatusCode(200))
       .withStartupTimeout(5000)
       .withName('keycloak')
       .withEnvironment({
