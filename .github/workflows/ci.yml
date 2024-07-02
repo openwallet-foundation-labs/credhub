@@ -45,7 +45,7 @@ jobs:
         run: echo "127.0.0.1       host.testcontainers.internal" | sudo tee -a /etc/hosts
 
       - name: Lint, test, build, and container
-        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx run holder-backend-e2e:e2e-ci
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx run holder-backend-e2e:e2e-ci --verbose
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
