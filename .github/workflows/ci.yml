@@ -41,6 +41,11 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      # build the docker image for keycloak
+      # TODO: since we are pushing, this should be moved to cd
+      - name: Build Keycloak Docker Image
+        run: cd deploys/keycloak && docker-compose build keycloak && docker-compose push keycloak
+
       - name: Lint, test, build, and container
         run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test container e2e-ci
 
