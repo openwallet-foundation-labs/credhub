@@ -51,7 +51,7 @@ jobs:
           token: aj_tcc_svc_yoXfa_SozWm96Lu4PxUD5L8N0IVncaV9WLn2JV1hSOi0A
 
       - name: Lint, test, build, and container
-        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test container e2e-ci
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx run holder-backend-e2e:e2e-ci
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
