@@ -47,8 +47,8 @@ jobs:
       - name: Add entry to /etc/hosts
         run: echo "127.0.0.1       host.testcontainers.internal" | sudo tee -a /etc/hosts
 
-      - name: Lint, test, build, and container
-        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} npx nx run holder-backend-e2e:e2e-ci --verbose
+      - name: Lint, test, build, e2e
+        run: INPUT_GITHUPB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test e2e-ci
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
