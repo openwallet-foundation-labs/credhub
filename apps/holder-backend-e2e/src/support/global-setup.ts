@@ -10,11 +10,10 @@ module.exports = async function () {
   //start backend
   globalThis.backend = await HolderBackend.init();
 
-  keycloak.instance.logs().then((logs) => {
-    logs.on('data', (chunk: Uint8Array) => {
-      console.log(chunk.toString());
-    });
-  });
+  (await keycloak.instance.logs())
+    .on('data', (line) => console.log(line))
+    .on('err', (line) => console.error(line))
+    .on('end', () => console.log('Stream closed'));
 
   const testUserEmail = 'test@test.de';
   const testUserPassword = 'password';
