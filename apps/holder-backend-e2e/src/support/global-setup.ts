@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { Readable } from 'node:stream';
 import { HolderBackend, Keycloak } from '../../../../libs/testing/src/index';
 
 module.exports = async function () {
@@ -8,6 +9,12 @@ module.exports = async function () {
 
   //start backend
   globalThis.backend = await HolderBackend.init();
+
+  keycloak.instance.logs().then((logs) => {
+    logs.on('data', (chunk: Uint8Array) => {
+      console.log(chunk.toString());
+    });
+  });
 
   const testUserEmail = 'test@test.de';
   const testUserPassword = 'password';
