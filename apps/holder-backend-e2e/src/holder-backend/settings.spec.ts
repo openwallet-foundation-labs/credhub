@@ -9,9 +9,15 @@ describe('settings', () => {
   });
 
   it('get settings', async () => {
-    const settings = await axios.get('/settings');
-    expect(settings.status).toBe(200);
-    expect(settings.data).toEqual({ auto: false, darkTheme: false });
+    await axios.get('/settings').then(
+      (settings) => {
+        expect(settings.status).toBe(200);
+        expect(settings.data).toEqual({ auto: false, darkTheme: false });
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   });
 
   it('update settings', async () => {

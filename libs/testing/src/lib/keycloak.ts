@@ -52,11 +52,11 @@ export class Keycloak {
           abortOnContainerExit: true,
         }).forStatusCode(200)
       )
-      .withLogConsumer((stream) => {
+      /*       .withLogConsumer((stream) => {
         stream.on('data', (line) => console.log(line));
         stream.on('err', (line) => console.error(line));
         stream.on('end', () => console.log('Stream closed'));
-      })
+      }) */
       .withDefaultLogDriver()
       .withName('keycloak')
       .withEnvironment({
