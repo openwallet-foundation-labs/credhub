@@ -107,10 +107,7 @@ export class Keycloak {
       .post(tokenUrl, params, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       })
-      .then(
-        (response) => response.data.access_token,
-        (err) => console.log(err)
-      );
+      .then((response) => response.data.access_token);
   }
 
   /**
