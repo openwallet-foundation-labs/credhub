@@ -24,6 +24,7 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/holder-app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
+        "sourceMap": true,
         "assets": [
           "apps/holder-app/src/favicon.ico",
           "apps/holder-app/src/assets",
@@ -100,6 +101,10 @@
           "tags": ["latest"]
         }
       }
+    },
+    "sentry": {
+      "dependsOn": ["build"],
+      "command": "sentry-cli sourcemaps inject --org credhub --project pwa ./dist/apps/holder-app/browser && sentry-cli sourcemaps upload --org credhub --project pwa ./dist/apps/holder-app/browser"
     }
   }
 }

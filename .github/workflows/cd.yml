@@ -46,4 +46,4 @@ jobs:
         run: cd deploys/keycloak && docker-compose build keycloak && docker-compose push keycloak
 
       - name: Build and push images
-        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} INPUT_PUSH=true pnpm exec nx affected -t container
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} INPUT_PUSH=true pnpm exec nx affected -t container sentry
