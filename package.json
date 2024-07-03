@@ -102,6 +102,7 @@
     "@sd-jwt/jwt-status-list": "^0.7.1",
     "@sd-jwt/sd-jwt-vc": "^0.7.1",
     "@sd-jwt/types": "^0.7.1",
+    "@sentry/angular": "^8.13.0",
     "@simplewebauthn/browser": "^10.0.0",
     "@simplewebauthn/server": "^10.0.0",
     "@sphereon/did-auth-siop": "^0.6.4",
