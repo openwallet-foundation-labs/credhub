@@ -1,10 +1,32 @@
 /* eslint-disable */
-var __TEARDOWN_MESSAGE__: string;
+import { HolderBackend, Keycloak } from '../../../../libs/testing/src/index';
 
 module.exports = async function () {
-  // Start services that that the app needs to run (e.g. database, docker-compose, etc.).
-  console.log('\nSetting up...\n');
+  //start keycloak
+  const keycloak = await Keycloak.init();
+  globalThis.keycloak = keycloak;
 
-  // Hint: Use `globalThis` to pass variables to global teardown.
-  globalThis.__TEARDOWN_MESSAGE__ = '\nTearing down...\n';
+  //start backend
+  globalThis.backend = await HolderBackend.init();
+
+  const testUserEmail = 'test@test.de';
+  const testUserPassword = 'password';
+  // create a new user
+  await keycloak.createUser(
+    `http://localhost:${keycloak.instance.getMappedPort(8080)}`,
+    'wallet',
+    testUserEmail,
+    testUserPassword
+  );
+
+  //store the token so it can be used in the tests
+  globalThis.userAccessToken = await keycloak.getAccessToken(
+    `http://host.testcontainers.internal:${keycloak.instance.getMappedPort(
+      8080
+    )}`,
+    'wallet',
+    testUserEmail,
+    testUserPassword,
+    'wallet'
+  );
 };

@@ -1,0 +1,7 @@
+{
+  "backendUrlPP": "http://localhost:3001",
+  "credentialId": "Identity",
+  "oidcUrl": "http://host.docker.internal:8080/realms/wallet",
+  "oidcClientId": "relying-party",
+  "oidcClientSecret": "hA0mbfpKl8wdMrUxr2EjKtL5SGsKFW5D"
+}

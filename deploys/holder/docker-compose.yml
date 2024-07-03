@@ -41,8 +41,11 @@ services:
 
   holder-frontend:
     image: ghcr.io/openwallet-foundation-labs/credhub/holder-app
-    volumes:
-      - ./config/holder-frontend:/usr/share/nginx/html/assets/config
+    environment:
+      - BACKEND_URL=${BACKEND_URL}
+      - OIDC_AUTH_URL=${OIDC_AUTH_URL}/realms/${OIDC_REALM}
+      - OIDC_CLIENT_ID=${OIDC_PUBLIC_CLIENT_ID}
+      - OIDC_ALLOW_HTTP=${OIDC_ALLOW_HTTP}
     ports:
       - $FRONTEND_PORT:80
 

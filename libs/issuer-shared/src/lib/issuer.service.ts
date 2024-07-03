@@ -1,12 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ConfigBasic, ConfigService } from '@credhub/relying-party-frontend';
+import { ConfigService } from '@credhub/relying-party-frontend';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { SessionResponseDto, SessionsApiService } from './api';
-
-export class IssuerConfig extends ConfigBasic {
-  issuerUrl!: string;
-  credentialId!: string;
-}
+import { IssuerConfig } from './issuer-config.service';
 
 type IssuanceConfig = {
   pin: boolean;

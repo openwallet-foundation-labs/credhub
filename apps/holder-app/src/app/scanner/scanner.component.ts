@@ -36,12 +36,20 @@ export class ScannerComponent implements OnInit, OnDestroy {
   scanner?: Html5Qrcode;
   devices: CameraDevice[] = [];
   selectedDevice?: string;
+  readFromClipboard = false;
 
   status: Status = 'scanning';
   loading = true;
   url?: string;
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) {
+    if (
+      navigator.clipboard &&
+      typeof navigator.clipboard.readText !== 'undefined'
+    ) {
+      this.readFromClipboard = true;
+    }
+  }
 
   /**
    * Init the scanner
@@ -84,6 +92,7 @@ export class ScannerComponent implements OnInit, OnDestroy {
    * Stop the scanner when leaving the page
    */
   async ngOnDestroy(): Promise<void> {
+    console.log('destroying');
     await this.stopScanning();
   }
 
@@ -171,5 +180,15 @@ export class ScannerComponent implements OnInit, OnDestroy {
           'CUnable to read from clipboard, have you granted the permission?'
         )
     );
+  }
+
+  /**
+   * Open the input dialog
+   */
+  openInput() {
+    const url = prompt('Enter the URL to scan');
+    if (url) {
+      this.onScanSuccess(url);
+    }
   }
 }

@@ -22,11 +22,18 @@
 
 <h4>Logout</h4>
 <p>If you want to logout of this client</p>
-<button mat-stroked-button (click)="authService.logout()">Logout</button>
+<button mat-stroked-button (click)="authService.logout()" id="logout">
+  Logout
+</button>
 
 <h4>Delete account</h4>
 <p>Your account will be permanently deleted. All data will be lost.</p>
-<button mat-flat-button color="warn" (click)="deleteAccount()">
+<button
+  mat-flat-button
+  color="warn"
+  (click)="deleteAccount()"
+  id="delete-account"
+>
   Delete account
 </button>
 

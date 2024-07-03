@@ -1,7 +1,7 @@
 {
-  "issuerUrl": "http://localhost:3001",
+  "backendUrl": "http://localhost:3001",
   "credentialId": "Identity",
-  "tokenEndpoint": "http://localhost:8080/realms/wallet/protocol/openid-connect/token",
-  "clientId": "relying-party",
-  "clientSecret": "hA0mbfpKl8wdMrUxr2EjKtL5SGsKFW5D"
+  "oidcUrl": "http://localhost:8080/realms/wallet",
+  "oidcClientId": "relying-party",
+  "oidcClientSecret": "hA0mbfpKl8wdMrUxr2EjKtL5SGsKFW5D"
 }

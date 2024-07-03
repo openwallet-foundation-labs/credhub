@@ -19,6 +19,7 @@ services:
       - keycloak-net
 
   keycloak:
+    image: ghcr.io/openwallet-foundation-labs/credhub/keycloak
     restart: unless-stopped
     build:
       context: .

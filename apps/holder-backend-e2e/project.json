@@ -4,14 +4,15 @@
   "projectType": "application",
   "implicitDependencies": ["holder-backend"],
   "targets": {
-    "e2e": {
+    "e2e-ci": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{e2eProjectRoot}"],
       "options": {
         "jestConfig": "apps/holder-backend-e2e/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "runInBand": true
       },
-      "dependsOn": ["holder-backend:build"]
+      "dependsOn": ["holder-backend:container"]
     }
   }
 }

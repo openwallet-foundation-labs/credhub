@@ -1,12 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { SiopApiService } from './api';
-import { ConfigBasic, ConfigService } from '@credhub/relying-party-frontend';
-
-export class VerifierConfig extends ConfigBasic {
-  verifierUrl!: string;
-  credentialId!: string;
-}
+import { ConfigService } from '@credhub/relying-party-frontend';
+import { VerifierConfig } from './verifier-config.service';
 
 @Injectable({
   providedIn: 'root',
