@@ -94,11 +94,12 @@ export class Keycloak {
     keycloakUrl: string,
     realm: string,
     username: string,
-    password: string
+    password: string,
+    client = 'admin-cli'
   ): Promise<string> {
     const tokenUrl = `${keycloakUrl}/realms/${realm}/protocol/openid-connect/token`;
     const params = new URLSearchParams();
-    params.append('client_id', 'admin-cli');
+    params.append('client_id', client);
     params.append('username', username);
     params.append('password', password);
     params.append('grant_type', 'password');

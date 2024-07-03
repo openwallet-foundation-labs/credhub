@@ -26,7 +26,8 @@ describe('account settings', () => {
       )}`,
       'wallet',
       testUserEmail,
-      testUserPassword
+      testUserPassword,
+      'wallet'
     );
     const settings = await axios.delete('/auth', {
       headers: { Authorization: `Bearer ${userAccessToken}` },
@@ -37,14 +38,18 @@ describe('account settings', () => {
     // call the endpoint again, the token should be invalid since the user is deleted
 
     // try to get a new token with the deleted user, which should fail
-    const response = keycloak.getAccessToken(
-      `http://host.testcontainers.internal:${keycloak.instance.getMappedPort(
-        8080
-      )}`,
-      'wallet',
-      testUserEmail,
-      testUserPassword
-    );
-    expect(response).rejects.toThrow();
+    try {
+      await keycloak.getAccessToken(
+        `http://host.testcontainers.internal:${keycloak.instance.getMappedPort(
+          8080
+        )}`,
+        'wallet',
+        testUserEmail,
+        testUserPassword,
+        'wallet'
+      );
+    } catch (error) {
+      expect(error.response.status).toBe(401);
+    }
   });
 });

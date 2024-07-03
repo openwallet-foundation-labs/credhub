@@ -26,6 +26,7 @@ module.exports = async function () {
     )}`,
     'wallet',
     testUserEmail,
-    testUserPassword
+    testUserPassword,
+    'wallet'
   );
 };
