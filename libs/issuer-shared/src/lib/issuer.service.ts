@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ConfigService } from '@credhub/relying-party-frontend';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { SessionResponseDto, SessionsApiService } from './api';
-import { IssuerConfig } from './issuer-config.service';
+import { IssuerConfigService } from './issuer-config.service';
 
 type IssuanceConfig = {
   pin: boolean;
@@ -25,7 +24,7 @@ export class IssuerService {
 
   constructor(
     private sessionApiService: SessionsApiService,
-    private configService: ConfigService<IssuerConfig>
+    private configService: IssuerConfigService
   ) {}
 
   /**
