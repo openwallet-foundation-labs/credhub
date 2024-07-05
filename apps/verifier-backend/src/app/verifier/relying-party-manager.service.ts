@@ -17,7 +17,7 @@ import {
   SupportedVersion,
 } from '@sphereon/did-auth-siop';
 import { JWkResolver, encodeDidJWK } from './did';
-import { VerifierRP, RPInstance } from './types';
+import { RPInstance } from './types';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { KbVerifier, Verifier } from '@sd-jwt/types';
 import { PresentationSubmission } from '@sphereon/pex-models';
@@ -31,6 +31,7 @@ import { ResolverService } from '../resolver/resolver.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { TemplatesService } from '../templates/templates.interface';
+import { Template } from '../templates/dto/template.dto';
 
 @Injectable()
 export class RelyingPartyManagerService {
@@ -45,7 +46,7 @@ export class RelyingPartyManagerService {
     private resolverService: ResolverService,
     private configService: ConfigService,
     private httpSerivce: HttpService,
-    @Inject('TemplateService') private templateService: TemplatesService
+    @Inject('TemplatesService') private templateService: TemplatesService
   ) {
     this.sessionManager = new InMemoryRPSessionManager(this.eventEmitter, {
       // maxAgeInSeconds: 10,
@@ -159,7 +160,7 @@ export class RelyingPartyManagerService {
     return rp.verifier;
   }
 
-  getCall(verifier: VerifierRP): PresentationVerificationCallback {
+  getCall(verifier: Template): PresentationVerificationCallback {
     /**
      * The presentation verification callback. This is called when the verifier needs to verify the presentation. The function can only handle sd-jwt-vc credentials.
      * @param args encoded credential.

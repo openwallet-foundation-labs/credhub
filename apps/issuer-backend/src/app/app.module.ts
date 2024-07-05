@@ -13,6 +13,7 @@ import { CredentialsModule } from './credentials/credentials.module';
 import { StatusModule } from './status/status.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { IssuerModule } from './issuer/issuer.module';
+import { TEMPLATE_VALIDATION_SCHEMA } from './templates/templates.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { IssuerModule } from './issuer/issuer.module';
         ...DB_VALIDATION_SCHEMA,
         ...KEY_VALIDATION_SCHEMA,
         ...OIDC_VALIDATION_SCHEMA,
+        ...TEMPLATE_VALIDATION_SCHEMA,
       }),
     }),
     KeyModule.forRoot(),

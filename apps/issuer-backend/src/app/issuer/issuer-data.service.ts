@@ -1,9 +1,8 @@
 import { CredentialIssuerMetadataOptsV1_0_13 } from '@sphereon/oid4vci-common';
-import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { CredentialSchema } from './types.js';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { TemplatesService } from '../templates/templates.interface';
 
 /**
  * The issuer class is responsible for managing the credentials and the metadata of the issuer.
@@ -21,41 +20,24 @@ export class IssuerDataService {
    */
   private credentials: Map<string, CredentialSchema> = new Map();
 
-  constructor(private configSerivce: ConfigService) {
+  constructor(
+    private configSerivce: ConfigService,
+    @Inject('TemplatesService') private templatesService: TemplatesService
+  ) {
     this.loadConfig();
   }
 
-  public loadConfig() {
+  public async loadConfig() {
     this.credentials.clear();
     const folder = this.configSerivce.get('CREDENTIALS_FOLDER');
 
     //instead of reading at the beginning, we could implement a read on demand.
-    this.metadata = JSON.parse(
-      readFileSync(join(folder, 'metadata.json'), 'utf-8')
-    ) as CredentialIssuerMetadataOptsV1_0_13;
+    this.metadata = await this.templatesService.getMetadata();
+
     this.metadata.credential_issuer = this.configSerivce.get('ISSUER_BASE_URL');
 
-    if (!this.metadata.credential_configurations_supported) {
-      this.metadata.credential_configurations_supported = {};
-    }
-
-    const files = readdirSync(join(folder, 'credentials'));
-    for (const file of files) {
-      //TODO: we should validate the schema
-      const content = JSON.parse(
-        readFileSync(join(folder, 'credentials', file), 'utf-8')
-      ) as CredentialSchema;
-      //check if an id is already used
-      if (this.credentials.has(content.schema.id as string)) {
-        throw new Error(
-          `The credential with the id ${content.schema.id} is already used.`
-        );
-      }
-      this.credentials.set(content.schema.id as string, content);
-      this.metadata.credential_configurations_supported[
-        content.schema.id as string
-      ] = content.schema;
-    }
+    this.metadata.credential_configurations_supported =
+      this.templatesService.getSupported(await this.templatesService.listAll());
   }
 
   /**

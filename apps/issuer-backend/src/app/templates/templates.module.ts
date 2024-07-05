@@ -13,7 +13,6 @@ export const TEMPLATE_VALIDATION_SCHEMA = {
 };
 
 @Module({
-  //the typeorm module is imported here, but is only required when the database type is configured. But if so, then we need to register the typeorm root module. It can be difficult in the future when there are multiple modules that require the typeorm module.
   imports: [TypeOrmModule.forFeature([Template])],
   controllers: [TemplatesController],
   providers: [

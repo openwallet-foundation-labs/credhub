@@ -14,11 +14,12 @@ import { Template } from './dto/template.dto';
 
 @Injectable()
 export class TemplatesFileService implements TemplatesService {
+  folder: string;
   constructor(private configService: ConfigService) {
     //create the folder if it does not exist yet
-    const folder = this.configService.get('CREDENTIALS_FOLDER');
-    if (!existsSync(folder)) {
-      mkdirSync(folder, {
+    this.folder = this.configService.get('CREDENTIALS_FOLDER');
+    if (!existsSync(this.folder)) {
+      mkdirSync(this.folder, {
         recursive: true,
       });
     }
@@ -26,16 +27,9 @@ export class TemplatesFileService implements TemplatesService {
 
   listAll() {
     try {
-      const fileNames = readdirSync(
-        this.configService.get('CREDENTIALS_FOLDER')
-      );
+      const fileNames = readdirSync(this.folder);
       const files = fileNames.map((file) =>
-        JSON.parse(
-          readFileSync(
-            join(this.configService.get('CREDENTIALS_FOLDER'), file),
-            'utf-8'
-          )
-        )
+        JSON.parse(readFileSync(join(this.folder, file), 'utf-8'))
       );
       return Promise.resolve(files);
     } catch (error) {
@@ -54,32 +48,27 @@ export class TemplatesFileService implements TemplatesService {
     // escape potential path traversal attacks. This will not allow ids with /
     const safeId = normalize(data.request.id).split(sep).pop();
     //check if there is already a template with the same id. If so, throw an error because it needs to be updated
-    if (
-      existsSync(
-        join(this.configService.get('CREDENTIALS_FOLDER'), `${safeId}.json`)
-      )
-    ) {
+    if (existsSync(join(this.folder, `${safeId}.json`))) {
       throw new ConflictException('Template already exists');
     }
     //create the file
     writeFileSync(
-      join(this.configService.get('CREDENTIALS_FOLDER'), `${safeId}.json`),
+      join(this.folder, `${safeId}.json`),
       JSON.stringify(data, null, 2)
     );
     return Promise.resolve(null);
   }
 
   update(id: string, data: Template) {
-    const safeId = normalize(data.request.id).split(sep).pop();
+    if (id !== data.request.id) {
+      throw new ConflictException('Id does not match');
+    }
+    const safeId = normalize(id).split(sep).pop();
     //check if the file exists
-    if (
-      existsSync(
-        join(this.configService.get('CREDENTIALS_FOLDER'), `${safeId}.json`)
-      )
-    ) {
+    if (existsSync(join(this.folder, `${safeId}.json`))) {
       //update the file
       writeFileSync(
-        join(this.configService.get('CREDENTIALS_FOLDER'), `${safeId}.json`),
+        join(this.folder, `${safeId}.json`),
         JSON.stringify(data, null, 2)
       );
     }
@@ -89,15 +78,9 @@ export class TemplatesFileService implements TemplatesService {
   delete(id: string) {
     const safeId = normalize(id).split(sep).pop();
     //check if the file exists
-    if (
-      existsSync(
-        join(this.configService.get('CREDENTIALS_FOLDER'), `${safeId}.json`)
-      )
-    ) {
+    if (existsSync(join(this.folder, `${safeId}.json`))) {
       //delete the file
-      rmSync(
-        join(this.configService.get('CREDENTIALS_FOLDER'), `${safeId}.json`)
-      );
+      rmSync(join(this.folder, `${safeId}.json`));
     }
     return Promise.resolve(null);
   }

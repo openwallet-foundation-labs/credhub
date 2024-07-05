@@ -25,8 +25,8 @@ export class TemplatesController {
 
   @ApiOperation({ summary: 'List all templates' })
   @Get()
-  listAll() {
-    return this.templatesService.listAll();
+  async listAll() {
+    return Object.fromEntries(await this.templatesService.listAll());
   }
 
   @ApiOperation({ summary: 'Get one template' })
