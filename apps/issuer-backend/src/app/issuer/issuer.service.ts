@@ -83,7 +83,9 @@ export class IssuerService implements OnModuleInit {
     const credentialId = values.credentialId;
     const sessionId = v4();
     try {
-      const credential = this.issuerDataService.getCredential(credentialId);
+      const credential = await this.issuerDataService.getCredential(
+        credentialId
+      );
       let exp: number | undefined;
       // we either use the passed exp value or the ttl of the credential. If none is set, the credential will not expire.
       if (values.exp) {
@@ -237,7 +239,7 @@ export class IssuerService implements OnModuleInit {
     > = async (args) => {
       const jwt = await sdjwt.issue<SdJwtVcPayload>(
         args.credential as unknown as SdJwtVcPayload,
-        this.issuerDataService.getDisclosureFrame(
+        await this.issuerDataService.getDisclosureFrame(
           args.credential.vct as string
         ),
         { header: { kid: await this.keyService.getKid() } }

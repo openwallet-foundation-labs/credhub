@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Inject,
   Param,
   Patch,
   Post,
@@ -11,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOAuth2, ApiOperation } from '@nestjs/swagger';
 import { AuthGuard } from 'nest-keycloak-connect';
-import { TemplatesService } from './templates.interface';
+import { TemplatesService } from './templates.service';
 import { Template } from './dto/template.dto';
 
 @ApiTags('templates')
@@ -19,9 +18,7 @@ import { Template } from './dto/template.dto';
 @ApiOAuth2([])
 @Controller('templates')
 export class TemplatesController {
-  constructor(
-    @Inject('TemplatesService') private templatesService: TemplatesService
-  ) {}
+  constructor(private templatesService: TemplatesService) {}
 
   @ApiOperation({ summary: 'List all templates' })
   @Get()

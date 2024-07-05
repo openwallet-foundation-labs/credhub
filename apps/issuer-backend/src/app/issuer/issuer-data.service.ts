@@ -1,8 +1,7 @@
 import { CredentialIssuerMetadataOptsV1_0_13 } from '@sphereon/oid4vci-common';
-import { CredentialSchema } from './types.js';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { TemplatesService } from '../templates/templates.interface';
+import { TemplatesService } from '../templates/template.service';
 
 /**
  * The issuer class is responsible for managing the credentials and the metadata of the issuer.
@@ -15,22 +14,14 @@ export class IssuerDataService {
    */
   private metadata!: CredentialIssuerMetadataOptsV1_0_13;
 
-  /**
-   * The credentials supported by the issuer.
-   */
-  private credentials: Map<string, CredentialSchema> = new Map();
-
   constructor(
     private configSerivce: ConfigService,
-    @Inject('TemplatesService') private templatesService: TemplatesService
+    private templatesService: TemplatesService
   ) {
     this.loadConfig();
   }
 
   public async loadConfig() {
-    this.credentials.clear();
-    const folder = this.configSerivce.get('CREDENTIALS_FOLDER');
-
     //instead of reading at the beginning, we could implement a read on demand.
     this.metadata = await this.templatesService.getMetadata();
 
@@ -45,11 +36,11 @@ export class IssuerDataService {
    * @param id
    * @returns
    */
-  getCredential(id: string) {
+  async getCredential(id: string) {
     if (this.configSerivce.get('CONFIG_RELOAD')) {
       this.loadConfig();
     }
-    const credential = this.credentials.get(id);
+    const credential = await this.templatesService.getOne(id);
     if (!credential) {
       throw new Error(`The credential with the id ${id} is not supported.`);
     }
@@ -61,11 +52,11 @@ export class IssuerDataService {
    * @param id
    * @returns
    */
-  getDisclosureFrame(id: string) {
+  async getDisclosureFrame(id: string) {
     if (this.configSerivce.get('CONFIG_RELOAD')) {
       this.loadConfig();
     }
-    const credential = this.credentials.get(id);
+    const credential = await this.templatesService.getOne(id);
     if (!credential) {
       throw new Error(`The credential with the id ${id} is not supported.`);
     }

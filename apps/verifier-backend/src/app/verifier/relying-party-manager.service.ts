@@ -30,7 +30,7 @@ import { KeyService } from '@credhub/relying-party-shared';
 import { ResolverService } from '../resolver/resolver.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { TemplatesService } from '../templates/templates.interface';
+import { TemplatesService } from '../templates/templates.service';
 import { Template } from '../templates/dto/template.dto';
 
 @Injectable()
@@ -46,7 +46,7 @@ export class RelyingPartyManagerService {
     private resolverService: ResolverService,
     private configService: ConfigService,
     private httpSerivce: HttpService,
-    @Inject('TemplatesService') private templateService: TemplatesService
+    private templateService: TemplatesService
   ) {
     this.sessionManager = new InMemoryRPSessionManager(this.eventEmitter, {
       // maxAgeInSeconds: 10,

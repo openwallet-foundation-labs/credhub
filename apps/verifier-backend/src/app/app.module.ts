@@ -10,10 +10,7 @@ import {
   KeyModule,
   OIDC_VALIDATION_SCHEMA,
 } from '@credhub/relying-party-shared';
-import {
-  TEMPLATE_VALIDATION_SCHEMA,
-  TemplatesModule,
-} from './templates/templates.module';
+import { TemplatesModule } from './templates/templates.module';
 
 @Module({
   imports: [
@@ -29,7 +26,6 @@ import {
           .default('development'),
         CREDENTIALS_FOLDER: Joi.string().required(),
         ...OIDC_VALIDATION_SCHEMA,
-        ...TEMPLATE_VALIDATION_SCHEMA,
         ...DB_VALIDATION_SCHEMA,
       }),
     }),
