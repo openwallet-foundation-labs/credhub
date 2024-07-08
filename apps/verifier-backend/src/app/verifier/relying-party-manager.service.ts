@@ -16,10 +16,7 @@ import {
   SubjectType,
   SupportedVersion,
 } from '@sphereon/did-auth-siop';
-import { JWkResolver, encodeDidJWK } from './did';
-import { readFileSync } from 'node:fs';
-import { join, normalize, sep } from 'node:path';
-import { VerifierRP, RPInstance } from './types';
+import { RPInstance } from './types';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { KbVerifier, Verifier } from '@sd-jwt/types';
 import { PresentationSubmission } from '@sphereon/pex-models';
@@ -28,10 +25,16 @@ import { importJWK, jwtVerify } from 'jose';
 import { InMemoryRPSessionManager } from './session-manager';
 import { EventEmitter } from 'node:events';
 import { ConfigService } from '@nestjs/config';
-import { KeyService } from '@credhub/relying-party-shared';
+import {
+  encodeDidJWK,
+  JWkResolver,
+  KeyService,
+} from '@credhub/relying-party-shared';
 import { ResolverService } from '../resolver/resolver.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { TemplatesService } from '../templates/templates.service';
+import { Template } from '../templates/dto/template.dto';
 
 @Injectable()
 export class RelyingPartyManagerService {
@@ -45,7 +48,8 @@ export class RelyingPartyManagerService {
     @Inject('KeyService') private keyService: KeyService,
     private resolverService: ResolverService,
     private configService: ConfigService,
-    private httpSerivce: HttpService
+    private httpSerivce: HttpService,
+    private templateService: TemplatesService
   ) {
     this.sessionManager = new InMemoryRPSessionManager(this.eventEmitter, {
       // maxAgeInSeconds: 10,
@@ -94,17 +98,10 @@ export class RelyingPartyManagerService {
 
   // create the relying party
   private async buildRP(id: string) {
-    // escape potential path traversal attacks
-    const safeId = normalize(id).split(sep).pop();
-    // instead of reading a file, we could pass a storage reference. Then the storage can be implemented in different ways, like using a database or a file system.
-    const verifierFile = readFileSync(
-      join(this.configService.get('CREDENTIALS_FOLDER'), `${safeId}.json`),
-      'utf-8'
-    );
-    if (!verifierFile) {
+    const verifier = await this.templateService.getOne(id);
+    if (!verifier) {
       throw new Error(`The verifier with the id ${id} is not supported.`);
     }
-    const verifier = JSON.parse(verifierFile) as VerifierRP;
     const did = encodeDidJWK(await this.keyService.getPublicKey());
 
     const rp = RP.builder()
@@ -166,7 +163,7 @@ export class RelyingPartyManagerService {
     return rp.verifier;
   }
 
-  getCall(verifier: VerifierRP): PresentationVerificationCallback {
+  getCall(verifier: Template): PresentationVerificationCallback {
     /**
      * The presentation verification callback. This is called when the verifier needs to verify the presentation. The function can only handle sd-jwt-vc credentials.
      * @param args encoded credential.
@@ -235,19 +232,12 @@ export class RelyingPartyManagerService {
           return response.data;
         };
 
-        const statusValidator: (status: number) => Promise<void> = async (
-          number: number
-        ) => {
-          console.log(number);
-        };
-
         // initialize the sdjwt instance.
         sdjwtInstance = new SDJwtVcInstance({
           hasher: digest,
           verifier,
           kbVerifier,
           statusListFetcher,
-          // statusValidator,
         });
         // verify the presentation.
         await sdjwtInstance.verify(args as CompactJWT, requiredClaimKeys, true);

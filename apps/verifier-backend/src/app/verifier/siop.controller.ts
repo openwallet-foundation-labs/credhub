@@ -29,7 +29,7 @@ import { AuthResponseRequestDto } from './dto/auth-repsonse-request.dto';
 @UseGuards(AuthGuard)
 @ApiOAuth2([])
 @Controller('siop')
-export class VerifierController {
+export class SiopController {
   constructor(
     private readonly relyingPartyManagerService: RelyingPartyManagerService,
     private configService: ConfigService

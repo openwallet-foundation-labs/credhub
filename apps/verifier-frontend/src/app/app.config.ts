@@ -7,10 +7,9 @@ import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import {
   ApiModule,
-  VerifierConfig,
   Configuration,
+  VerifierConfigService,
 } from '@credhub/verifier-shared';
-import { ConfigService } from '@credhub/relying-party-frontend';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,10 +17,10 @@ export const appConfig: ApplicationConfig = {
     {
       provide: APP_INITIALIZER,
       useFactory: (
-        configService: ConfigService<VerifierConfig>,
+        configService: VerifierConfigService,
         httpClient: HttpClient
-      ) => configService.appConfigLoader(httpClient),
-      deps: [ConfigService, HttpClient],
+      ) => configService.appConfigLoader(httpClient, 'assets/config.json'),
+      deps: [VerifierConfigService, HttpClient],
       multi: true,
     },
     provideAnimationsAsync(),
@@ -29,8 +28,8 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(ApiModule),
     {
       provide: Configuration,
-      deps: [ConfigService],
-      useFactory: (configService: ConfigService<VerifierConfig>) => {
+      deps: [VerifierConfigService],
+      useFactory: (configService: VerifierConfigService) => {
         return new Configuration({
           basePath: configService.getConfig<string>('backendUrl'),
           credentials: {

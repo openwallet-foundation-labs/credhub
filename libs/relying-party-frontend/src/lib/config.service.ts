@@ -44,9 +44,9 @@ export class ConfigService<Config extends ConfigBasic> {
     return this.config[key] as T;
   }
 
-  appConfigLoader(http: HttpClient) {
+  appConfigLoader(http: HttpClient, path = this.path) {
     return () => {
-      return firstValueFrom(http.get<Config>(this.path))
+      return firstValueFrom(http.get<Config>(path))
         .then(async (config) => {
           this.loadConfig(config);
           await this.authenticateWithKeycloak();

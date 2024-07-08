@@ -1,7 +1,6 @@
 import { OIDCClient } from './oidc-client';
 import { ConfigService } from '@nestjs/config';
-import { OnEvent } from '@nestjs/event-emitter';
-import { USER_DELETED_EVENT, UserDeletedEvent } from '../auth.service';
+import { UserDeletedEvent } from '../auth.service';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';

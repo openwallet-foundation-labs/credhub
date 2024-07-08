@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { SiopApiService } from './api';
-import { ConfigService } from '@credhub/relying-party-frontend';
-import { VerifierConfig } from './verifier-config.service';
+import { VerifierConfigService } from './verifier-config.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +12,7 @@ export class VerifierService {
 
   constructor(
     private siopApiService: SiopApiService,
-    private configService: ConfigService<VerifierConfig>
+    private configService: VerifierConfigService
   ) {}
 
   /**
