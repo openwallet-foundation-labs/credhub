@@ -5,7 +5,7 @@ import * as Joi from 'joi';
 import { DatabaseType } from 'typeorm';
 
 export const DB_VALIDATION_SCHEMA = {
-  DB_TYPE: Joi.string().default('postgres'),
+  DB_TYPE: Joi.string().valid('sqlite', 'postgres').default('postgres'),
   DB_HOST: Joi.string().when('DB_TYPE', {
     is: 'postgres',
     then: Joi.required(),

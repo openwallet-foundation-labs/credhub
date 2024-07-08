@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "@sphereon/pex": "^3.3.3"
+    "@sphereon/pex": "^3.3.3",
+    "sqlite3": "^5.1.7",
+    "pg": "^8.11.5"
   },
   "pnpm": {
     "patchedDependencies": {
