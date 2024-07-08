@@ -7,6 +7,9 @@
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     }
   ],
+  "scripts": {
+    "sentry-cli": "sentry-cli"
+  },
   "description": "A monorepo including multiple apps for SSI",
   "author": "Mirko Mollik <mirkomollik@gmail.com>",
   "engines": {
@@ -41,6 +44,7 @@
     "@nx/workspace": "19.3.2",
     "@playwright/test": "^1.44.0",
     "@schematics/angular": "18.0.1",
+    "@sentry/cli": "^2.32.1",
     "@simplewebauthn/types": "^10.0.0",
     "@swc-node/register": "1.9.2",
     "@swc/core": "1.5.7",
@@ -102,7 +106,6 @@
     "@sd-jwt/sd-jwt-vc": "^0.7.1",
     "@sd-jwt/types": "^0.7.1",
     "@sentry/angular": "^8.13.0",
-    "@sentry/cli": "^2.32.1",
     "@simplewebauthn/browser": "^10.0.0",
     "@simplewebauthn/server": "^10.0.0",
     "@sphereon/did-auth-siop": "^0.6.4",
