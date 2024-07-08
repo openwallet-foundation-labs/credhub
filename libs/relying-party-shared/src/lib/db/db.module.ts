@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import { DatabaseType } from 'typeorm';
 
 export const DB_VALIDATION_SCHEMA = {
-  DB_TYPE: Joi.string().default('postgres'),
+  DB_TYPE: Joi.string().valid('sqlite', 'postgres').default('sqlite'),
   DB_HOST: Joi.string().when('DB_TYPE', {
     is: 'postgres',
     then: Joi.required(),
@@ -42,7 +42,7 @@ export const DB_VALIDATION_SCHEMA = {
               database: configService.get('DB_NAME'),
               synchronize: true,
               autoLoadEntities: true,
-            };
+            } as TypeOrmModuleOptions;
           case 'postgres':
             return {
               type: 'postgres',
@@ -53,7 +53,9 @@ export const DB_VALIDATION_SCHEMA = {
               database: configService.get('DB_NAME'),
               synchronize: true,
               autoLoadEntities: true,
-            };
+            } as TypeOrmModuleOptions;
+          default:
+            throw new Error('Invalid DB_TYPE');
         }
       },
     }),

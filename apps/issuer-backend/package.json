@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "sqlite3": "^5.1.7",
+    "pg": "^8.11.5",
     "@sphereon/pex": "^3.3.3",
     "@sphereon/oid4vci-issuer": "^0.12.0",
     "@sphereon/ssi-express-support": "0.26.0"
