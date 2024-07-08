@@ -54,5 +54,6 @@ jobs:
       - name: Build Keycloak Docker Image
         run: cd deploys/keycloak && docker-compose build keycloak && docker-compose push keycloak
 
+      # add the release, build the container and release it with the information for sentry
       - name: Build and push images
-        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} INPUT_PUSH=true pnpm exec nx affected -t container sentry-deploy
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} INPUT_PUSH=true pnpm exec nx affected -t sentry-release container sentry-deploy
