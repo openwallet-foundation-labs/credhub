@@ -41,9 +41,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          environment: production
+
       # build the docker image for keycloak
       - name: Build Keycloak Docker Image
         run: cd deploys/keycloak && docker-compose build keycloak && docker-compose push keycloak
 
       - name: Build and push images
-        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} INPUT_PUSH=true pnpm exec nx affected -t container sentry
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} INPUT_PUSH=true pnpm exec nx affected -t container sentry-deploy

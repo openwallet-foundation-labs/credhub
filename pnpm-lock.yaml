@@ -91,9 +91,6 @@ dependencies:
   '@sentry/angular':
     specifier: ^8.13.0
     version: 8.13.0(@angular/common@18.0.0)(@angular/core@18.0.0)(@angular/router@18.0.0)(rxjs@7.8.1)
-  '@sentry/cli':
-    specifier: ^2.32.1
-    version: 2.32.1
   '@simplewebauthn/browser':
     specifier: ^10.0.0
     version: 10.0.0
@@ -273,6 +270,9 @@ devDependencies:
   '@schematics/angular':
     specifier: 18.0.1
     version: 18.0.1
+  '@sentry/cli':
+    specifier: ^2.32.1
+    version: 2.32.1
   '@simplewebauthn/types':
     specifier: ^10.0.0
     version: 10.0.0
@@ -7291,7 +7291,7 @@ packages:
     engines: {node: '>=10'}
     os: [darwin]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /@sentry/cli-linux-arm64@2.32.1:
@@ -7300,7 +7300,7 @@ packages:
     cpu: [arm64]
     os: [linux, freebsd]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /@sentry/cli-linux-arm@2.32.1:
@@ -7309,7 +7309,7 @@ packages:
     cpu: [arm]
     os: [linux, freebsd]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /@sentry/cli-linux-i686@2.32.1:
@@ -7318,7 +7318,7 @@ packages:
     cpu: [x86, ia32]
     os: [linux, freebsd]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /@sentry/cli-linux-x64@2.32.1:
@@ -7327,7 +7327,7 @@ packages:
     cpu: [x64]
     os: [linux, freebsd]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /@sentry/cli-win32-i686@2.32.1:
@@ -7336,7 +7336,7 @@ packages:
     cpu: [x86, ia32]
     os: [win32]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /@sentry/cli-win32-x64@2.32.1:
@@ -7345,7 +7345,7 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: false
+    dev: true
     optional: true
 
   /@sentry/cli@2.32.1:
@@ -7370,7 +7370,7 @@ packages:
     transitivePeerDependencies:
       - encoding
       - supports-color
-    dev: false
+    dev: true
 
   /@sentry/core@8.13.0:
     resolution: {integrity: sha512-N9Qg4ZGxZWp8eb2eUUHVVKgjBLtFIjS805nG92s6yJmkvOpKm6mLtcUaT/iDf3Hta6nG+xRkhbE3r+Z4cbXG8w==}
@@ -16257,7 +16257,7 @@ packages:
   /progress@2.0.3:
     resolution: {integrity: sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==}
     engines: {node: '>=0.4.0'}
-    dev: false
+    dev: true
 
   /promise-inflight@1.0.1:
     resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}

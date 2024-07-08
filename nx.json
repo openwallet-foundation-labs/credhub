@@ -68,7 +68,7 @@
   "targetDefaults": {
     "@angular-devkit/build-angular:application": {
       "cache": true,
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "add-sentry-release"],
       "inputs": ["production", "^production"]
     },
     "@angular-devkit/build-angular:browser": {
