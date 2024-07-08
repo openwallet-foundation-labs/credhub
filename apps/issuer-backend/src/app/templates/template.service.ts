@@ -3,11 +3,8 @@ import { Template } from './dto/template.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Template as TemplateEntity } from './schemas/temoplate.entity';
 import { Repository } from 'typeorm';
-import {
-  CredentialIssuerMetadataOptsV1_0_13,
-  CredentialConfigurationSupportedV1_0_13,
-} from '@sphereon/oid4vci-common';
-import { readdirSync, readFileSync, writeFileSync } from 'fs';
+import { CredentialConfigurationSupportedV1_0_13 } from '@sphereon/oid4vci-common';
+import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
@@ -24,11 +21,13 @@ export class TemplatesService {
     this.folder = this.configSerivce.get('CREDENTIALS_FOLDER');
   }
 
+  /**
+   * Import templates for the local system when they are not already in the database. Do not overwrite existing templates.
+   */
   async import() {
     const credentialFolder = join(this.folder, 'credentials');
     const files = readdirSync(credentialFolder);
     for (const file of files) {
-      //TODO: we should validate the schema
       const template = plainToInstance(
         Template,
         JSON.parse(readFileSync(join(credentialFolder, file), 'utf-8'))
@@ -43,20 +42,6 @@ export class TemplatesService {
         });
       }
     }
-  }
-
-  getMetadata(): Promise<CredentialIssuerMetadataOptsV1_0_13> {
-    const content = JSON.parse(
-      readFileSync(join(this.folder, 'metadata.json'), 'utf-8')
-    ) as CredentialIssuerMetadataOptsV1_0_13;
-    return Promise.resolve(content);
-  }
-  setMetadata(metadata: CredentialIssuerMetadataOptsV1_0_13): Promise<void> {
-    writeFileSync(
-      join(this.folder, 'metadata.json'),
-      JSON.stringify(metadata, null, 2)
-    );
-    return Promise.resolve(null);
   }
 
   getSupported(value: Map<string, Template>) {

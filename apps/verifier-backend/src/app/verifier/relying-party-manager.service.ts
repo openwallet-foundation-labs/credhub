@@ -16,7 +16,6 @@ import {
   SubjectType,
   SupportedVersion,
 } from '@sphereon/did-auth-siop';
-import { JWkResolver, encodeDidJWK } from './did';
 import { RPInstance } from './types';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { KbVerifier, Verifier } from '@sd-jwt/types';
@@ -26,7 +25,11 @@ import { importJWK, jwtVerify } from 'jose';
 import { InMemoryRPSessionManager } from './session-manager';
 import { EventEmitter } from 'node:events';
 import { ConfigService } from '@nestjs/config';
-import { KeyService } from '@credhub/relying-party-shared';
+import {
+  encodeDidJWK,
+  JWkResolver,
+  KeyService,
+} from '@credhub/relying-party-shared';
 import { ResolverService } from '../resolver/resolver.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -229,19 +232,12 @@ export class RelyingPartyManagerService {
           return response.data;
         };
 
-        const statusValidator: (status: number) => Promise<void> = async (
-          number: number
-        ) => {
-          console.log(number);
-        };
-
         // initialize the sdjwt instance.
         sdjwtInstance = new SDJwtVcInstance({
           hasher: digest,
           verifier,
           kbVerifier,
           statusListFetcher,
-          // statusValidator,
         });
         // verify the presentation.
         await sdjwtInstance.verify(args as CompactJWT, requiredClaimKeys, true);

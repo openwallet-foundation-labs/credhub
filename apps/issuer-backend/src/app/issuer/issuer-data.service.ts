@@ -2,6 +2,7 @@ import { CredentialIssuerMetadataOptsV1_0_13 } from '@sphereon/oid4vci-common';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TemplatesService } from '../templates/template.service';
+import { MetadataService } from '../templates/metadata.service';
 
 /**
  * The issuer class is responsible for managing the credentials and the metadata of the issuer.
@@ -16,14 +17,15 @@ export class IssuerDataService {
 
   constructor(
     private configSerivce: ConfigService,
-    private templatesService: TemplatesService
+    private templatesService: TemplatesService,
+    private metadataService: MetadataService
   ) {
     this.loadConfig();
   }
 
   public async loadConfig() {
     //instead of reading at the beginning, we could implement a read on demand.
-    this.metadata = await this.templatesService.getMetadata();
+    this.metadata = await this.metadataService.getMetadata();
 
     this.metadata.credential_issuer = this.configSerivce.get('ISSUER_BASE_URL');
 

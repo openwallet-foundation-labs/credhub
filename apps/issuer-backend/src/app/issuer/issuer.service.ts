@@ -182,7 +182,7 @@ export class IssuerService implements OnModuleInit {
         ...(args.credentialDataSupplierInput as CredentialDataSupplierInput)
           .credentialSubject,
         //TODO: can be removed when correct type is set in PEX
-        status: status as any,
+        status: status as unknown as { idx: number; uri: string },
         exp: args.credentialDataSupplierInput.exp,
       };
       return Promise.resolve({
@@ -194,10 +194,9 @@ export class IssuerService implements OnModuleInit {
     /**
      * Signer callback for the access token.
      * @param jwt header and payload of the jwt
-     * @param kid key id that should be used for signing
      * @returns signed jwt
      */
-    const signerCallback = async (jwt: Jwt, kid?: string): Promise<string> => {
+    const signerCallback = async (jwt: Jwt): Promise<string> => {
       return this.keyService.signJWT(jwt.payload, {
         ...jwt.header,
         alg: Alg.ES256,

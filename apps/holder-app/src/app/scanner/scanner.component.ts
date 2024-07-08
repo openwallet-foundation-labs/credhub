@@ -3,7 +3,6 @@ import { CameraDevice, Html5Qrcode } from 'html5-qrcode';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import {
   VerifyRequestComponent,
@@ -42,7 +41,7 @@ export class ScannerComponent implements OnInit, OnDestroy {
   loading = true;
   url?: string;
 
-  constructor(private httpClient: HttpClient) {
+  constructor() {
     if (
       navigator.clipboard &&
       typeof navigator.clipboard.readText !== 'undefined'
@@ -92,7 +91,6 @@ export class ScannerComponent implements OnInit, OnDestroy {
    * Stop the scanner when leaving the page
    */
   async ngOnDestroy(): Promise<void> {
-    console.log('destroying');
     await this.stopScanning();
   }
 
@@ -137,11 +135,8 @@ export class ScannerComponent implements OnInit, OnDestroy {
     // handle the scanned code as you like, for example:
     if (decodedText.startsWith('openid-credential-offer://')) {
       this.showRequest(decodedText, 'receive');
-      // use a constant for the verification schema
-      await this.stopScanning();
     } else if (decodedText.startsWith('openid://')) {
       this.showRequest(decodedText, 'send');
-      await this.stopScanning();
     } else {
       alert("Scanned text doesn't match the expected format");
     }

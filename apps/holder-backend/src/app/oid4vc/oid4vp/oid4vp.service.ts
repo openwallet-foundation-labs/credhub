@@ -16,16 +16,14 @@ import {
 import { SdJwtDecodedVerifiableCredentialWithKbJwtInput } from '@sphereon/pex';
 import { v4 as uuid } from 'uuid';
 import { Oid4vpParseRepsonse } from './dto/parse-response.dto';
-import {
-  CredentialSelection,
-  SubmissionRequest,
-} from './dto/submission-request.dto';
+import { CredentialSelection } from './dto/submission-request.dto';
 import { Oid4vpParseRequest } from './dto/parse-request.dto';
 import { Session } from './session';
 import { CompactSdJwtVc } from '@sphereon/ssi-types';
 import { CredentialsService } from '../../credentials/credentials.service';
 import { HistoryService } from '../../history/history.service';
 import { KeysService } from '../../keys/keys.service';
+import { JWkResolver } from '@credhub/relying-party-shared';
 
 @Injectable()
 export class Oid4vpService {
@@ -49,10 +47,13 @@ export class Oid4vpService {
 
     //parse the uri
     const parsedAuthReqURI = await op.parseAuthorizationRequestURI(data.url);
+    console.log('verify');
     const verifiedAuthReqWithJWT: VerifiedAuthorizationRequest =
       await op.verifyAuthorizationRequest(
-        parsedAuthReqURI.requestObjectJwt as string
+        parsedAuthReqURI.requestObjectJwt as string,
+        {}
       );
+    console.log('verified');
     const issuer =
       (
         verifiedAuthReqWithJWT.authorizationRequestPayload
@@ -232,6 +233,7 @@ export class Oid4vpService {
     const alg = SigningAlgo.ES256;
 
     const withSuppliedSignature = async (data: string | Uint8Array) => {
+      console.log('sign');
       const signature = await this.keysService.sign(kid, user, {
         data: data as string,
       });
@@ -242,7 +244,7 @@ export class Oid4vpService {
       .withExpiresIn(1000)
       .withHasher(digest)
       .withIssuer(ResponseIss.SELF_ISSUED_V2)
-      .addDidMethod('jwk')
+      .addResolver('jwk', new JWkResolver())
       .withSuppliedSignature(withSuppliedSignature, did, kid, alg)
       .withSupportedVersions(SupportedVersion.SIOPv2_D12_OID4VP_D18)
       .build();
