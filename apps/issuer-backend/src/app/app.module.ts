@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import {
   AuthModule,
+  CRYPTO_VALIDATION_SCHEMA,
   KEY_VALIDATION_SCHEMA,
   KeyModule,
   OIDC_VALIDATION_SCHEMA,
@@ -29,6 +30,7 @@ import { IssuerModule } from './issuer/issuer.module';
         //TODO: we only need this, when we configured datbase type, not file type
         ...DB_VALIDATION_SCHEMA,
         ...KEY_VALIDATION_SCHEMA,
+        ...CRYPTO_VALIDATION_SCHEMA,
         ...OIDC_VALIDATION_SCHEMA,
       }),
     }),

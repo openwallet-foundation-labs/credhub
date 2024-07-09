@@ -8,7 +8,7 @@ import {
   PublicKeyCredentialCreationOptionsJSON,
   PublicKeyCredentialRequestOptionsJSON,
 } from '@simplewebauthn/types';
-import { AuthApiService, RegistrationResponse } from '../api';
+import { AuthApiService, AuthSubmission, RegistrationResponse } from '../api';
 
 @Injectable({ providedIn: 'root' })
 export class WebauthnService {
@@ -33,7 +33,7 @@ export class WebauthnService {
    * Authenticate with a credential, use it to get a authenticated session for one action
    * @returns
    */
-  async authenticate() {
+  async authenticate(): Promise<AuthSubmission> {
     const res = (await firstValueFrom(
       this.authService.webAuthnControllerGetAuthenticationOptions()
     )) as { options: PublicKeyCredentialRequestOptionsJSON; session: string };

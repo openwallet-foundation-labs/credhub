@@ -9,14 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { AuthSubmission } from './authSubmission';
 
 
-export interface AuthenticationResponse { 
-    id: string;
-    rawId: string;
-    response: object;
-    authenticatorAttachment?: object;
-    clientExtensionResults: object;
-    type: string;
+export interface SubmissionRequest { 
+    auth?: AuthSubmission;
+    values: object;
 }
 

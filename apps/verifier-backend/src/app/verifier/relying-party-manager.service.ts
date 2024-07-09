@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ES256, digest } from '@sd-jwt/crypto-nodejs';
+import { digest } from '@sd-jwt/crypto-nodejs';
 import {
   JWK,
   JWTPayload,
@@ -29,6 +29,7 @@ import {
   encodeDidJWK,
   JWkResolver,
   KeyService,
+  CryptoService,
 } from '@credhub/relying-party-shared';
 import { ResolverService } from '../resolver/resolver.service';
 import { HttpService } from '@nestjs/axios';
@@ -49,6 +50,7 @@ export class RelyingPartyManagerService {
     private resolverService: ResolverService,
     private configService: ConfigService,
     private httpSerivce: HttpService,
+    private cryptoService: CryptoService,
     private templateService: TemplatesService
   ) {
     this.sessionManager = new InMemoryRPSessionManager(this.eventEmitter, {
@@ -198,7 +200,9 @@ export class RelyingPartyManagerService {
             payload,
             header
           );
-          const verify = await ES256.getVerifier(publicKey);
+          //get the verifier based on the algorithm
+          const crypto = this.cryptoService.getCrypto(header.alg as string);
+          const verify = await crypto.getVerifier(publicKey);
           return verify(data, signature);
         };
 

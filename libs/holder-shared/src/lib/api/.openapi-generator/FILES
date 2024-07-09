@@ -13,6 +13,8 @@ encoder.ts
 git_push.sh
 index.ts
 model/acceptRequestDto.ts
+model/authSubmission.ts
+model/authenticationResponseJSON.ts
 model/createCredentialDto.ts
 model/cred.ts
 model/credentialIssuer.ts
@@ -31,6 +33,7 @@ model/registrationResponse.ts
 model/relyingParty.ts
 model/setting.ts
 model/settingResponse.ts
+model/submissionRequest.ts
 model/txCodeInfo.ts
 model/updateSettingsDto.ts
 model/verifyRequestClaim.ts

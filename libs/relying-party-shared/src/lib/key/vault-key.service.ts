@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { importSPKI, exportJWK, JWTHeaderParameters } from 'jose';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayload, Signer } from '@sd-jwt/types';
+import { CryptoService, CryptoType } from '../crypto/crypto.service';
 
 @Injectable()
 export class VaultKeyService extends KeyService {
@@ -18,7 +19,8 @@ export class VaultKeyService extends KeyService {
 
   constructor(
     private httpService: HttpService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private cryptoService: CryptoService
   ) {
     super();
     this.vaultUrl = this.configService.get<string>('VAULT_URL') as string;
@@ -50,12 +52,16 @@ export class VaultKeyService extends KeyService {
    * @returns
    */
   async create() {
+    const types: Map<CryptoType, string> = new Map();
+    types.set('ES256', 'ecdsa-p256');
+    types.set('Ed25519', 'ed25519');
+
     const res = await firstValueFrom(
       this.httpService.post(
         `${this.vaultUrl}/keys/${this.keyId}`,
         {
           exportable: false,
-          type: 'ecdsa-p256',
+          type: types.get(this.cryptoService.getAlg()),
         },
         this.headers
       )
@@ -80,7 +86,12 @@ export class VaultKeyService extends KeyService {
     return firstValueFrom(
       this.httpService.get(`${this.vaultUrl}/keys/${this.keyId}`, this.headers)
     )
-      .then((res) => importSPKI(res.data.data.keys['1'].public_key, 'ES256'))
+      .then((res) =>
+        importSPKI(
+          res.data.data.keys['1'].public_key,
+          this.cryptoService.getAlg()
+        )
+      )
       .then((key) => exportJWK(key))
       .then((jwk) => {
         jwk.kid = this.keyId;

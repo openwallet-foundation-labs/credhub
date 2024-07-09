@@ -4,6 +4,8 @@ import * as Joi from 'joi';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { VaultKeyService } from './vault-key.service';
+import { CryptoService } from '../crypto/crypto.service';
+import { CryptoModule } from '../crypto/crypto.module';
 
 export const KEY_VALIDATION_SCHEMA = {
   KM_TYPE: Joi.string().valid('file', 'vault').default('file'),
@@ -34,20 +36,21 @@ export class KeyModule {
   static forRoot(): DynamicModule {
     return {
       module: KeyModule,
-      imports: [HttpModule, ConfigModule],
+      imports: [HttpModule, ConfigModule, CryptoModule],
       providers: [
         {
           provide: 'KeyService',
           useFactory: (
             configService: ConfigService,
-            httpService: HttpService
+            httpService: HttpService,
+            cryptoService: CryptoService
           ) => {
             const kmType = configService.get<string>('KM_TYPE');
             return kmType === 'vault'
-              ? new VaultKeyService(httpService, configService)
-              : new FileSystemKeyService(configService);
+              ? new VaultKeyService(httpService, configService, cryptoService)
+              : new FileSystemKeyService(configService, cryptoService);
           },
-          inject: [ConfigService, HttpService],
+          inject: [ConfigService, HttpService, CryptoService],
         },
       ],
       exports: ['KeyService'],

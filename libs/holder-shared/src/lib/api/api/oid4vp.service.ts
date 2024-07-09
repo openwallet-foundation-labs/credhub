@@ -22,6 +22,8 @@ import { Observable }                                        from 'rxjs';
 import { Oid4vpParseRepsonse } from '../model/oid4vpParseRepsonse';
 // @ts-ignore
 import { Oid4vpParseRequest } from '../model/oid4vpParseRequest';
+// @ts-ignore
+import { SubmissionRequest } from '../model/submissionRequest';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -248,19 +250,19 @@ export class Oid4vpApiService {
     /**
      * submit a response
      * @param id 
-     * @param body 
+     * @param submissionRequest 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public oid4vpControllerSubmit(id: string, body: object, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public oid4vpControllerSubmit(id: string, body: object, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public oid4vpControllerSubmit(id: string, body: object, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public oid4vpControllerSubmit(id: string, body: object, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public oid4vpControllerSubmit(id: string, submissionRequest: SubmissionRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public oid4vpControllerSubmit(id: string, submissionRequest: SubmissionRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public oid4vpControllerSubmit(id: string, submissionRequest: SubmissionRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public oid4vpControllerSubmit(id: string, submissionRequest: SubmissionRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling oid4vpControllerSubmit.');
         }
-        if (body === null || body === undefined) {
-            throw new Error('Required parameter body was null or undefined when calling oid4vpControllerSubmit.');
+        if (submissionRequest === null || submissionRequest === undefined) {
+            throw new Error('Required parameter submissionRequest was null or undefined when calling oid4vpControllerSubmit.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -318,7 +320,7 @@ export class Oid4vpApiService {
         return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: body,
+                body: submissionRequest,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
