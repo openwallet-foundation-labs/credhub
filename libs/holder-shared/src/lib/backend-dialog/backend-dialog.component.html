@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>Change backend</h1>
+<mat-dialog-content fxLayout="column">
+  <p>Change the backend of your wallet to a custom one.</p>
+  <mat-form-field appearance="outline">
+    <input matInput placeholder="Backend URL" [formControl]="input" />
+    <mat-error *ngIf="input.hasError('pattern')">Invalid URL</mat-error>
+    <mat-error *ngIf="input.hasError('unavailable')"
+      >Backend not reachable</mat-error
+    >
+  </mat-form-field>
+  <button mat-button (click)="setDefault()">set default</button>
+</mat-dialog-content>
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
+  <button mat-button mat-dialog-close="">Cancel</button>
+  <button mat-flat-button [disabled]="input.invalid" (click)="store()">
+    Ok
+  </button>
+</mat-dialog-actions>

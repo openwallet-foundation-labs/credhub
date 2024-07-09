@@ -15,6 +15,10 @@ export class AuthService {
     @Inject(oidcclientName) private oidcClient: OIDCClient
   ) {}
 
+  endpoints() {
+    return this.oidcClient.endpoints();
+  }
+
   async deleteAccount(userId: string) {
     const event = new UserDeletedEvent();
     event.id = userId;

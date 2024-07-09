@@ -5,7 +5,7 @@ import {
   CredentialsSupportedDisplay,
   MetadataDisplay,
 } from '@sphereon/oid4vci-common';
-import { Oid4vciApiService, Oid4vcpApiService } from '@credhub/holder-shared';
+import { Oid4vciApiService, Oid4vpApiService } from '@credhub/holder-shared';
 import { firstValueFrom } from 'rxjs';
 
 export interface ResultScan {
@@ -27,7 +27,7 @@ export class ScannerService {
   constructor(
     private zone: NgZone,
     private oid4vciApiService: Oid4vciApiService,
-    private oid4vpApiService: Oid4vcpApiService
+    private oid4vpApiService: Oid4vpApiService
   ) {
     // this.listenToEvents();
   }

@@ -6,6 +6,7 @@ export * from './cred';
 export * from './credentialIssuer';
 export * from './credentialResponse';
 export * from './disclosed';
+export * from './endpointResponse';
 export * from './history';
 export * from './historyResponse';
 export * from './issuerMetadataLogo';

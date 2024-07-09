@@ -1,7 +1,11 @@
-import { type ApplicationConfig, importProvidersFrom } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  type ApplicationConfig,
+  importProvidersFrom,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { provideOAuthClient } from 'angular-oauth2-oidc';
@@ -10,6 +14,7 @@ import {
   ApiModule,
   Configuration,
   AuthServiceInterface,
+  ConfigService,
 } from '@credhub/holder-shared';
 import { AuthService } from './auth/auth.service';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
@@ -26,6 +31,22 @@ export const appConfig: ApplicationConfig = {
     {
       provide: AuthServiceInterface,
       useClass: AuthService,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory:
+        (
+          authService: AuthService,
+          configService: ConfigService,
+          httpClient: HttpClient
+        ) =>
+        async () => {
+          await configService.appConfigLoader(httpClient);
+          //authService.init();
+          //await authService.runInitialLoginSequence();
+        },
+      deps: [AuthService, ConfigService, HttpClient],
+      multi: true,
     },
     {
       provide: Configuration,

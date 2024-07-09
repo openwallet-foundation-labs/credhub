@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Oid4vciApiService, TxCodeInfo } from '../../api/';
+import { Oid4vciApiService } from '../../api/';
 import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import {

@@ -4,13 +4,10 @@ import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
 import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatInputModule } from '@angular/material/input';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { environment } from '../../environments/environment';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { firstValueFrom } from 'rxjs';
+import { BackendDialogComponent, ConfigService } from '@credhub/holder-shared';
 
 @Component({
   selector: 'app-login',
@@ -20,20 +17,31 @@ import { environment } from '../../environments/environment';
     FlexLayoutModule,
     MatInputModule,
     ReactiveFormsModule,
+    MatDialogModule,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent implements OnInit {
-  form: FormGroup = new FormGroup({
-    // we can not pass the value during runtime. If it's stored in the localstorage on the start, it's fine.
-    endpoint: new FormControl(environment.backendUrl, Validators.required),
-  });
+  name!: string;
 
   constructor(
     public authService: AuthService,
-    private router: Router
+    private matDialog: MatDialog,
+    private router: Router,
+    private configService: ConfigService
   ) {}
+
+  /**
+   * Open the dialog to change the backend. Reload the page after the dialog is closed so the new backend is used when the application starts.
+   */
+  changeBackend() {
+    firstValueFrom(
+      this.matDialog
+        .open(BackendDialogComponent, { disableClose: true })
+        .afterClosed()
+    ).then(() => window.location.reload());
+  }
 
   ngOnInit(): void {
     this.authService.isAuthenticated().then((isAuthenticated) => {
@@ -41,6 +49,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/credentials']);
       }
     });
+    this.name = this.configService.getConfig('name');
   }
 
   async login() {

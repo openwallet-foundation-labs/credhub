@@ -1,3 +1,8 @@
 <div fxLayout="column" fxLayoutAlign="space-around center" id="content">
-  <button mat-flat-button color="primary" (click)="login()">Login</button>
+  <div fxLayout="column" fxLayoutGap="16px">
+    <img src="assets/icons/icon.svg" alt="Wallet" />
+    <h3>Login into {{ name }}</h3>
+    <button mat-flat-button color="primary" (click)="login()">Login</button>
+    <button mat-button (click)="changeBackend()">Change backend</button>
+  </div>
 </div>
