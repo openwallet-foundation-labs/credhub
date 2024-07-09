@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom, timeout } from 'rxjs';
-import { EndpointResponse } from '@credhub/holder-shared';
+import { EndpointResponse } from './api';
 
 class LoadedAppConfig {
   backendUrl!: string;
