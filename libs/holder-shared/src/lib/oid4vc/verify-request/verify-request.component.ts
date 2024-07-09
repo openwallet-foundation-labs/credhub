@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { SettingsService } from '../../settings/settings.service';
-import { Oid4vcpApiService } from '../../api/api/oid4vcp.service';
+import { Oid4vpApiService } from '../../api/api/oid4vp.service';
 import { WebauthnService } from '../../auth/webauthn.service';
 
 @Component({
@@ -44,7 +44,7 @@ export class VerifyRequestComponent implements OnInit {
   noMatch = false;
 
   constructor(
-    private oid4vpApiService: Oid4vcpApiService,
+    private oid4vpApiService: Oid4vpApiService,
     private router: Router,
     private snackBar: MatSnackBar,
     private settingsService: SettingsService,

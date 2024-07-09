@@ -9,11 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { AuthSubmission } from './authSubmission';
+import { AuthenticationResponseJSON } from './authenticationResponseJSON';
 
 
-export interface SubmissionRequest { 
-    auth?: AuthSubmission;
-    values: object;
+export interface AuthSubmission { 
+    session: string;
+    response: AuthenticationResponseJSON;
 }
 
