@@ -6,7 +6,7 @@ import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { AuthServiceInterface } from '@credhub/holder-shared';
-import { ConfigService } from '../config.service';
+import { ConfigService } from '../../../../../libs/holder-shared/src/lib/config.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService implements AuthServiceInterface {

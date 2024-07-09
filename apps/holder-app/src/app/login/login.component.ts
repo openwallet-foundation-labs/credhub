@@ -4,9 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { BackendDialogComponent } from './backend-dialog/backend-dialog.component';
 import { firstValueFrom } from 'rxjs';
-import { ConfigService } from '../config.service';
+import { BackendDialogComponent, ConfigService } from '@credhub/holder-shared';
 
 @Component({
   selector: 'app-login',

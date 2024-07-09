@@ -1,14 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { ConfigService } from '../../config.service';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FlexLayoutModule } from 'ng-flex-layout';
+import { ConfigService } from '../config.service';
 
 @Component({
-  selector: 'app-backend-dialog',
+  selector: 'lib-backend-dialog',
   standalone: true,
   imports: [
     CommonModule,
@@ -42,10 +42,7 @@ export class BackendDialogComponent {
   store() {
     this.configService.changeBackend(this.input.value as string).then(
       () => this.dialogRef.close(),
-      (err) => {
-        this.input.setErrors({ unavailable: true });
-        alert('Error changing backend: ' + err.error.message);
-      }
+      () => this.input.setErrors({ unavailable: true })
     );
   }
 }

@@ -13,7 +13,9 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         };
         reader.readAsDataURL(blob);
       })
-      .catch((error) => console.error('Error fetching image:', error));
+      .catch(() => {
+        // just catch it
+      });
     return true; // Indicates that you wish to send a response asynchronously
   }
 

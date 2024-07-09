@@ -1,6 +1,3 @@
 {
-  "backendUrl": "http://localhost:3000",
-  "oidcUrl": "http://host.docker.internal:8080/realms/wallet",
-  "oidcClient": "wallet",
-  "oidcAllowHttp": true
+  "backendUrl": "http://localhost:3000"
 }
