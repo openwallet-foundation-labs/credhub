@@ -15,6 +15,7 @@ import {
   CredentialOfferSession,
   CNonceState,
   URIState,
+  TxCode,
 } from '@sphereon/oid4vci-common';
 import {
   CredentialDataSupplier,
@@ -90,7 +91,9 @@ export class IssuerService implements OnModuleInit {
     const credentialId = values.credentialId;
     const sessionId = v4();
     try {
-      const credential = this.issuerDataService.getCredential(credentialId);
+      const credential = await this.issuerDataService.getCredential(
+        credentialId
+      );
       let exp: number | undefined;
       // we either use the passed exp value or the ttl of the credential. If none is set, the credential will not expire.
       if (values.exp) {
@@ -105,12 +108,21 @@ export class IssuerService implements OnModuleInit {
         credentialSubject: values.credentialSubject,
         exp,
       };
+      let tx_code: TxCode;
+      if (values.pin) {
+        tx_code = {
+          input_mode: 'numeric',
+          length: 6,
+          description: 'Please enter the code',
+        };
+      }
+
       const response = await this.vcIssuer.createCredentialOfferURI({
-        credentials: [credential.schema.id as string],
+        credential_configuration_ids: [credential.schema.id as string],
         grants: {
           'urn:ietf:params:oauth:grant-type:pre-authorized_code': {
             'pre-authorized_code': sessionId,
-            user_pin_required: values.pin,
+            tx_code,
           },
         },
         credentialDataSupplierInput,
@@ -177,7 +189,7 @@ export class IssuerService implements OnModuleInit {
         ...(args.credentialDataSupplierInput as CredentialDataSupplierInput)
           .credentialSubject,
         //TODO: can be removed when correct type is set in PEX
-        status: status as any,
+        status: status as unknown as { idx: number; uri: string },
         exp: args.credentialDataSupplierInput.exp,
       };
       return Promise.resolve({
@@ -189,10 +201,9 @@ export class IssuerService implements OnModuleInit {
     /**
      * Signer callback for the access token.
      * @param jwt header and payload of the jwt
-     * @param kid key id that should be used for signing
      * @returns signed jwt
      */
-    const signerCallback = async (jwt: Jwt, kid?: string): Promise<string> => {
+    const signerCallback = async (jwt: Jwt): Promise<string> => {
       return this.keyService.signJWT(jwt.payload, {
         ...jwt.header,
         alg: this.crypto.alg,
@@ -234,7 +245,7 @@ export class IssuerService implements OnModuleInit {
     > = async (args) => {
       const jwt = await sdjwt.issue<SdJwtVcPayload>(
         args.credential as unknown as SdJwtVcPayload,
-        this.issuerDataService.getDisclosureFrame(
+        await this.issuerDataService.getDisclosureFrame(
           args.credential.vct as string
         ),
         { header: { kid: await this.keyService.getKid() } }
@@ -244,6 +255,7 @@ export class IssuerService implements OnModuleInit {
         id: args.credential.jti as string,
       });
       return jwt;
+      // return decodeSdJwtVc(jwt, digest) as unknown as Promise<CompactSdJwtVc>;
     };
 
     //create the issuer instance

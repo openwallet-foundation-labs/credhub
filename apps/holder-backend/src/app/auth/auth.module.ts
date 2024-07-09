@@ -20,7 +20,7 @@ import {
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Passkey } from './webauthn/entities/passkey.entity';
 import { WebAuthnController } from './webauthn/webauthn.controller';
-import { WebauthnService } from './webauthn/entities/webauthn.service';
+import { WebauthnService } from './webauthn/webauthn.service';
 
 export const OIDC_VALIDATION_SCHEMA = {
   OIDC_AUTH_URL: Joi.string().required(),
@@ -67,7 +67,7 @@ export const OIDC_VALIDATION_SCHEMA = {
     AuthService,
     WebauthnService,
   ],
-  exports: [KeycloakConnectModule],
+  exports: [KeycloakConnectModule, WebauthnService],
   controllers: [AuthController, WebAuthnController],
 })
 export class AuthModule {}

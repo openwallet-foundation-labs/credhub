@@ -90,12 +90,15 @@ export class EidComponent implements OnDestroy {
    * Starts the issuance process
    */
   async startIssuance() {
-    this.issuanceUrl = await this.issuerService.getUrl(
+    const res = await this.issuerService.getUrl(
       undefined,
-      this.registerForm.value
+      this.registerForm.value,
+      { pin: false }
     );
-    this.qrCodeIssueField.setValue(this.issuanceUrl);
-    this.qrCodeIssueImage = await qrcode.toDataURL(this.issuanceUrl);
+    this.qrCodeIssueField.setValue(res.uri);
+    this.issuanceUrl = res.uri;
+    this.qrCodeIssueImage = await qrcode.toDataURL(res.uri);
+    //TODO: show pin
     this.issuerService.statusEvent.subscribe((status) => {
       if (status === 'CREDENTIAL_ISSUED') {
         this.snackBar.open('Credential issued', 'Close', { duration: 3000 });

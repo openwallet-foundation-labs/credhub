@@ -5,12 +5,13 @@ services:
       - OIDC_AUTH_URL=$OIDC_AUTH_URL
       - OIDC_REALM=$OIDC_REALM
       - OIDC_CLIENT_ID=$OIDC_CLIENT_ID
+      - OIDC_CLIENT_SECRET=$OIDC_CLIENT_SECRET
       - VERIFIER_BASE_URL=$VERIFIER_BASE_URL
       - KM_FOLDER=$KM_FOLDER
       - ISSUER_BASE_URL=$ISSUER_BASE_URL
       - CREDENTIALS_FOLDER=$CREDENTIALS_FOLDER
-      - DB_TYPE=sqlite
-      - DB_NAME=data/db.sqlite
+      - DB_TYPE=$DB_TYPE
+      - DB_NAME=$DB_NAME
     volumes:
       - issuer:/home/node/app/data:rw
       - ./config/issuer-backend:/home/node/app/templates
@@ -25,8 +26,12 @@ services:
 
   issuer-frontend:
     image: ghcr.io/openwallet-foundation-labs/credhub/issuer-frontend
-    volumes:
-      - ./config/issuer-frontend/config.json:/usr/share/nginx/html/assets/config.json
+    environment:
+      - BACKEND_URL=$ISSUER_BASE_URL
+      - OIDC_AUTH_URL=$OIDC_AUTH_URL/realms/$OIDC_REALM
+      - OIDC_CLIENT_ID=$FRONTEND_OIDC_CLIENT_ID
+      - OIDC_CLIENT_SECRET=$FRONTEND_OIDC_CLIENT_SECRET
+      - CREDENTIAL_ID=$CREDENTIAL_ID
     ports:
       - $FRONTEND_PORT:80
 

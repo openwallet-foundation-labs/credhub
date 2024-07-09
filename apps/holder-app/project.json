@@ -24,6 +24,7 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/holder-app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
+        "sourceMap": true,
         "assets": [
           "apps/holder-app/src/favicon.ico",
           "apps/holder-app/src/assets",
@@ -100,6 +101,36 @@
           "tags": ["latest"]
         }
       }
+    },
+    "sentry-release": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "pnpm run sentry-cli releases new $(npm --silent run sentry-cli releases propose-version) -o credhub -p pwa",
+          "pnpm run sentry-cli releases set-commits --auto $(npm --silent run sentry-cli releases propose-version) -o credhub -p pwa",
+          "pnpm run sentry-cli releases files $(npm --silent run sentry-cli releases propose-version) upload-sourcemaps dist/apps/holder-app/browser -o credhub -p pwa",
+          "pnpm run sentry-cli releases finalize $(npm --silent run sentry-cli releases propose-version) -o credhub -p pwa"
+        ],
+        "parallel": false
+      }
+    },
+    "add-sentry-release": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "sed -i '' -E \"s/release: 'version',/release: '$(npm --silent run sentry-cli releases propose-version)',/g\" apps/holder-app/src/environments/environment.ts"
+        ],
+        "parallel": false
+      }
+    },
+    "sentry-deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "pnpm run sentry-cli releases deploys $(npm --silent run sentry-cli releases propose-version) new -e production -o credhub -p pwa"
+        ]
+      },
+      "dependsOn": ["sentry-release"]
     }
   }
 }

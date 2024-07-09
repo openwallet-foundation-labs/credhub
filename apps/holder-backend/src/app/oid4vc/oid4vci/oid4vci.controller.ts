@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOAuth2,
@@ -10,6 +10,7 @@ import { Oid4vciParseRequest } from './dto/parse-request.dto';
 import { Oid4vciParseRepsonse } from './dto/parse-response.dto';
 import { Oid4vciService } from './oid4vci.service';
 import { KeycloakUser } from '../../auth/user';
+import { AcceptRequestDto } from './dto/accept-request.dto';
 
 @UseGuards(AuthGuard)
 @ApiOAuth2([])
@@ -26,8 +27,11 @@ export class Oid4vciController {
   }
 
   @ApiOperation({ summary: 'accept a credential' })
-  @Get('accept/:id')
-  accept(@Param('id') id: string, @AuthenticatedUser() user: KeycloakUser) {
-    return this.oid4vciService.accept(id, user.sub);
+  @Post('accept')
+  accept(
+    @Body() values: AcceptRequestDto,
+    @AuthenticatedUser() user: KeycloakUser
+  ) {
+    return this.oid4vciService.accept(values, user.sub);
   }
 }

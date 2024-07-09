@@ -11,7 +11,7 @@ import { AppController } from './app.controller';
 import { SettingsModule } from './settings/settings.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { WEBAUTHN_VALIDATION_SCHEMA } from './auth/webauthn/entities/webauthn.service';
+import { WEBAUTHN_VALIDATION_SCHEMA } from './auth/webauthn/webauthn.service';
 
 @Module({
   imports: [

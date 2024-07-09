@@ -1,7 +1,7 @@
 /* eslint-disable */
+import { HolderBackend, Keycloak } from '../../../../libs/testing/src/index';
 
 module.exports = async function () {
-  // Put clean up logic here (e.g. stopping services, docker-compose, etc.).
-  // Hint: `globalThis` is shared between setup and teardown.
-  console.log(globalThis.__TEARDOWN_MESSAGE__);
+  await (globalThis.backend as HolderBackend).stop();
+  await (globalThis.keycloak as Keycloak).stop();
 };

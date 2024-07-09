@@ -38,5 +38,26 @@ jobs:
       - name: Run license check
         run: npx license-checker --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;0BSD"
 
-      - name: Lint, test, build, and container
-        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test container
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Build keycloak
+        run: cd deploys/keycloak && docker-compose build keycloak
+
+      - name: Add entry to /etc/hosts
+        run: echo "127.0.0.1       host.testcontainers.internal" | sudo tee -a /etc/hosts
+
+      - name: Lint, test, build, e2e
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test e2e-ci
+# comment out since the current e2e tests do not produce any artifacts
+#      - name: Upload coverage
+#        uses: codecov/codecov-action@v4
+#        with:
+#          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload playwright results
+        uses: actions/upload-artifact@v2
+        with:
+          name: playwright-results
+          path: dist/.playwright
+          retention-days: 30

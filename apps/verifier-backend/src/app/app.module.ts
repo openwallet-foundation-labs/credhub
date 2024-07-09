@@ -6,9 +6,12 @@ import { VerifierModule } from './verifier/verifier.module';
 import {
   AuthModule,
   CRYPTO_VALIDATION_SCHEMA,
+  DB_VALIDATION_SCHEMA,
+  DbModule,
   KeyModule,
   OIDC_VALIDATION_SCHEMA,
 } from '@credhub/relying-party-shared';
+import { TemplatesModule } from './templates/templates.module';
 
 @Module({
   imports: [
@@ -25,10 +28,13 @@ import {
         CREDENTIALS_FOLDER: Joi.string().required(),
         ...OIDC_VALIDATION_SCHEMA,
         ...CRYPTO_VALIDATION_SCHEMA,
+        ...DB_VALIDATION_SCHEMA,
       }),
     }),
+    DbModule,
     VerifierModule,
     KeyModule.forRoot(),
+    TemplatesModule,
   ],
   controllers: [AppController],
 })

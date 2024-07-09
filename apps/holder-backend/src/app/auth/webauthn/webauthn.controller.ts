@@ -1,11 +1,19 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard, AuthenticatedUser } from 'nest-keycloak-connect';
-import { WebauthnService } from './entities/webauthn.service';
+import { WebauthnService } from './webauthn.service';
 import { KeycloakUser } from '../user';
-import { RegistrationResponseJSON } from '@simplewebauthn/types';
 import { RegistrationResponse } from './dto/registration-response.dto';
-import { AuthenticationResponse } from './dto/authentication-response.dto';
+import { Request } from 'express';
 
 @UseGuards(AuthGuard)
 @ApiOAuth2([])
@@ -27,23 +35,32 @@ export class WebAuthnController {
   @Post('registration')
   verifyRegistration(
     @AuthenticatedUser() user: KeycloakUser,
-    @Body() body: RegistrationResponse
+    @Body() body: RegistrationResponse,
+    @Req() req: Request
   ) {
-    return this.webAuthnService.startRegistration(user.sub, body);
+    const expectedOrigin = req.headers.origin;
+    return this.webAuthnService.startRegistration(
+      user.sub,
+      body,
+      expectedOrigin
+    );
+  }
+
+  @ApiOperation({ summary: 'get keys' })
+  @Get('keys')
+  getKeys(@AuthenticatedUser() user: KeycloakUser) {
+    return this.webAuthnService.getKeys(user.sub);
+  }
+
+  @ApiOperation({ summary: 'delete key' })
+  @Delete('keys/:id')
+  deleteKey(@AuthenticatedUser() user: KeycloakUser, @Param('id') id: string) {
+    return this.webAuthnService.deleteKey(user.sub, id);
   }
 
   @ApiOperation({ summary: 'get authentication options' })
   @Get('authentication')
   getAuthenticationOptions(@AuthenticatedUser() user: KeycloakUser) {
     return this.webAuthnService.generateAuthenticationOptions(user.sub);
-  }
-
-  @ApiOperation({ summary: 'complete authentication' })
-  @Post('authentication')
-  verifyAuthentication(
-    @AuthenticatedUser() user: KeycloakUser,
-    @Body() body: AuthenticationResponse
-  ) {
-    return this.webAuthnService.verifyAuthenticationResponse(user.sub, body);
   }
 }

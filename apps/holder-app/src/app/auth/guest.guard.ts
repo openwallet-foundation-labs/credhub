@@ -11,7 +11,7 @@ export const guestGuard: CanActivateFn = async () => {
       map((x) => {
         //when the person is authenticated, they will be redirected to the home page
         if (x) {
-          router.navigateByUrl('/');
+          router.navigateByUrl(router.url);
           return false;
         }
         return true;

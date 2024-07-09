@@ -6,7 +6,12 @@ globalThis.ngJest = {
   },
 };
 import { TextDecoder, TextEncoder } from 'util';
+
+type Global = {
+  TextDecoder: typeof TextDecoder;
+};
+
 global.TextEncoder = TextEncoder;
-(global as any).TextDecoder = TextDecoder;
+(global as Global).TextDecoder = TextDecoder;
 
 import 'jest-preset-angular/setup-jest';

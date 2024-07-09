@@ -3,7 +3,6 @@ import { CameraDevice, Html5Qrcode } from 'html5-qrcode';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import {
   VerifyRequestComponent,
@@ -36,12 +35,20 @@ export class ScannerComponent implements OnInit, OnDestroy {
   scanner?: Html5Qrcode;
   devices: CameraDevice[] = [];
   selectedDevice?: string;
+  readFromClipboard = false;
 
   status: Status = 'scanning';
   loading = true;
   url?: string;
 
-  constructor(private httpClient: HttpClient) {}
+  constructor() {
+    if (
+      navigator.clipboard &&
+      typeof navigator.clipboard.readText !== 'undefined'
+    ) {
+      this.readFromClipboard = true;
+    }
+  }
 
   /**
    * Init the scanner
@@ -128,11 +135,8 @@ export class ScannerComponent implements OnInit, OnDestroy {
     // handle the scanned code as you like, for example:
     if (decodedText.startsWith('openid-credential-offer://')) {
       this.showRequest(decodedText, 'receive');
-      // use a constant for the verification schema
-      await this.stopScanning();
     } else if (decodedText.startsWith('openid://')) {
       this.showRequest(decodedText, 'send');
-      await this.stopScanning();
     } else {
       alert("Scanned text doesn't match the expected format");
     }
@@ -171,5 +175,15 @@ export class ScannerComponent implements OnInit, OnDestroy {
           'CUnable to read from clipboard, have you granted the permission?'
         )
     );
+  }
+
+  /**
+   * Open the input dialog
+   */
+  openInput() {
+    const url = prompt('Enter the URL to scan');
+    if (url) {
+      this.onScanSuccess(url);
+    }
   }
 }

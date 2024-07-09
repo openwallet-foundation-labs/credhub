@@ -1,4 +1,7 @@
-import { CredentialSupported, MetadataDisplay } from '@sphereon/oid4vci-common';
+import {
+  CredentialConfigurationSupported,
+  MetadataDisplay,
+} from '@sphereon/oid4vci-common';
 import { IsObject, IsString } from 'class-validator';
 
 export class CreateCredentialDto {
@@ -18,7 +21,7 @@ export class CreateCredentialDto {
    * Metadata of the credential
    */
   @IsObject()
-  metaData: CredentialSupported;
+  metaData: CredentialConfigurationSupported;
 
   @IsObject()
   issuer: MetadataDisplay;

@@ -6,10 +6,13 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatListModule } from '@angular/material/list';
 import { firstValueFrom } from 'rxjs';
-import { AuthApiService, SettingsApiService } from '../api';
+import { AuthApiService, Passkey, SettingsApiService } from '../api';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { LicensesComponent } from './licenses/licenses.component';
 import { WebauthnService } from '../auth/webauthn.service';
+import { MatCardModule } from '@angular/material/card';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 export abstract class AuthServiceInterface {
   abstract getSettingsLink(): string;
@@ -22,17 +25,21 @@ export abstract class AuthServiceInterface {
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
   imports: [
+    CommonModule,
     MatButtonModule,
     MatSlideToggleModule,
     ReactiveFormsModule,
     FlexLayoutModule,
     MatListModule,
     MatDialogModule,
+    MatCardModule,
+    MatIconModule,
   ],
 })
 export class SettingsComponent implements OnInit {
   form!: FormGroup;
   keycloakLink: string;
+  keys: Passkey[] = [];
 
   constructor(
     public authService: AuthServiceInterface,
@@ -69,6 +76,8 @@ export class SettingsComponent implements OnInit {
         document.body.classList.remove('dark-theme');
       }
     });
+
+    this.webAuthnService.getKeys().then((keys) => (this.keys = keys));
   }
 
   async deleteAccount() {
@@ -79,5 +88,17 @@ export class SettingsComponent implements OnInit {
 
   async showLicense() {
     this.matDialog.open(LicensesComponent);
+  }
+
+  addKeys() {
+    this.webAuthnService.register().then(() => {
+      this.webAuthnService.getKeys().then((keys) => (this.keys = keys));
+    });
+  }
+
+  deleteKey(id: Passkey) {
+    this.webAuthnService.deleteKey(id.id).then(() => {
+      this.keys = this.keys.filter((key) => key.id !== id.id);
+    });
   }
 }

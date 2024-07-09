@@ -11,12 +11,8 @@
  */
 
 
-export interface AuthenticationResponse { 
+export interface AcceptRequestDto { 
     id: string;
-    rawId: string;
-    response: object;
-    authenticatorAttachment?: object;
-    clientExtensionResults: object;
-    type: string;
+    txCode?: string;
 }
 

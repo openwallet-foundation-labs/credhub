@@ -9,7 +9,7 @@ import {
   KeyModule,
   OIDC_VALIDATION_SCHEMA,
 } from '@credhub/relying-party-shared';
-import { DB_VALIDATION_SCHEMA, DbModule } from './db/db.module';
+import { DB_VALIDATION_SCHEMA, DbModule } from '@credhub/relying-party-shared';
 import { CredentialsModule } from './credentials/credentials.module';
 import { StatusModule } from './status/status.module';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -27,6 +27,7 @@ import { IssuerModule } from './issuer/issuer.module';
           .valid('development', 'production')
           .default('development'),
         CREDENTIALS_FOLDER: Joi.string().required(),
+        //TODO: we only need this, when we configured datbase type, not file type
         ...DB_VALIDATION_SCHEMA,
         ...KEY_VALIDATION_SCHEMA,
         ...CRYPTO_VALIDATION_SCHEMA,

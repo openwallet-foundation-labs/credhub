@@ -5,3 +5,5 @@ export * from './lib/crypto/crypto-implementation';
 export * from './lib/crypto/ed25519';
 export * from './lib/crypto/crypto.module';
 export * from './lib/crypto/crypto.service';
+export * from './lib/db/db.module';
+export * from './lib/did/did';

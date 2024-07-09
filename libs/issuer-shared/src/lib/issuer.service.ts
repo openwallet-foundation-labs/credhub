@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ConfigBasic, ConfigService } from '@credhub/relying-party-frontend';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { SessionsApiService } from './api';
+import { SessionResponseDto, SessionsApiService } from './api';
+import { IssuerConfigService } from './issuer-config.service';
 
-export class IssuerConfig extends ConfigBasic {
-  issuerUrl!: string;
-  credentialId!: string;
-}
+type IssuanceConfig = {
+  pin: boolean;
+};
 
 export interface SessionCreationResponse {
   uri: string;
@@ -25,7 +24,7 @@ export class IssuerService {
 
   constructor(
     private sessionApiService: SessionsApiService,
-    private configService: ConfigService<IssuerConfig>
+    private configService: IssuerConfigService
   ) {}
 
   /**
@@ -33,18 +32,19 @@ export class IssuerService {
    */
   async getUrl(
     credentialId: string = this.configService.getConfig('credentialId'),
-    credentialSubject: Record<string, unknown>
-  ): Promise<string> {
+    credentialSubject: Record<string, unknown>,
+    config: IssuanceConfig
+  ): Promise<SessionResponseDto> {
     if (this.loop) clearInterval(this.loop);
     const res = await firstValueFrom(
       this.sessionApiService.issuerControllerRequest({
         credentialId,
         credentialSubject,
-        pin: false,
+        ...config,
       })
     );
     this.loop = setInterval(() => this.getStatus(res.id), 2000);
-    return res.uri;
+    return res;
   }
 
   /**

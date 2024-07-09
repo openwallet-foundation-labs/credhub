@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Passkey } from './passkey.entity';
+import { Passkey } from './entities/passkey.entity';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
@@ -17,6 +17,7 @@ import {
   verifyAuthenticationResponse,
   verifyRegistrationResponse,
 } from '@simplewebauthn/server';
+import { v4 as uuid } from 'uuid';
 
 export const WEBAUTHN_VALIDATION_SCHEMA = {
   WEBAUTHN_RP_ID: Joi.string().required(),
@@ -34,12 +35,6 @@ export class WebauthnService {
    * local dev
    */
   private rpID: string;
-  /**
-   * The URL at which registrations and authentications should occur.
-   * 'http://localhost' and 'http://localhost:PORT' are also valid.
-   * Do NOT include any trailing /
-   */
-  private origin: string;
 
   private registerSessions: Map<
     string,
@@ -55,7 +50,6 @@ export class WebauthnService {
   ) {
     this.rpName = this.configService.get('WEBAUTHN_RP_NAME');
     this.rpID = this.configService.get('WEBAUTHN_RP_ID');
-    this.origin = `http://${this.rpID}`;
   }
 
   private getUserPassKeys(user: string) {
@@ -89,7 +83,7 @@ export class WebauthnService {
         // See "Guiding use of authenticators via authenticatorSelection" below
         authenticatorSelection: {
           // Defaults
-          residentKey: 'required',
+          residentKey: 'preferred',
           userVerification: 'preferred',
           // Optional
           authenticatorAttachment: 'platform',
@@ -117,7 +111,11 @@ export class WebauthnService {
     return this.registerSessions.get(user);
   }
 
-  async startRegistration(user: string, body: RegistrationResponseJSON) {
+  async startRegistration(
+    user: string,
+    body: RegistrationResponseJSON,
+    expectedOrigin: string
+  ) {
     // (Pseudocode) Get `options.challenge` that was saved above
     const currentOptions: PublicKeyCredentialCreationOptionsJSON =
       this.getCurrentRegistrationOptions(user);
@@ -127,8 +125,9 @@ export class WebauthnService {
       verification = await verifyRegistrationResponse({
         response: body,
         expectedChallenge: currentOptions.challenge,
-        expectedOrigin: this.origin,
+        expectedOrigin,
         expectedRPID: this.rpID,
+        requireUserVerification: true,
       });
     } catch (error) {
       throw new ConflictException(error.message);
@@ -142,27 +141,27 @@ export class WebauthnService {
       credentialDeviceType,
       credentialBackedUp,
     } = registrationInfo;
-
-    await this.passKeyRepository.save({
+    const el = this.passKeyRepository.create({
       user,
       webauthnUserID: currentOptions.user.id,
       id: credentialID,
-      publicKey: credentialPublicKey,
+      publicKey: Buffer.from(credentialPublicKey).toString('base64'),
       counter,
       deviceType: credentialDeviceType,
       backedUp: credentialBackedUp,
       transports: body.response.transports,
     });
+    await this.passKeyRepository.save(el);
   }
 
   async generateAuthenticationOptions(user: string) {
-    // (Pseudocode) Retrieve any of the user's previously-
-    // registered authenticators
     const userPasskeys: Passkey[] = await this.getUserPassKeys(user);
+    const session = uuid();
 
     const options: PublicKeyCredentialRequestOptionsJSON =
       await generateAuthenticationOptions({
         rpID: this.rpID,
+        userVerification: 'preferred',
         // Require users to use a previously-registered authenticator
         allowCredentials: userPasskeys.map((passkey) => ({
           id: passkey.id,
@@ -170,9 +169,9 @@ export class WebauthnService {
         })),
       });
 
-    this.setCurrentAuthenticationOptions(user, options);
+    this.setCurrentAuthenticationOptions(session, options);
 
-    return options;
+    return { options, session };
   }
 
   private setCurrentAuthenticationOptions(
@@ -182,19 +181,28 @@ export class WebauthnService {
     this.loginSessions.set(user, options);
   }
 
-  private getCurrentAuthenticationOptions(user: string) {
-    return this.loginSessions.get(user);
+  private getCurrentAuthenticationOptions(key: string) {
+    return this.loginSessions.get(key);
   }
 
+  private deleteCurrentAuthenticationOptions(key: string) {
+    this.loginSessions.delete(key);
+  }
+
+  /**
+   * Verify the authentication response
+   */
   async verifyAuthenticationResponse(
+    session: string,
     user: string,
-    body: AuthenticationResponseJSON
+    body: AuthenticationResponseJSON,
+    expectedOrigin: string
   ) {
-    // (Pseudocode) Get `options.challenge` that was saved above
     const currentOptions: PublicKeyCredentialRequestOptionsJSON =
-      this.getCurrentAuthenticationOptions(user);
-    // (Pseudocode} Retrieve a passkey from the DB that
-    // should match the `id` in the returned credential
+      this.getCurrentAuthenticationOptions(session);
+    if (!currentOptions) {
+      throw new ConflictException('No authentication session found');
+    }
     const passkey: Passkey = await this.getUserPasskey(user, body.id);
 
     if (!passkey) {
@@ -207,12 +215,15 @@ export class WebauthnService {
     try {
       verification = await verifyAuthenticationResponse({
         response: body,
+        requireUserVerification: true,
         expectedChallenge: currentOptions.challenge,
-        expectedOrigin: this.origin,
+        expectedOrigin,
         expectedRPID: this.rpID,
         authenticator: {
           credentialID: passkey.id,
-          credentialPublicKey: passkey.publicKey,
+          credentialPublicKey: Uint8Array.from(
+            Buffer.from(passkey.publicKey, 'base64')
+          ),
           counter: passkey.counter,
           transports: passkey.transports,
         },
@@ -222,6 +233,10 @@ export class WebauthnService {
     }
 
     const { verified } = verification;
+    if (!verified) {
+      throw new ConflictException('Could not verify authentication');
+    }
+    this.deleteCurrentAuthenticationOptions(session);
 
     const { authenticationInfo } = verification;
     const { newCounter } = authenticationInfo;
@@ -229,12 +244,51 @@ export class WebauthnService {
     await this.saveUpdatedCounter(passkey, newCounter);
   }
 
+  /**
+   * Save the updated counter for a passkey
+   * @param passkey
+   * @param newCounter
+   */
   private async saveUpdatedCounter(passkey: Passkey, newCounter: number) {
     passkey.counter = newCounter;
     await this.passKeyRepository.save(passkey);
   }
 
+  /**
+   * Get a passkey for a user
+   * @param user
+   * @param id
+   * @returns
+   */
   private getUserPasskey(user: string, id: string): Promise<Passkey> {
     return this.passKeyRepository.findOne({ where: { id, user } });
+  }
+
+  /**
+   * Check if a user has any keys
+   */
+  hasKeys(user: string) {
+    return this.passKeyRepository.count({ where: { user } }).then((count) => {
+      return count > 0;
+    });
+  }
+
+  /**
+   * Get all keys for a user
+   * @param sub
+   * @returns
+   */
+  getKeys(sub: string) {
+    return this.passKeyRepository.find({ where: { user: sub } });
+  }
+
+  /**
+   * Delete a key for a user
+   * @param sub
+   * @param id
+   * @returns
+   */
+  deleteKey(sub: string, id: string) {
+    return this.passKeyRepository.delete({ user: sub, id });
   }
 }

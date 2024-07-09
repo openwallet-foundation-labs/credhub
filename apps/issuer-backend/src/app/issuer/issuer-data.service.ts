@@ -1,9 +1,8 @@
-import { CredentialIssuerMetadataOpts } from '@sphereon/oid4vci-common';
-import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { CredentialSchema } from './types.js';
+import { CredentialIssuerMetadataOptsV1_0_13 } from '@sphereon/oid4vci-common';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { TemplatesService } from '../templates/template.service';
+import { MetadataService } from '../templates/metadata.service';
 
 /**
  * The issuer class is responsible for managing the credentials and the metadata of the issuer.
@@ -14,46 +13,24 @@ export class IssuerDataService {
   /**
    * The metadata of the issuer.
    */
-  private metadata!: CredentialIssuerMetadataOpts;
+  private metadata!: CredentialIssuerMetadataOptsV1_0_13;
 
-  /**
-   * The credentials supported by the issuer.
-   */
-  private credentials: Map<string, CredentialSchema> = new Map();
-
-  constructor(private configSerivce: ConfigService) {
+  constructor(
+    private configSerivce: ConfigService,
+    private templatesService: TemplatesService,
+    private metadataService: MetadataService
+  ) {
     this.loadConfig();
   }
 
-  public loadConfig() {
-    this.credentials.clear();
-    const folder = this.configSerivce.get('CREDENTIALS_FOLDER');
-
+  public async loadConfig() {
     //instead of reading at the beginning, we could implement a read on demand.
-    this.metadata = JSON.parse(
-      readFileSync(join(folder, 'metadata.json'), 'utf-8')
-    ) as CredentialIssuerMetadataOpts;
+    this.metadata = await this.metadataService.getMetadata();
+
     this.metadata.credential_issuer = this.configSerivce.get('ISSUER_BASE_URL');
 
-    if (!this.metadata.credentials_supported) {
-      this.metadata.credentials_supported = [];
-    }
-
-    const files = readdirSync(join(folder, 'credentials'));
-    for (const file of files) {
-      //TODO: we should validate the schema
-      const content = JSON.parse(
-        readFileSync(join(folder, 'credentials', file), 'utf-8')
-      ) as CredentialSchema;
-      //check if an id is already used
-      if (this.credentials.has(content.schema.id as string)) {
-        throw new Error(
-          `The credential with the id ${content.schema.id} is already used.`
-        );
-      }
-      this.credentials.set(content.schema.id as string, content);
-      this.metadata.credentials_supported.push(content.schema);
-    }
+    this.metadata.credential_configurations_supported =
+      this.templatesService.getSupported(await this.templatesService.listAll());
   }
 
   /**
@@ -61,11 +38,11 @@ export class IssuerDataService {
    * @param id
    * @returns
    */
-  getCredential(id: string) {
+  async getCredential(id: string) {
     if (this.configSerivce.get('CONFIG_RELOAD')) {
       this.loadConfig();
     }
-    const credential = this.credentials.get(id);
+    const credential = await this.templatesService.getOne(id);
     if (!credential) {
       throw new Error(`The credential with the id ${id} is not supported.`);
     }
@@ -77,11 +54,11 @@ export class IssuerDataService {
    * @param id
    * @returns
    */
-  getDisclosureFrame(id: string) {
+  async getDisclosureFrame(id: string) {
     if (this.configSerivce.get('CONFIG_RELOAD')) {
       this.loadConfig();
     }
-    const credential = this.credentials.get(id);
+    const credential = await this.templatesService.getOne(id);
     if (!credential) {
       throw new Error(`The credential with the id ${id} is not supported.`);
     }
