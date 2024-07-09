@@ -4,6 +4,7 @@ import { UserDeletedEvent } from '../auth.service';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { EndpointResponse } from '../dto/endpoint-response.dto';
 
 /**
  * Keycloak OIDC client implementation
@@ -23,6 +24,15 @@ export class KeycloakOIDCClient implements OIDCClient {
     this.realm = this.configService.get('OIDC_REALM');
     this.clientId = this.configService.get('OIDC_ADMIN_CLIENT_ID');
     this.clientSecret = this.configService.get('OIDC_ADMIN_CLIENT_SECRET');
+  }
+
+  endpoints(): EndpointResponse {
+    return {
+      oidcUrl: `${this.keycloakUrl}/realms/${this.realm}`,
+      oidcClient: this.configService.get('OIDC_PUBLIC_CLIENT_ID'),
+      oidcAllowHttp: true,
+      name: this.configService.get('WEBAUTHN_RP_NAME'),
+    };
   }
 
   /**

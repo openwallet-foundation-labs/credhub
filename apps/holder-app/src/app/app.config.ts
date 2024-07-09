@@ -29,6 +29,7 @@ import { environment } from '../environments/environment';
 
 Sentry.init({
   dsn: environment.sentryDsn,
+  enabled: !isDevMode(),
   integrations: [
     Sentry.browserTracingIntegration(),
     Sentry.replayIntegration(),
@@ -73,6 +74,7 @@ export const appConfig: ApplicationConfig = {
           resourceServer: {
             sendAccessToken: true,
             customUrlValidation: (url: string) => {
+              if (configService.isConfigUrl(url)) return true;
               // we need to ignore calls to assets to fetch the config file
               if (url.startsWith('/assets')) return true;
               return url.startsWith(configService.getConfig('backendUrl'));
