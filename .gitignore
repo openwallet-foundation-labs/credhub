@@ -6,6 +6,7 @@ tmp
 /out-tsc
 .env
 site
+application.zip
 
 # dependencies
 node_modules

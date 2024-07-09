@@ -72,6 +72,10 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "container": {
+      "command": "cd dist/apps/holder-browser-extension && zip -r ../../../application.zip .",
+      "dependsOn": ["build"]
     }
   }
 }

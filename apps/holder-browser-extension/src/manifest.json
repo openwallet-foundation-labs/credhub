@@ -1,7 +1,7 @@
 {
-  "name": "Wallet",
-  "version": "1",
-  "description": "A SSI wallet to manage credentials",
+  "name": "Credhub Client",
+  "version": "0.1",
+  "description": "A client to interact with a credhub cloud wallet",
   "manifest_version": 3,
   "action": {
     "default_title": "Wallet",

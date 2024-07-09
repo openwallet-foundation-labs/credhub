@@ -324,6 +324,12 @@ devDependencies:
   '@vitest/ui':
     specifier: ^1.6.0
     version: 1.6.0(vitest@1.6.0)
+  chrome-webstore-upload:
+    specifier: ^3.1.0
+    version: 3.1.0
+  dotenv:
+    specifier: ^16.4.5
+    version: 16.4.5
   eslint:
     specifier: ~8.57.0
     version: 8.57.0
@@ -9987,6 +9993,11 @@ packages:
   /chrome-trace-event@1.0.4:
     resolution: {integrity: sha512-rNjApaLzuwaOTjCiT8lSDdGN1APCiqkChLMJxJPWLunPAt5fy8xgU9/jNOchV84wfIxrA0lRQB7oCT8jrn/wrQ==}
     engines: {node: '>=6.0'}
+    dev: true
+
+  /chrome-webstore-upload@3.1.0:
+    resolution: {integrity: sha512-FpJFVewoeazHEz86vi6KaWq8+YYuX5RgmH6oVGDjeLS75n62qzjlwx1VQP4U2UeOPMNuUA3PYQQI6qkoSWVN8A==}
+    engines: {node: '>=18'}
     dev: true
 
   /chromedriver@126.0.4:
