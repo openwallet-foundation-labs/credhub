@@ -53,13 +53,7 @@
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
-          "watch": true,
-          "fileReplacements": [
-            {
-              "replace": "apps/holder-browser-extension/src/environments/environment.ts",
-              "with": "apps/holder-browser-extension/src/environments/environment.development.ts"
-            }
-          ]
+          "watch": true
         }
       },
       "defaultConfiguration": "production"
@@ -72,6 +66,13 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/holder-browser-extension/jest.config.ts"
+      }
     }
   }
 }

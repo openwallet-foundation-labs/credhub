@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
 import { decodeJwt } from 'jose';
 import { BehaviorSubject } from 'rxjs';
-import { AuthServiceInterface } from '@credhub/holder-shared';
+import { AuthServiceInterface, ConfigService } from '@credhub/holder-shared';
 
 interface Storage {
   access_token: string;
@@ -18,6 +17,8 @@ export class AuthService implements AuthServiceInterface {
 
   private token?: string;
 
+  constructor(private configService: ConfigService) {}
+
   getToken() {
     return this.token as string;
   }
@@ -27,7 +28,7 @@ export class AuthService implements AuthServiceInterface {
    * @returns
    */
   getSettingsLink(): string {
-    return `${environment.oidcUrl}/realms/${environment.keycloakRealm}/account`;
+    return `${this.configService.getConfig('oidcUrl')}/account`;
   }
 
   /**
@@ -67,7 +68,6 @@ export class AuthService implements AuthServiceInterface {
    */
   async login() {
     if (typeof chrome.identity !== 'undefined') {
-      console.log(this.getAuthUrl());
       await chrome.identity
         .launchWebAuthFlow({
           interactive: true,
@@ -112,10 +112,10 @@ export class AuthService implements AuthServiceInterface {
     const nonce = this.generateRandomString();
 
     const url = new URL(
-      `${environment.oidcUrl}/realms/${environment.keycloakRealm}/protocol/openid-connect/auth`
+      `${this.configService.getConfig('oidcUrl')}/protocol/openid-connect/auth`
     );
     const params = {
-      client_id: environment.keycloakClient,
+      client_id: this.configService.getConfig<string>('oidcClient'),
       response_type: 'id_token token',
       redirect_uri: redirectURL,
       nonce: nonce,
@@ -180,8 +180,10 @@ export class AuthService implements AuthServiceInterface {
       chrome.storage.local.get(['id_token'], (values) => {
         const idToken = (values as Storage).id_token;
         const logoutUrl =
-          `${environment.oidcUrl}/realms/${environment.keycloakRealm}/protocol/openid-connect/logout` +
-          `?client_id=${environment.keycloakClient}` +
+          `${this.configService.getConfig(
+            'oidcClient'
+          )}/protocol/openid-connect/logout` +
+          `?client_id=${this.configService.getConfig('oidcClient')}` +
           `&id_token_hint=${idToken}` +
           `&post_logout_redirect_uri=${encodeURIComponent(
             chrome.identity.getRedirectURL('')

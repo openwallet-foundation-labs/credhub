@@ -1,6 +1,6 @@
 {
-  "name": "Wallet",
-  "short_name": "Wallet",
+  "name": "Credhub",
+  "short_name": "Credhub",
   "theme_color": "#D7E3FF",
   "background_color": "#FFFFFF",
   "display": "standalone",
@@ -30,11 +30,21 @@
     {
       "src": "assets/icons/192x192.png",
       "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/192x192-maskable.png",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "assets/icons/512x512.png",
+      "src": "assets/icons/512x512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
