@@ -67,6 +67,13 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/holder-browser-extension/jest.config.ts"
+      }
+    },
     "container": {
       "command": "cd dist/apps/holder-browser-extension && zip -r ../../../application.zip .",
       "dependsOn": ["build"]
