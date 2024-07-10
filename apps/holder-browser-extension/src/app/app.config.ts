@@ -9,7 +9,6 @@ import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { provideOAuthClient } from 'angular-oauth2-oidc';
-import { environment } from '../environments/environment';
 import {
   ApiModule,
   Configuration,
@@ -50,15 +49,14 @@ export const appConfig: ApplicationConfig = {
     },
     {
       provide: Configuration,
-      useFactory: (authService: AuthService) =>
+      useFactory: (authService: AuthService, configService: ConfigService) =>
         new Configuration({
-          //TODO: the basepath is static, therefore we can not set it during the login process. We could update the config so the baseBath will be fetched dynamically.
-          basePath: environment.backendUrl,
+          basePath: configService.getConfig('backendUrl'),
           credentials: {
             oauth2: authService.getToken.bind(authService),
           },
         }),
-      deps: [AuthService],
+      deps: [AuthService, ConfigService],
       multi: false,
     },
   ],
