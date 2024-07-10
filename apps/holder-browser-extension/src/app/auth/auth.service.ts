@@ -68,7 +68,6 @@ export class AuthService implements AuthServiceInterface {
    */
   async login() {
     if (typeof chrome.identity !== 'undefined') {
-      console.log(this.getAuthUrl());
       await chrome.identity
         .launchWebAuthFlow({
           interactive: true,
