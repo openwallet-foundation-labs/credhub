@@ -61,3 +61,11 @@ jobs:
           name: playwright-results
           path: dist/.playwright
           retention-days: 30
+
+      # Upload the extension
+      - name: Upload Chrome extension
+        if: ${{ hashFiles('application.zip') != ''}}
+        uses: actions/upload-artifact@v3
+        with:
+          name: chrome-extension
+          path: application.zip
