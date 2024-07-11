@@ -61,11 +61,3 @@ jobs:
           name: playwright-results
           path: dist/.playwright
           retention-days: 30
-
-      # Upload the extension
-      - name: Upload Chrome extension
-        if: ${{ hashFiles('dist/apps/holder-browser-extension') != ''}}
-        uses: actions/upload-artifact@v4
-        with:
-          name: chrome-extension
-          path: dist/apps/holder-browser-extension
