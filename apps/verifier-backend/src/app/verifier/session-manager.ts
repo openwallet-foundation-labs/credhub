@@ -99,6 +99,10 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
     );
   }
 
+  getAllRequestStates(): Promise<AuthorizationRequestState[]> {
+    return Promise.resolve(Object.values(this.authorizationRequests));
+  }
+
   async getRequestStateByCorrelationId(
     correlationId: string,
     errorOnNotFound?: boolean

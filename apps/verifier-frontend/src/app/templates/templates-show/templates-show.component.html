@@ -1,0 +1,18 @@
+<mat-card *ngIf="template">
+  <mat-card-header>
+    <mat-card-title fxLayout="row" fxLayoutAlign="start center">
+      <button mat-icon-button routerLink="/">
+        <mat-icon>arrow_back_ios</mat-icon>
+      </button>
+      <span>{{ template.request.id }}</span>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <app-sessions-list></app-sessions-list>
+  </mat-card-content>
+  <mat-card-actions fxLayoutGap="16px">
+    <button mat-flat-button color="primary" routerLink="issue">Issue</button>
+    <button mat-flat-button color="primary" routerLink="edit">Edit</button>
+    <button mat-button color="warn" (click)="delete()">Delete</button>
+  </mat-card-actions>
+</mat-card>

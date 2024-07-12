@@ -18,12 +18,10 @@ export class VerifierService {
   /**
    * Gets the url for a new session from the issuer
    */
-  async getUrl(): Promise<string> {
+  async getUrl(credentialId: string): Promise<string> {
     if (this.loop) clearInterval(this.loop);
     const res = await firstValueFrom(
-      this.siopApiService.verifierControllerCreateSession(
-        this.configService.getConfig('credentialId')
-      )
+      this.siopApiService.siopControllerCreateSession(credentialId)
     );
     const id = decodeURIComponent(res.uri).split('/').pop() as string;
     this.loop = setInterval(() => this.getStatus(id), 2000);
@@ -32,7 +30,7 @@ export class VerifierService {
 
   async getStatus(id: string) {
     await firstValueFrom(
-      this.siopApiService.verifierControllerGetAuthRequestStatus(
+      this.siopApiService.siopControllerGetAuthRequestStatus(
         this.configService.getConfig('credentialId'),
         id
       )
