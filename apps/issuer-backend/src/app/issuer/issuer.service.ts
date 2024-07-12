@@ -45,6 +45,7 @@ import { IssuerMetadata } from './types';
 import { StatusService } from '../status/status.service';
 import { SessionResponseDto } from './dto/session-response.dto';
 import { ConfigService } from '@nestjs/config';
+import { CustomStates } from './state';
 
 interface CredentialDataSupplierInput {
   credentialSubject: Record<string, unknown>;
@@ -264,7 +265,7 @@ export class IssuerService implements OnModuleInit {
       {
         cNonceExpiresIn: 300,
         //TODO: use persistant session managements in production
-        credentialOfferSessions: new MemoryStates<CredentialOfferSession>(),
+        credentialOfferSessions: new CustomStates<CredentialOfferSession>(),
         cNonces: new MemoryStates<CNonceState>(),
         uris: new MemoryStates<URIState>(),
         jwtVerifyCallback,
@@ -286,6 +287,8 @@ export class IssuerService implements OnModuleInit {
           preAuthorizedCodeExpirationDuration: 1000 * 60 * 10,
           tokenExpiresIn: 300,
         },
+        //TODO: not implemented yet
+        //notificationOpts: {},
       },
     });
   }

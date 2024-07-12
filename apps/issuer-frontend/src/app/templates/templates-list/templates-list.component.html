@@ -1,0 +1,21 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Templates</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-nav-list>
+      @for(template of templates; track template) {
+      <a
+        mat-list-item
+        [routerLink]="template.schema.id"
+        routerLinkActive="router-link-active"
+        >{{ template.schema.id }}</a
+      >
+
+      }
+    </mat-nav-list>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-flat-button color="primary" [routerLink]="['new']">New</button>
+  </mat-card-actions>
+</mat-card>

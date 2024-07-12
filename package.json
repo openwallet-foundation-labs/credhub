@@ -14,7 +14,7 @@
   "author": "Mirko Mollik <mirkomollik@gmail.com>",
   "engines": {
     "node": ">=18",
-    "pnpm": "=8"
+    "pnpm": "=9"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "18.0.1",

@@ -22,8 +22,10 @@ export class TemplatesController {
 
   @ApiOperation({ summary: 'List all templates' })
   @Get()
-  async listAll() {
-    return Object.fromEntries(await this.templatesService.listAll());
+  async listAll(): Promise<Template[]> {
+    return Object.values(
+      Object.fromEntries(await this.templatesService.listAll())
+    );
   }
 
   @ApiOperation({ summary: 'Get one template' })
