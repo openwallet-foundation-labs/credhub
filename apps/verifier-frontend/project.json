@@ -29,7 +29,7 @@
           "apps/verifier-frontend/src/assets"
         ],
         "styles": [
-          "@angular/material/prebuilt-themes/indigo-pink.css",
+          "@angular/material/prebuilt-themes/azure-blue.css",
           "apps/verifier-frontend/src/styles.scss"
         ],
         "scripts": [],

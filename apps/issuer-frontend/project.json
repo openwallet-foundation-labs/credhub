@@ -29,7 +29,7 @@
           "apps/issuer-frontend/src/assets"
         ],
         "styles": [
-          "@angular/material/prebuilt-themes/indigo-pink.css",
+          "@angular/material/prebuilt-themes/azure-blue.css",
           "apps/issuer-frontend/src/styles.scss"
         ],
         "scripts": [],

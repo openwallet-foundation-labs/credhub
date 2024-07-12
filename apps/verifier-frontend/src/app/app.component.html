@@ -1,20 +1,4 @@
-<div fxLayout="column" fxLayoutGap="16px" id="content">
-  <button mat-raised-button color="primary" (click)="generate()">
-    Generate QR-Code
-  </button>
-  <img [src]="qrCodeImage" *ngIf="qrCodeImage" alt="QR-Code" />
-  <mat-form-field [appearance]="'outline'">
-    <input
-      placeholder="QR-Code Url"
-      matInput
-      readonly
-      [formControl]="qrCodeField"
-    />
-    <button mat-icon-button matSuffix (click)="copyValue()" *ngIf="qrCodeImage">
-      <mat-icon>content_copy</mat-icon>
-    </button>
-  </mat-form-field>
-  <p *ngIf="verifierService.statusEvent.value">
-    Status: {{ verifierService.statusEvent.value }}
-  </p>
-</div>
+<mat-toolbar>
+  <a mat-button routerLink="/">Templates</a>
+</mat-toolbar>
+<router-outlet></router-outlet>

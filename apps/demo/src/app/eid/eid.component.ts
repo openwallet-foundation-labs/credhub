@@ -9,7 +9,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { IssuerService } from '@credhub/issuer-shared';
-import { VerifierService } from '@credhub/verifier-shared';
+import {
+  VerifierConfigService,
+  VerifierService,
+} from '@credhub/verifier-shared';
 import qrcode from 'qrcode';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
@@ -59,6 +62,7 @@ export class EidComponent implements OnDestroy {
   constructor(
     public issuerService: IssuerService,
     public verifierService: VerifierService,
+    private verifierConfigService: VerifierConfigService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -111,7 +115,9 @@ export class EidComponent implements OnDestroy {
    * Starts the verification process
    */
   async startVerification() {
-    this.verifierUrl = await this.verifierService.getUrl();
+    this.verifierUrl = await this.verifierService.getUrl(
+      this.verifierConfigService.getConfig('credentialId')
+    );
     this.qrCodeVerifyField.setValue(this.verifierUrl);
     this.qrCodeVerifyImage = await qrcode.toDataURL(this.verifierUrl);
     this.verifierService.statusEvent.subscribe((status) => {

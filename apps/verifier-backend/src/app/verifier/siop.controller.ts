@@ -24,6 +24,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { v4 } from 'uuid';
 import { AuthResponseRequestDto } from './dto/auth-repsonse-request.dto';
+import { InMemoryRPSessionManager } from './session-manager';
 
 @ApiTags('siop')
 @UseGuards(AuthGuard)
@@ -79,10 +80,18 @@ export class SiopController {
     return await request?.request.requestObject?.toJwt();
   }
 
+  @ApiOperation({ summary: 'Get all auth request' })
+  @Get(':rp/auth-request')
+  async getAllAuthRequest(@Param('rp') rp: string) {
+    const instance = await this.relyingPartyManagerService.getOrCreate(rp);
+    return (
+      instance.rp.sessionManager as InMemoryRPSessionManager
+    ).getAllRequestStates();
+  }
+
   /**
    * Add the route to get the status of the request
    */
-  @Public()
   @ApiOperation({ summary: 'Get the status of the auth request' })
   @Get(':rp/auth-request/:correlationId/status')
   async getAuthRequestStatus(

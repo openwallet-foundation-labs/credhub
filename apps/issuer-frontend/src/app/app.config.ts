@@ -10,10 +10,13 @@ import {
   Configuration,
   IssuerConfigService,
 } from '@credhub/issuer-shared';
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(),
+    provideRouter(routes),
     {
       provide: APP_INITIALIZER,
       useFactory: (

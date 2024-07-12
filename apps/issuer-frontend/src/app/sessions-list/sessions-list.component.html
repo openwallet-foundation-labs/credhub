@@ -1,0 +1,9 @@
+<mat-list>
+  @for(session of sessions; track session) {
+  <mat-list-item>
+    <span matListItemTitle>{{ session.preAuthorizedCode }}</span>
+    <span matListItemLine>{{ session.status }}</span>
+    <span matListItemLine>{{ session.createdAt | date }}</span>
+  </mat-list-item>
+  }
+</mat-list>

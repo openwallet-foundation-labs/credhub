@@ -20,7 +20,7 @@ import { StatusService } from './status.service';
 import { AuthGuard, Public } from 'nest-keycloak-connect';
 import { CreateListDto } from './dto/create-list.dto';
 import { ChangeStatusDto } from './dto/change-status.dto';
-import { StatusListAccept } from './StatusListAccept';
+import { StatusListAccept } from './status-list-accept';
 
 @UseGuards(AuthGuard)
 @ApiOAuth2([])

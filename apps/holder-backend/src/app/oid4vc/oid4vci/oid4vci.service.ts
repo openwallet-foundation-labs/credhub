@@ -125,6 +125,7 @@ export class Oid4vciService {
         alg: Alg.ES256,
         format: credential.format,
       });
+
       const sdjwtvc = await this.sdjwt.decode(
         credentialResponse.credential as string
       );
@@ -138,6 +139,17 @@ export class Oid4vciService {
         },
         user
       );
+      /* if (credentialResponse.notification_id) {
+        const res = await data.client.sendNotification(
+          {},
+          {
+            notification_id: credentialResponse.notification_id,
+            event: 'credential_accepted',
+          }
+        );
+        console.log(res);
+      } */
+
       //remove the old session
       this.sessions.delete(accept.id);
       return { id: credentialEntry.id };

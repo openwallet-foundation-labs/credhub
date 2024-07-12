@@ -1,0 +1,76 @@
+<div fxLayout="column" fxLayoutGap="16px" id="content" *ngIf="template">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title fxLayout="row" fxLayoutAlign="start center">
+        <button mat-icon-button routerLink="../">
+          <mat-icon>arrow_back_ios</mat-icon>
+        </button>
+        <span>{{ template.schema.id }}</span>
+      </mat-card-title>
+    </mat-card-header>
+    <form
+      [formGroup]="form"
+      (submit)="generate()"
+      fxLayout="column"
+      fxLayoutGap="16px"
+    >
+      <mat-card-content>
+        @for(field of form.controls | keyvalue; track field) {
+        <mat-form-field [appearance]="'outline'">
+          <mat-label>{{ field.key }}</mat-label>
+          <input matInput [formControlName]="field.key" />
+        </mat-form-field>
+        }
+        <mat-slide-toggle [formControl]="pinRequired" color="primary"
+          >Require PIN</mat-slide-toggle
+        >
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button type="submit" mat-flat-button color="primary">Generate</button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+  <div *ngIf="qrCodeImage" fxLayout="column" fxLayoutGap="16px">
+    <img [src]="qrCodeImage" alt="QR-Code" />
+    <mat-form-field [appearance]="'outline'">
+      <mat-label>QR-Code Url</mat-label>
+      <input
+        placeholder="QR-Code Url"
+        matInput
+        readonly
+        [formControl]="qrCodeField"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="copyValue(qrCodeField.value!)"
+        *ngIf="qrCodeImage"
+      >
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field
+      [appearance]="'outline'"
+      *ngIf="pinField.value && pinField.value.length > 0"
+    >
+      <mat-label>Pin</mat-label>
+      <input
+        placeholder="Issuer Name"
+        matInput
+        [formControl]="pinField"
+        readonly
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="copyValue(pinField.value!)"
+        *ngIf="qrCodeImage"
+      >
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </mat-form-field>
+    <p *ngIf="issuerService.statusEvent.value">
+      Status: {{ issuerService.statusEvent.value }}
+    </p>
+  </div>
+</div>
