@@ -14,7 +14,7 @@ export class StatusList {
   @Column()
   bitsPerStatus: BitsPerStatus;
 
-  @Column('blob')
+  @Column(process.env.DB_TYPE === 'sqlite' ? 'blob' : 'bytea')
   list: Buffer;
 
   @Column()

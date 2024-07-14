@@ -13,6 +13,7 @@ import { WebauthnService } from '../auth/webauthn.service';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 
 export abstract class AuthServiceInterface {
   abstract getSettingsLink(): string;
@@ -47,7 +48,8 @@ export class SettingsComponent implements OnInit {
     public settingsService: SettingsService,
     private settingsApiService: SettingsApiService,
     private matDialog: MatDialog,
-    public webAuthnService: WebauthnService
+    public webAuthnService: WebauthnService,
+    private router: Router
   ) {
     this.form = new FormGroup({
       auto: new FormControl(false),
@@ -84,6 +86,7 @@ export class SettingsComponent implements OnInit {
     if (!confirm('Are you sure you want to delete your account?')) return;
     await firstValueFrom(this.authApiService.authControllerDeleteAccount());
     this.authService.logout();
+    this.router.navigateByUrl('/login');
   }
 
   async showLicense() {

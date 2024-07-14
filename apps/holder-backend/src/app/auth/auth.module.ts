@@ -40,11 +40,11 @@ export const OIDC_VALIDATION_SCHEMA = {
           authServerUrl: configService.get('OIDC_AUTH_URL'),
           //when referencing the realm, it is not possible to use another oidc than keycloak for now
           realm: configService.get('OIDC_REALM'),
-          clientId: configService.get('OIDC_PUBLIC_CLIENT_ID'),
+          // we need the client id and secret to validare if a token got revoked. The client needs to have a service account with manage user permissions
+          clientId: configService.get('OIDC_ADMIN_CLIENT_ID'),
+          secret: configService.get('OIDC_ADMIN_CLIENT_SECRET'),
           policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
-          //TODO: set this to online
-          tokenValidation: TokenValidation.OFFLINE,
-          //TODO: maybe setting verifyTokenAudience could work with the localhost problem
+          tokenValidation: TokenValidation.ONLINE,
         } as KeycloakConnectOptions),
     }),
     OidcClientModule.forRoot(),

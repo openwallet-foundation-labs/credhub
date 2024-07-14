@@ -10,12 +10,7 @@ import {
   Wait,
 } from 'testcontainers';
 import { Client } from 'pg';
-import { KeycloakGlobalThis } from './keycloak';
-
-export type gt = typeof globalThis;
-export interface BackendGlobalThis extends gt {
-  backend: HolderBackend;
-}
+import { Keycloak } from './keycloak';
 
 /**
  * HolderBackend to manage the holder backend container
@@ -27,11 +22,13 @@ export class HolderBackend {
   private postgresClient!: Client;
   instance!: StartedTestContainer;
 
-  static async init() {
-    const instance = new HolderBackend();
+  static async init(keycloak: Keycloak) {
+    const instance = new HolderBackend(keycloak);
     await instance.start();
     return instance;
   }
+
+  constructor(private keycloak: Keycloak) {}
 
   /**
    * Start the holder backend container
@@ -57,9 +54,9 @@ export class HolderBackend {
       .withWaitStrategy(Wait.forHttp('/health', 3000).forStatusCode(200))
       .withName('holder-backend')
       .withEnvironment({
-        OIDC_AUTH_URL: `http://host.testcontainers.internal:${(
-          globalThis as KeycloakGlobalThis
-        ).keycloak.instance.getMappedPort(8080)}`,
+        OIDC_AUTH_URL: `http://host.testcontainers.internal:${this.keycloak.instance.getMappedPort(
+          8080
+        )}`,
         OIDC_REALM: 'wallet',
         OIDC_PUBLIC_CLIENT_ID: 'wallet',
         OIDC_ADMIN_CLIENT_ID: 'wallet-admin',

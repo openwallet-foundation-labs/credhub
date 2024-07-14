@@ -1,84 +1,49 @@
-import {
-  Keycloak,
-  HolderBackend,
-  KeycloakGlobalThis,
-  BackendGlobalThis,
-  HolderFrontend,
-} from '@credhub/testing';
+import { HolderBackend, HolderFrontend, Keycloak } from '@credhub/testing';
 import { test, expect } from '@playwright/test';
+import { faker } from '@faker-js/faker';
+import { login, logout, register } from './helpers';
 
-const username = 'mirko@gmx.de';
-const password = 'mirko';
+export const username = faker.internet.email();
+export const password = faker.internet.password();
+export let hostname: string;
 let keycloak: Keycloak;
 let backend: HolderBackend;
 let frontend: HolderFrontend;
-let hostname: string;
 
-test.beforeAll(async () => {
-  //start keycloak
-  keycloak = await Keycloak.init();
-  (globalThis as KeycloakGlobalThis).keycloak = keycloak;
+test.beforeAll(async ({ browser }) => {
+  if (process.env['NO_CONTAINER']) {
+    hostname = 'http://localhost:4200';
+  } else {
+    keycloak = await Keycloak.init();
+    backend = await HolderBackend.init(keycloak);
+    frontend = await HolderFrontend.init(backend);
+    hostname = `http://localhost:${frontend.instance.getMappedPort(80)}`;
+  }
 
-  //start backend
-  backend = await HolderBackend.init();
-  (globalThis as BackendGlobalThis).backend = backend;
-
-  //start frontend
-  frontend = await HolderFrontend.init();
-
-  hostname = `http://localhost:${frontend.instance.getMappedPort(80)}`;
-
-  const testUserEmail = 'test@test.de';
-  const testUserPassword = 'password';
-  // create a new user
-  await keycloak.createUser(
-    `http://localhost:${keycloak.instance.getMappedPort(8080)}`,
-    'wallet',
-    testUserEmail,
-    testUserPassword
-  );
+  const page = await browser.newPage();
+  await register(page, hostname, username, password);
+  await logout(page, hostname);
 });
 
 test.afterAll(async () => {
-  await frontend.stop();
-  await backend.stop();
+  if (process.env['NO_CONTAINER']) {
+    return;
+  }
   await keycloak.stop();
+  await backend.stop();
+  await frontend.stop();
 });
 
 test('register', async ({ page }) => {
-  await page.goto(hostname);
-
-  //click on the button
-  await page.click('text=Login');
-
-  await page.click('text=Register');
-
-  //fill the form
-  await page.fill('input[name=email]', username);
-  await page.fill('input[name=password]', password);
-  await page.fill('input[name=password-confirm]', password);
-  await page.click('input[type=submit]');
-
-  await page.waitForSelector('text=Credentials');
+  const username = faker.internet.email();
+  const password = faker.internet.password();
+  await register(page, hostname, username, password);
   expect(true).toBeTruthy();
 });
 
 test('login', async ({ page }) => {
   await page.goto(hostname);
-
-  //click on the button
-  await page.click('text=Login');
-
-  //login into keycloak
-  await page.fill('input[name=username]', username);
-  await page.fill('input[name=password]', password);
-  await page.click('id=kc-login');
-
-  //wait for the password input field
-  // await page.waitForSelector('input[name=password]');
-  // await page.click('text=Sign In');
-
-  await page.waitForSelector('text=Credentials');
+  await login(page, username, password);
 
   expect(true).toBeTruthy();
 });
@@ -86,56 +51,34 @@ test('login', async ({ page }) => {
 test('logout', async ({ page }) => {
   await page.goto(hostname);
 
+  await login(page, username, password);
+  await logout(page, hostname);
+  //expect to see the login button
+  expect(true).toBeTruthy();
+});
+
+test('delete account', async ({ page }) => {
+  await page.goto(hostname);
+  await login(page, username, password);
+
+  page.on('dialog', async (dialog) => dialog.accept());
+  await page.goto(`${hostname}/settings`);
+
+  await page.waitForSelector('id=delete-account');
+
+  await page.click('id=delete-account');
+
+  await page.waitForSelector('text=Login');
+
   //click on the button
-  await page.click('text=Login');
+  await page.click('#login');
 
   //login into keycloak
   await page.fill('input[name=username]', username);
   await page.fill('input[name=password]', password);
   await page.click('id=kc-login');
 
-  await page.waitForSelector('text=Credentials');
-  await page.goto(`${hostname}/settings`);
-
-  await page.click('id=logout');
-
-  await page.waitForSelector('text=Login');
-  //expect to see the login button
+  //Invalid username or password. should be seen as an error
+  await page.waitForSelector('text=Invalid username or password.');
   expect(true).toBeTruthy();
 });
-
-//TODO: does not work yet
-// test('delete account', async ({ page }) => {
-//   await page.goto('http://localhost:4200');
-
-//   page.on('dialog', async (dialog) => dialog.accept());
-
-//   //click on the button
-//   await page.click('text=Login');
-
-//   //login into keycloak
-//   await page.fill('input[name=username]', username);
-//   await page.fill('input[name=password]', password);
-//   await page.click('id=kc-login');
-
-//   await page.waitForSelector('text=Credentials');
-//   await page.goto('http://localhost:4200/settings');
-
-//   await page.waitForSelector('id=delete-account');
-
-//   await page.click('id=delete-account');
-
-//   await page.waitForSelector('text=Login');
-
-//   //click on the button
-//   await page.click('text=Login');
-
-//   //login into keycloak
-//   await page.fill('input[name=username]', username);
-//   await page.fill('input[name=password]', password);
-//   await page.click('id=kc-login');
-
-//   //Invalid username or password. should be seen as an error
-//   await page.waitForSelector('text=Invalid username or password.');
-//   expect(true).toBeTruthy();
-// });
