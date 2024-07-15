@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  '@sphereon/oid4vci-issuer@0.12.0':
-    hash: b56rz3dojlfwokgvfk5khv2mfa
-    path: patches/@sphereon__oid4vci-issuer@0.12.0.patch
   '@sphereon/pex@3.3.3':
     hash: bzkrsrlwcpq6eepymelnbd2pca
     path: patches/@sphereon__pex@3.3.3.patch
@@ -104,17 +101,17 @@ importers:
         specifier: ^0.6.4
         version: 0.6.4(encoding@0.1.13)
       '@sphereon/oid4vci-client':
-        specifier: ^0.12.0
-        version: 0.12.0(encoding@0.1.13)
+        specifier: ^0.14.0
+        version: 0.14.0(encoding@0.1.13)
       '@sphereon/oid4vci-common':
-        specifier: ^0.12.0
-        version: 0.12.0(encoding@0.1.13)
+        specifier: ^0.14.0
+        version: 0.14.0(encoding@0.1.13)
       '@sphereon/oid4vci-issuer':
-        specifier: ^0.12.0
-        version: 0.12.0(patch_hash=b56rz3dojlfwokgvfk5khv2mfa)(encoding@0.1.13)
+        specifier: ^0.14.0
+        version: 0.14.0(encoding@0.1.13)
       '@sphereon/oid4vci-issuer-server':
-        specifier: ^0.12.0
-        version: 0.12.0(encoding@0.1.13)
+        specifier: ^0.14.0
+        version: 0.14.0(encoding@0.1.13)
       '@sphereon/pex':
         specifier: ^3.3.3
         version: 3.3.3(patch_hash=bzkrsrlwcpq6eepymelnbd2pca)
@@ -3114,20 +3111,20 @@ packages:
   '@sphereon/did-uni-client@0.6.3':
     resolution: {integrity: sha512-g7LD7ofbE36slHN7Bhr5dwUrj6t0BuZeXBYJMaVY/pOeL1vJxW1cZHbZqu0NSfOmzyBg4nsYVlgTjyi/Aua2ew==}
 
-  '@sphereon/oid4vci-client@0.12.0':
-    resolution: {integrity: sha512-e/aOX9Wbgh6URDsjl/6KY1b68JEWi9aXnbguvxlskeia7c6zP3XPTOY37H9o7SRx1iGrh6Z3wEJecTVgeryHnQ==}
+  '@sphereon/oid4vci-client@0.14.0':
+    resolution: {integrity: sha512-4QuXPnGI4TBH6YytTBEWSHCMLdTvUnTpTZEVrFM2H/wZxYd+EpCvULX3g6GQtEsDV2svuqH80cZaTv78RSnq2A==}
     engines: {node: '>=18'}
 
-  '@sphereon/oid4vci-common@0.12.0':
-    resolution: {integrity: sha512-eGhDu1R9XHmGy//3BLa0LltnscpAkK7xKJzx+g8kUvH+B3Gcz5Mk6haH3GEa54ZEskuSSjOnm5yqQwZPBk3AhA==}
+  '@sphereon/oid4vci-common@0.14.0':
+    resolution: {integrity: sha512-AubbtqNTnW5U+RFaiVWR28RsWdsvKnmmLKYsUW7T2Q+mmwHCAVNZhc8BP+JRdxN0cRYC4JVaXiUS797Odfiavg==}
     engines: {node: '>=18'}
 
-  '@sphereon/oid4vci-issuer-server@0.12.0':
-    resolution: {integrity: sha512-+eHkJ/6zWyluJ1W8r6StmoRGY3xZjDBzEAplBRZf1OtK7MpHZWhkThBGqQGN6Av+vf2qZIyEj7YCyz8PkkvbIA==}
+  '@sphereon/oid4vci-issuer-server@0.14.0':
+    resolution: {integrity: sha512-pnPTyNm7x7aP88TSxa3bq0TQBeE4SQOUA/ENwAZks5/M+CZu2U1zCBNbrskc0RtaHx7q6wS16LRbwPpIZNqiGA==}
     engines: {node: '>=18'}
 
-  '@sphereon/oid4vci-issuer@0.12.0':
-    resolution: {integrity: sha512-aZxj9hlJ3aIoGLE0JmVqF5IJMJ50BpEACnyqtGQZK9sEGyOFotPD/xaDaJOR9C1Kw2Tj/VMmO6fONa7M+PlPwQ==}
+  '@sphereon/oid4vci-issuer@0.14.0':
+    resolution: {integrity: sha512-GImbDB/yesPK7iAD575J1ZNF8bjs4DinrMuLFfXqFPzLeJeyYZf8NgqG0W7KHtS37njNtchGsuGnammHFJl5ZA==}
     engines: {node: '>=18'}
     peerDependencies:
       awesome-qr: ^2.1.5-rc.0
@@ -3141,20 +3138,6 @@ packages:
   '@sphereon/pex@3.3.3':
     resolution: {integrity: sha512-CXwdEcMTUh2z/5AriBn3OuShEG06l2tgiIr7qDJthnkez8DQ3sZo2vr4NEQWKKAL+DeAWAI4FryQGO4KuK7yfg==}
     engines: {node: '>=18'}
-
-  '@sphereon/ssi-express-support@0.25.1-unstable.87':
-    resolution: {integrity: sha512-LS1ZDwbNc0rIYbRI032b0jUB7B9PjgvLEr1bqikjxY6MFRi2t31kb6W3b6LV2Fscd+cIYIiRR4Z7icn7LCjIXg==}
-    peerDependencies:
-      '@noble/hashes': 1.2.0
-      passport-azure-ad: ^4.3.5
-      passport-http-bearer: ^1.0.1
-    peerDependenciesMeta:
-      '@noble/hashes':
-        optional: true
-      passport-azure-ad:
-        optional: true
-      passport-http-bearer:
-        optional: true
 
   '@sphereon/ssi-express-support@0.26.0':
     resolution: {integrity: sha512-wnhPpQVt1ULdHNQfjE7rm515BeGPsi/UrsuzY/L65ZAy/9kQS1dV5KMbM6bpmSNPl1ZY2OykalPGXVs/Vhs5fw==}
@@ -3170,14 +3153,31 @@ packages:
       passport-http-bearer:
         optional: true
 
+  '@sphereon/ssi-express-support@0.26.1-next.6':
+    resolution: {integrity: sha512-Wo5Qa/ILGHCzef67JuwkOAHHTlC8R7YRkVitW/g+HCzHzaEEwoMh44cgYf65fufem00dYvPN15/gNWNQPaJZOw==}
+    peerDependencies:
+      '@noble/hashes': 1.2.0
+      passport-azure-ad: ^4.3.5
+      passport-http-bearer: ^1.0.1
+    peerDependenciesMeta:
+      '@noble/hashes':
+        optional: true
+      passport-azure-ad:
+        optional: true
+      passport-http-bearer:
+        optional: true
+
   '@sphereon/ssi-types@0.22.0':
     resolution: {integrity: sha512-YPJAZlKmzNALXK8ohP3ETxj1oVzL4+M9ljj3fD5xrbacvYax1JPCVKc8BWSubGcQckKHPbgbpcS7LYEeghyT9Q==}
 
-  '@sphereon/ssi-types@0.25.1-unstable.87':
-    resolution: {integrity: sha512-CaZO9Da/WcHylnZOT6i/o6P8eB9EVhywJpAKZYpSZVnZiUkpSD9ciTI5F1GK8snMDjlTFci5RJruEMpiFSgnuQ==}
-
   '@sphereon/ssi-types@0.26.0':
     resolution: {integrity: sha512-r4JQIN7rnPunEv0HvCFC1ZCc9qlWcegYvhJbMJqSvyFE6VhmT5NNdH9jNV9QetgMa0yo5r3k+TnHNv3nH58Dmg==}
+
+  '@sphereon/ssi-types@0.26.1-next.132':
+    resolution: {integrity: sha512-coqhozmVf2phy40l1htj/zbLJLJhyD69ZukBVR4gKn35t8q2B2EZhJbCIPWKk2HWT6+gV+JUBQ9n4v3cSHNCJg==}
+
+  '@sphereon/ssi-types@0.26.1-next.6':
+    resolution: {integrity: sha512-YloKFKuUfx7JOyxJPig6YLPJ04owQpbaF0WWOfu5MB+EFJIgSrl3GLO391/FZh8MYxTHh9+QpkpAxfVLXFpJ2A==}
 
   '@sphereon/ssi-types@0.9.0':
     resolution: {integrity: sha512-umCr/syNcmvMMbQ+i/r/mwjI1Qw2aFPp9AwBTvTo1ailAVaaJjJGPkkVz1K9/2NZATNdDiQ3A8yGzdVJoKh9pA==}
@@ -6313,6 +6313,10 @@ packages:
 
   jwt-decode@3.1.2:
     resolution: {integrity: sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==}
+
+  jwt-decode@4.0.0:
+    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
+    engines: {node: '>=18'}
 
   karma-source-map-support@1.4.0:
     resolution: {integrity: sha512-RsBECncGO17KAoJCYXjv+ckIz+Ii9NCi+9enk+rq6XC81ezYkb4/RHE6CTXdA7IOJqoF3wcaLfVG0CPmE5ca6A==}
@@ -13869,33 +13873,33 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@sphereon/oid4vci-client@0.12.0(encoding@0.1.13)':
+  '@sphereon/oid4vci-client@0.14.0(encoding@0.1.13)':
     dependencies:
-      '@sphereon/oid4vci-common': 0.12.0(encoding@0.1.13)
-      '@sphereon/ssi-types': 0.25.1-unstable.87
+      '@sphereon/oid4vci-common': 0.14.0(encoding@0.1.13)
+      '@sphereon/ssi-types': 0.26.1-next.132
       cross-fetch: 3.1.8(encoding@0.1.13)
       debug: 4.3.5
     transitivePeerDependencies:
       - encoding
       - supports-color
 
-  '@sphereon/oid4vci-common@0.12.0(encoding@0.1.13)':
+  '@sphereon/oid4vci-common@0.14.0(encoding@0.1.13)':
     dependencies:
-      '@sphereon/ssi-types': 0.25.1-unstable.87
+      '@sphereon/ssi-types': 0.26.1-next.132
       cross-fetch: 3.1.8(encoding@0.1.13)
-      jwt-decode: 3.1.2
+      jwt-decode: 4.0.0
       sha.js: 2.4.11
       uint8arrays: 3.1.1
     transitivePeerDependencies:
       - encoding
       - supports-color
 
-  '@sphereon/oid4vci-issuer-server@0.12.0(encoding@0.1.13)':
+  '@sphereon/oid4vci-issuer-server@0.14.0(encoding@0.1.13)':
     dependencies:
-      '@sphereon/oid4vci-common': 0.12.0(encoding@0.1.13)
-      '@sphereon/oid4vci-issuer': 0.12.0(patch_hash=b56rz3dojlfwokgvfk5khv2mfa)(encoding@0.1.13)
-      '@sphereon/ssi-express-support': 0.25.1-unstable.87
-      '@sphereon/ssi-types': 0.25.1-unstable.87
+      '@sphereon/oid4vci-common': 0.14.0(encoding@0.1.13)
+      '@sphereon/oid4vci-issuer': 0.14.0(encoding@0.1.13)
+      '@sphereon/ssi-express-support': 0.26.1-next.6
+      '@sphereon/ssi-types': 0.26.1-next.6
       body-parser: 1.20.2
       cookie-parser: 1.4.6
       cors: 2.8.5
@@ -13912,10 +13916,10 @@ snapshots:
       - passport-http-bearer
       - supports-color
 
-  '@sphereon/oid4vci-issuer@0.12.0(patch_hash=b56rz3dojlfwokgvfk5khv2mfa)(encoding@0.1.13)':
+  '@sphereon/oid4vci-issuer@0.14.0(encoding@0.1.13)':
     dependencies:
-      '@sphereon/oid4vci-common': 0.12.0(encoding@0.1.13)
-      '@sphereon/ssi-types': 0.25.1-unstable.87
+      '@sphereon/oid4vci-common': 0.14.0(encoding@0.1.13)
+      '@sphereon/ssi-types': 0.26.1-next.132
       uuid: 9.0.1
     transitivePeerDependencies:
       - encoding
@@ -13938,7 +13942,7 @@ snapshots:
       string.prototype.matchall: 4.0.11
       uint8arrays: 3.1.1
 
-  '@sphereon/ssi-express-support@0.25.1-unstable.87':
+  '@sphereon/ssi-express-support@0.26.0(patch_hash=tpbu4tlseyturmm3mamihb4kae)':
     dependencies:
       body-parser: 1.20.2
       casbin: 5.30.0
@@ -13956,7 +13960,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@sphereon/ssi-express-support@0.26.0(patch_hash=tpbu4tlseyturmm3mamihb4kae)':
+  '@sphereon/ssi-express-support@0.26.1-next.6':
     dependencies:
       body-parser: 1.20.2
       casbin: 5.30.0
@@ -13979,7 +13983,7 @@ snapshots:
       '@sd-jwt/decode': 0.6.1
       jwt-decode: 3.1.2
 
-  '@sphereon/ssi-types@0.25.1-unstable.87':
+  '@sphereon/ssi-types@0.26.0':
     dependencies:
       '@sd-jwt/decode': 0.6.1
       debug: 4.3.5
@@ -13988,7 +13992,16 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@sphereon/ssi-types@0.26.0':
+  '@sphereon/ssi-types@0.26.1-next.132':
+    dependencies:
+      '@sd-jwt/decode': 0.6.1
+      debug: 4.3.5
+      events: 3.3.0
+      jwt-decode: 3.1.2
+    transitivePeerDependencies:
+      - supports-color
+
+  '@sphereon/ssi-types@0.26.1-next.6':
     dependencies:
       '@sd-jwt/decode': 0.6.1
       debug: 4.3.5
@@ -17956,6 +17969,8 @@ snapshots:
       safe-buffer: 5.2.1
 
   jwt-decode@3.1.2: {}
+
+  jwt-decode@4.0.0: {}
 
   karma-source-map-support@1.4.0:
     dependencies:
