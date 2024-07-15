@@ -7,7 +7,7 @@ module.exports = async function () {
   globalThis.keycloak = keycloak;
 
   //start backend
-  globalThis.backend = await HolderBackend.init();
+  globalThis.backend = await HolderBackend.init(keycloak);
 
   const testUserEmail = 'test@test.de';
   const testUserPassword = 'password';
@@ -18,15 +18,6 @@ module.exports = async function () {
     testUserEmail,
     testUserPassword
   );
-
-  //store the token so it can be used in the tests
-  globalThis.userAccessToken = await keycloak.getAccessToken(
-    `http://host.testcontainers.internal:${keycloak.instance.getMappedPort(
-      8080
-    )}`,
-    'wallet',
-    testUserEmail,
-    testUserPassword,
-    'wallet'
-  );
+  globalThis.testUserEmail = testUserEmail;
+  globalThis.testUserPassword = testUserPassword;
 };
