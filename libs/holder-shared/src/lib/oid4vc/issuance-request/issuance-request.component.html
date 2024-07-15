@@ -27,7 +27,9 @@
     </mat-list>
   </mat-card-content>
   <mat-card-actions fxLayout="row" fxLayoutAlign="space-between center">
-    <button mat-button color="warn" (click)="deny()">Deny</button>
-    <button mat-flat-button color="primary" (click)="accept()">Accept</button>
+    <button mat-button color="warn" (click)="deny()" id="deny">Deny</button>
+    <button mat-flat-button color="primary" (click)="accept()" id="accept">
+      Accept
+    </button>
   </mat-card-actions>
 </mat-card>

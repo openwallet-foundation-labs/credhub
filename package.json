@@ -26,6 +26,7 @@
     "@angular/cli": "~18.0.0",
     "@angular/compiler-cli": "18.0.0",
     "@angular/language-service": "18.0.0",
+    "@faker-js/faker": "^8.4.1",
     "@nestjs/schematics": "^10.1.1",
     "@nestjs/testing": "^10.3.8",
     "@nx-tools/nx-container": "^6.0.0",

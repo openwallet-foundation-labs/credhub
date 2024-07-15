@@ -8,9 +8,6 @@
   "targets": {
     "e2e-ci": {
       "dependsOn": ["holder-app:container"]
-    },
-    "e2e": {
-      "dependsOn": ["holder-app:container"]
     }
   }
 }

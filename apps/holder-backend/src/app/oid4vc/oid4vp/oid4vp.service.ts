@@ -46,13 +46,11 @@ export class Oid4vpService {
 
     //parse the uri
     const parsedAuthReqURI = await op.parseAuthorizationRequestURI(data.url);
-    console.log('verify');
     const verifiedAuthReqWithJWT: VerifiedAuthorizationRequest =
       await op.verifyAuthorizationRequest(
         parsedAuthReqURI.requestObjectJwt as string,
         {}
       );
-    console.log('verified');
     const issuer =
       (
         verifiedAuthReqWithJWT.authorizationRequestPayload
@@ -97,7 +95,8 @@ export class Oid4vpService {
     // select the credentials for the presentation
     const result = await pex
       .selectVerifiableCredentialsForSubmission(pds[0].definition)
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         //instead of throwing an error, we return an empty array. This allows the user to show who sent the request for what.
         return { verifiableCredential: [] };
       });
@@ -232,7 +231,6 @@ export class Oid4vpService {
     const alg = SigningAlgo.ES256;
 
     const withSuppliedSignature = async (data: string | Uint8Array) => {
-      console.log('sign');
       const signature = await this.keysService.sign(kid, user, {
         data: data as string,
       });

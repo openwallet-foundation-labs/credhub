@@ -1,11 +1,14 @@
+import { HolderBackend } from '@credhub/testing';
 import { AxiosInstance } from 'axios';
-import { getInstance } from '@credhub/testing';
 
 describe('settings', () => {
   let axios: AxiosInstance;
+  const backend = globalThis.backend as HolderBackend;
 
-  beforeAll(() => {
-    axios = getInstance();
+  beforeAll(async () => {
+    const username = globalThis.testUserEmail;
+    const password = globalThis.testUserPassword;
+    axios = await backend.getAxiosInstance(username, password);
   });
 
   it('get settings', async () => {

@@ -10,6 +10,7 @@
     </button>
     <mat-menu #menu="matMenu">
       <button
+        id="insert"
         mat-menu-item
         (click)="passFromClipboard()"
         *ngIf="readFromClipboard"

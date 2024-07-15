@@ -1,4 +1,4 @@
-<mat-card *ngIf="response && !auto && status !== 'done'">
+<mat-card *ngIf="response && !auto && status !== 'done'" id="request">
   <mat-card-header>
     <img
       mat-card-avatar
@@ -17,19 +17,17 @@
       <a routerLink="/" mat-button>Credential overview</a>
     </mat-card-actions>
   </div>
-  <form [formGroup]="form" (submit)="submit()" *ngIf="!noMatch">
+  <form [formGroup]="form" (submit)="submit()" *ngIf="!noMatch" id="match">
     <mat-card-content>
       <h2>{{ response.purpose }}</h2>
 
       @for (request of response.requests; track request) {
-        <h3>{{ request.purpose }}</h3>
-        <mat-selection-list [formControlName]="request.id" [multiple]="false">
-          @for (option of request.credentials; track option) {
-            <mat-list-option [value]="option.jti">{{
-              option.vct
-            }}</mat-list-option>
-          }
-        </mat-selection-list>
+      <h3>{{ request.purpose }}</h3>
+      <mat-selection-list [formControlName]="request.id" [multiple]="false">
+        @for (option of request.credentials; track option) {
+        <mat-list-option [value]="option.jti">{{ option.vct }}</mat-list-option>
+        }
+      </mat-selection-list>
       }
     </mat-card-content>
     <mat-card-actions flexLayout="row" fxLayoutAlign="space-between center">
@@ -41,6 +39,7 @@
         mat-flat-button
         color="primary"
         [disabled]="form.invalid"
+        id="send"
       >
         Send
       </button>
@@ -53,6 +52,7 @@
   fxLayout="column"
   fxLayoutAlign="space-around center"
   fxLayoutGap="16px"
+  id="success"
 >
   <div class="success-animation">
     <svg

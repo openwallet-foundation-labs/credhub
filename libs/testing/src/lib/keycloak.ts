@@ -11,7 +11,6 @@ import {
   Wait,
 } from 'testcontainers';
 import axios from 'axios';
-import { gt } from './holder-backend';
 
 export class Keycloak {
   // Keycloak admin credentials
@@ -47,17 +46,7 @@ export class Keycloak {
     )
       .withNetwork(this.network)
       .withExposedPorts({ container: 8080, host: hostPort })
-      .withWaitStrategy(
-        Wait.forHttp('/health/ready', 8080, {
-          abortOnContainerExit: true,
-        }).forStatusCode(200)
-      )
-      /*       .withLogConsumer((stream) => {
-        stream.on('data', (line) => console.log(line));
-        stream.on('err', (line) => console.error(line));
-        stream.on('end', () => console.log('Stream closed'));
-      }) */
-      .withDefaultLogDriver()
+      .withWaitStrategy(Wait.forHttp('/health/ready', 8080).forStatusCode(200))
       .withName('keycloak')
       .withEnvironment({
         JAVA_OPTS_APPEND: '-Dkeycloak.profile.feature.upload_scripts=enabled',
@@ -109,6 +98,25 @@ export class Keycloak {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       })
       .then((response) => response.data.access_token);
+  }
+
+  static async getAccessTokenForClient(
+    keycloakUrl: string,
+    realm: string,
+    clientId: string,
+    clientSecret: string
+  ) {
+    const tokenUrl = `${keycloakUrl}/realms/${realm}/protocol/openid-connect/token`;
+    const params = new URLSearchParams();
+    params.append('client_id', clientId);
+    params.append('client_secret', clientSecret);
+    params.append('grant_type', 'client_credentials');
+
+    return axios
+      .post(tokenUrl, params, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      })
+      .then((response) => response.data.access_token as string);
   }
 
   /**
@@ -182,9 +190,4 @@ export class Keycloak {
     await this.db.stop();
     await this.network.stop();
   }
-}
-
-// extend globalThis with the keycloak instance
-export interface KeycloakGlobalThis extends gt {
-  keycloak: Keycloak;
 }

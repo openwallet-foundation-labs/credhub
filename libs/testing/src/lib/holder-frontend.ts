@@ -1,10 +1,5 @@
 import { GenericContainer, StartedTestContainer } from 'testcontainers';
-import { KeycloakGlobalThis } from './keycloak';
-import { BackendGlobalThis, gt } from './holder-backend';
-
-export interface FrontendGlobalThis extends gt {
-  backend: HolderFrontend;
-}
+import { HolderBackend } from './holder-backend';
 
 /**
  * HolderBackend to manage the holder backend container
@@ -12,11 +7,13 @@ export interface FrontendGlobalThis extends gt {
 export class HolderFrontend {
   instance!: StartedTestContainer;
 
-  static async init() {
-    const instance = new HolderFrontend();
+  static async init(backend: HolderBackend) {
+    const instance = new HolderFrontend(backend);
     await instance.start();
     return instance;
   }
+
+  constructor(private backend: HolderBackend) {}
 
   /**
    * Start the holder backend container
@@ -30,14 +27,9 @@ export class HolderFrontend {
       .withStartupTimeout(2000)
       .withName('holder-frontend')
       .withEnvironment({
-        BACKEND_URL: `http://localhost:${(
-          globalThis as BackendGlobalThis
-        ).backend.instance.getMappedPort(3000)}`,
-        OIDC_AUTH_URL: `http://host.testcontainers.internal:${(
-          globalThis as KeycloakGlobalThis
-        ).keycloak.instance.getMappedPort(8080)}/realms/wallet`,
-        OIDC_CLIENT_ID: 'wallet',
-        OIDC_ALLOW_HTTP: 'true',
+        BACKEND_URL: `http://localhost:${this.backend.instance.getMappedPort(
+          3000
+        )}`,
       })
       .start();
   }

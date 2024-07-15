@@ -12,11 +12,12 @@ import {
 import { Client } from 'pg';
 import { Keycloak } from './keycloak';
 import axios from 'axios';
+import { join } from 'node:path';
 
 /**
  * HolderBackend to manage the holder backend container
  */
-export class HolderBackend {
+export class VerifierBackend {
   // Holder backend network
   network!: StartedNetwork;
   private postgresContainer!: StartedPostgreSqlContainer;
@@ -25,83 +26,84 @@ export class HolderBackend {
   oidc: {
     OIDC_AUTH_URL: string;
     OIDC_REALM: string;
-    OIDC_PUBLIC_CLIENT_ID: string;
-    OIDC_ADMIN_CLIENT_ID: string;
-    OIDC_ADMIN_CLIENT_SECRET: string;
+    OIDC_CLIENT_ID: string;
+    OIDC_CLIENT_SECRET: string;
   };
 
   static async init(keycloak: Keycloak) {
-    const instance = new HolderBackend(keycloak);
+    const instance = new VerifierBackend(keycloak);
     await instance.start();
     return instance;
   }
 
   constructor(private keycloak: Keycloak) {
+    //TODO: since keycloak is passed, you can use the varibales from keycloak to set it here like realm and client
     this.oidc = {
       OIDC_AUTH_URL: `http://host.testcontainers.internal:${this.keycloak.instance.getMappedPort(
         8080
       )}`,
       OIDC_REALM: 'wallet',
-      OIDC_PUBLIC_CLIENT_ID: 'wallet',
-      OIDC_ADMIN_CLIENT_ID: 'wallet-admin',
-      OIDC_ADMIN_CLIENT_SECRET: 'kwpCrguxUOn9gump77E0B3vAkiOhW8eL',
+      OIDC_CLIENT_ID: 'relying-party',
+      OIDC_CLIENT_SECRET: 'hA0mbfpKl8wdMrUxr2EjKtL5SGsKFW5D',
     };
   }
-
   /**
    * Start the holder backend container
    * @param network
    */
   async start() {
     this.network = await new Network().start();
-
     this.postgresContainer = await new PostgreSqlContainer()
       .withNetwork(this.network)
-      .withName('postgres-backend')
+      .withName('postgres-verifier')
       .start();
     this.postgresClient = new Client({
       connectionString: this.postgresContainer.getConnectionUri(),
     });
     await this.postgresClient.connect();
-
     this.instance = await new GenericContainer(
-      'ghcr.io/openwallet-foundation-labs/credhub/holder-backend'
+      'ghcr.io/openwallet-foundation-labs/credhub/verifier-backend'
     )
       .withNetwork(this.network)
       .withExposedPorts(3000)
       .withWaitStrategy(Wait.forHttp('/health', 3000).forStatusCode(200))
-      .withName('holder-backend')
+      .withName('verifier-backend')
       .withEnvironment({
         ...this.oidc,
         DB_TYPE: 'postgres',
-        DB_HOST: 'postgres-backend',
+        DB_HOST: 'postgres-verifier',
         DB_PORT: '5432',
         DB_USERNAME: this.postgresContainer.getUsername(),
         DB_PASSWORD: this.postgresContainer.getPassword(),
         DB_NAME: this.postgresContainer.getDatabase(),
-        WEBAUTHN_RP_ID: 'localhost',
-        WEBAUTHN_RP_NAME: 'Holder Backend',
+        VERIFIER_BASE_URL: 'http://localhost:3001',
+        CREDENTIALS_FOLDER: 'templates',
+        KM_FOLDER: 'data',
       })
+      .withBindMounts([
+        {
+          source: join(
+            __dirname,
+            '../../../../',
+            'deploys/verifier/config/verifier-backend'
+          ),
+          target: '/home/node/app/templates',
+          mode: 'ro',
+        },
+      ])
       .start();
-  }
-
-  async stop() {
-    await this.instance.stop();
-    await this.postgresClient.end();
-    await this.postgresContainer.stop();
-    await this.network.stop();
   }
 
   /**
    * Get an axios instance with the bearer token
    * @returns
    */
-  async getAxiosInstance(username: string, password: string) {
-    const token = await this.keycloak.getAccessToken(
+  async getAxiosInstance() {
+    const token = await Keycloak.getAccessTokenForClient(
       this.oidc.OIDC_AUTH_URL,
       this.oidc.OIDC_REALM,
-      username,
-      password
+      this.oidc.OIDC_CLIENT_ID,
+      this.oidc.OIDC_CLIENT_SECRET
     );
     const host = 'localhost';
     const port = this.instance.getMappedPort(3000);
@@ -111,5 +113,12 @@ export class HolderBackend {
         Authorization: `Bearer ${token}`,
       },
     });
+  }
+
+  async stop() {
+    await this.instance.stop();
+    await this.postgresClient.end();
+    await this.postgresContainer.stop();
+    await this.network.stop();
   }
 }

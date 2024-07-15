@@ -47,7 +47,7 @@ export class StatusService {
   private async updateListJob() {
     // get all lists that are expired
     const lists = await this.statusRepository.find({
-      where: { exp: LessThan(new Date().getTime() / 1000) },
+      where: { exp: LessThan(Math.round(new Date().getTime() / 1000)) },
     });
     for (const list of lists) {
       // update the jwt
