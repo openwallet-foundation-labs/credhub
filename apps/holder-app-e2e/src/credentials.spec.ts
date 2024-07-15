@@ -1,11 +1,12 @@
 import { faker } from '@faker-js/faker';
 import { test, expect, Page } from '@playwright/test';
-import { login, logout, register } from './helpers';
+import { register } from './helpers';
 import {
   Keycloak,
   HolderBackend,
   HolderFrontend,
   IssuerBackend,
+  VerifierBackend,
 } from '@credhub/testing';
 import axios from 'axios';
 
@@ -16,6 +17,7 @@ let keycloak: Keycloak;
 let backend: HolderBackend;
 let frontend: HolderFrontend;
 let issuerBackend: IssuerBackend;
+let verifierBackend: VerifierBackend;
 let page: Page;
 
 test.beforeAll(async ({ browser }) => {
@@ -26,18 +28,19 @@ test.beforeAll(async ({ browser }) => {
     backend = await HolderBackend.init(keycloak);
     frontend = await HolderFrontend.init(backend);
     issuerBackend = await IssuerBackend.init(keycloak);
+    verifierBackend = await VerifierBackend.init(keycloak);
     hostname = `http://localhost:${frontend.instance.getMappedPort(80)}`;
   }
 
   page = await browser.newPage();
   await register(page, hostname, username, password);
-  //await logout(page, hostname);
 });
 
 test.afterAll(async () => {
   if (process.env['NO_CONTAINER']) {
     return;
   }
+  await verifierBackend.stop();
   await issuerBackend.stop();
   await keycloak.stop();
   await backend.stop();
@@ -62,11 +65,10 @@ function getToken() {
     .then((response) => response.data.access_token as string);
 }
 
-async function getAxiosInstance() {
+async function getAxiosInstance(port: number) {
   if (process.env['NO_CONTAINER']) {
     const token = await getToken();
     const host = 'localhost';
-    const port = 3001;
     return axios.create({
       baseURL: `http://${host}:${port}`,
       headers: {
@@ -78,24 +80,59 @@ async function getAxiosInstance() {
   }
 }
 
-test('issuance without pin', async () => {
-  // get credential uri and copy it to clipboard
-  const axios = await getAxiosInstance();
+async function receiveCredential(pin = false) {
+  const axios = await getAxiosInstance(3001);
   const response = await axios.post(`/sessions`, {
-    credentialSubject: {},
+    credentialSubject: {
+      prename: 'Max',
+      surname: 'Mustermann',
+    },
     credentialId: 'Identity',
-    pin: false,
+    pin,
   });
   const uri = response.data.uri;
-  console.log(uri);
+  const userPin = response.data.userPin;
   await page.evaluate(`navigator.clipboard.writeText("${uri}")`);
   await page.goto(`${hostname}/scan`);
-  await page.waitForSelector('#menu');
-  await page.click('#menu');
-  await page.waitForSelector('#insert');
-  await page.click('#insert');
-  await page.waitForSelector('#accept');
-  await page.click('#accept');
+  const menu = await page.waitForSelector('#menu');
+  await menu.click();
+  const inserButton = await page.waitForSelector('#insert');
+  await inserButton.click();
+  if (userPin) {
+    const el = await page.waitForSelector('#pin-field');
+    await el.fill(userPin);
+    await page.click('#send');
+  }
+  const acceptButton = await page.waitForSelector('#accept');
+  await acceptButton.click();
   await page.waitForSelector('#credential');
+}
+
+test('issuance without pin', async () => {
+  // get credential uri and copy it to clipboard
+  await receiveCredential();
+  expect(true).toBeTruthy();
+});
+
+test('issuance with pin', async () => {
+  // get credential uri and copy it to clipboard
+  await receiveCredential(true);
+  expect(true).toBeTruthy();
+});
+
+test('verify credential', async () => {
+  await receiveCredential();
+  const credentialId = 'Identity';
+  const axios = await getAxiosInstance(3002);
+  const response = await axios.post(`/siop/${credentialId}`);
+  const uri = response.data.uri;
+  await page.evaluate(`navigator.clipboard.writeText("${uri}")`);
+  await page.goto(`${hostname}/scan`);
+  await page.waitForSelector('#menu').then((menu) => menu.click());
+  await page.waitForSelector('#insert').then((button) => button.click());
+  await page.waitForSelector('#match');
+  await page.click('mat-list-option');
+  await page.click('#send');
+  await page.waitForSelector('#success');
   expect(true).toBeTruthy();
 });

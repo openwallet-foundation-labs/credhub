@@ -14,7 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class SessionsListComponent implements OnInit, OnDestroy {
   sessions: any[] = [];
-  interval!: NodeJS.Timeout;
+  interval!: any;
 
   constructor(
     private templatesApiService: SiopApiService,

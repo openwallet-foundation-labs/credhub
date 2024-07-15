@@ -18,7 +18,7 @@ import { firstValueFrom } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
-  selector: 'app-templates-issue',
+  selector: 'app-templates-request',
   standalone: true,
   imports: [
     CommonModule,
@@ -33,10 +33,10 @@ import { MatCardModule } from '@angular/material/card';
     MatCardModule,
     RouterModule,
   ],
-  templateUrl: './templates-issue.component.html',
-  styleUrl: './templates-issue.component.scss',
+  templateUrl: './templates-request.component.html',
+  styleUrl: './templates-request.component.scss',
 })
-export class TemplatesIssueComponent implements OnInit, OnDestroy {
+export class TemplatesRequestComponent implements OnInit, OnDestroy {
   form: FormGroup;
   qrCodeField = new FormControl('');
   qrCodeImage?: string;

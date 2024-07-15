@@ -4,7 +4,12 @@
     {{ data.description }}
   </p>
   <mat-form-field [appearance]="'outline'">
-    <input matInput placeholder="Transaction code" [formControl]="input" />
+    <input
+      matInput
+      placeholder="Transaction code"
+      [formControl]="input"
+      id="pin-field"
+    />
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
@@ -13,6 +18,7 @@
     mat-flat-button
     [mat-dialog-close]="input.value"
     [disabled]="input.invalid"
+    id="send"
   >
     Ok
   </button>
