@@ -1,37 +1,21 @@
-import { HolderBackend, HolderFrontend, Keycloak } from '@credhub/testing';
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { login, logout, register } from './helpers';
+import { getConfig, login, logout, register } from './helpers';
+import { GlobalConfig } from '../global-setup';
 
 export const username = faker.internet.email();
 export const password = faker.internet.password();
-export let hostname: string;
-let keycloak: Keycloak;
-let backend: HolderBackend;
-let frontend: HolderFrontend;
+
+let config: GlobalConfig;
+let hostname: string;
 
 test.beforeAll(async ({ browser }) => {
-  if (process.env['NO_CONTAINER']) {
-    hostname = 'http://localhost:4200';
-  } else {
-    keycloak = await Keycloak.init();
-    backend = await HolderBackend.init(keycloak);
-    frontend = await HolderFrontend.init(backend);
-    hostname = `http://localhost:${frontend.instance.getMappedPort(80)}`;
-  }
-
+  config = getConfig();
+  console.log(config);
   const page = await browser.newPage();
+  hostname = `http://localhost:${config.holderFrontendPort}`;
   await register(page, hostname, username, password);
   await logout(page, hostname);
-});
-
-test.afterAll(async () => {
-  if (process.env['NO_CONTAINER']) {
-    return;
-  }
-  await keycloak.stop();
-  await backend.stop();
-  await frontend.stop();
 });
 
 test('register', async ({ page }) => {

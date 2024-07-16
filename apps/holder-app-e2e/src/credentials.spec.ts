@@ -1,60 +1,24 @@
 import { faker } from '@faker-js/faker';
 import { test, expect, Page } from '@playwright/test';
-import { register } from './helpers';
-import {
-  Keycloak,
-  HolderBackend,
-  HolderFrontend,
-  IssuerBackend,
-  VerifierBackend,
-} from '@credhub/testing';
+import { getConfig, register } from './helpers';
 import axios from 'axios';
+import { GlobalConfig } from '../global-setup';
 
 export const username = faker.internet.email();
 export const password = faker.internet.password();
 export let hostname: string;
-let keycloak: Keycloak;
-let backend: HolderBackend;
-let frontend: HolderFrontend;
-let issuerBackend: IssuerBackend;
-let verifierBackend: VerifierBackend;
-let keycloakPort = 8080;
-let issuerPort = 3001;
-let verifierPort = 3002;
 let page: Page;
+let config: GlobalConfig;
 
 test.beforeAll(async ({ browser }) => {
-  if (process.env['NO_CONTAINER']) {
-    hostname = 'http://localhost:4200';
-  } else {
-    keycloak = await Keycloak.init();
-    backend = await HolderBackend.init(keycloak);
-    frontend = await HolderFrontend.init(backend);
-    issuerBackend = await IssuerBackend.init(keycloak);
-    verifierBackend = await VerifierBackend.init(keycloak);
-    hostname = `http://localhost:${frontend.instance.getMappedPort(80)}`;
-    keycloakPort = keycloak.instance.getMappedPort(8080);
-    verifierPort = verifierBackend.instance.getMappedPort(3000);
-    issuerPort = issuerBackend.instance.getMappedPort(3000);
-  }
-
   page = await browser.newPage();
+  config = getConfig();
+  hostname = `http://localhost:${config.holderFrontendPort}`;
   await register(page, hostname, username, password);
 });
 
-test.afterAll(async () => {
-  if (process.env['NO_CONTAINER']) {
-    return;
-  }
-  await verifierBackend.stop();
-  await issuerBackend.stop();
-  await keycloak.stop();
-  await backend.stop();
-  await frontend.stop();
-});
-
 function getToken() {
-  const keycloakUrl = `http://localhost:${keycloakPort}`;
+  const keycloakUrl = `http://localhost:${config.keycloakPort}`;
   const realm = 'wallet';
   const clientId = 'relying-party';
   const clientSecret = 'hA0mbfpKl8wdMrUxr2EjKtL5SGsKFW5D';
@@ -83,7 +47,7 @@ async function getAxiosInstance(port: number) {
 }
 
 async function receiveCredential(pin = false) {
-  const axios = await getAxiosInstance(issuerPort);
+  const axios = await getAxiosInstance(config.issuerPort);
   const response = await axios.post(`/sessions`, {
     credentialSubject: {
       prename: 'Max',
@@ -130,7 +94,7 @@ test('issuance with pin', async () => {
 test('verify credential', async () => {
   await receiveCredential();
   const credentialId = 'Identity';
-  const axios = await getAxiosInstance(verifierPort);
+  const axios = await getAxiosInstance(config.verifierPort);
   let uri = '';
   try {
     const response = await axios.post(`/siop/${credentialId}`);
