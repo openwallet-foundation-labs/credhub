@@ -7,3 +7,4 @@ export * from './lib/crypto/crypto.module';
 export * from './lib/crypto/crypto.service';
 export * from './lib/db/db.module';
 export * from './lib/did/did';
+export * from './lib/db-states';

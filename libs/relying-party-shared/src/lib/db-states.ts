@@ -3,36 +3,43 @@ import {
   STATE_MISSING_ERROR,
   StateType,
 } from '@sphereon/oid4vci-common';
+import { LessThan, Repository } from 'typeorm';
 
-export class CustomStates<T extends StateType> implements IStateManager<T> {
+class BaseRepo implements StateType {
+  id: string;
+  createdAt: number;
+}
+
+export class DBStates<T extends StateType> implements IStateManager<T> {
   private readonly expiresInMS: number;
-  private readonly states: Map<string, T>;
   private cleanupIntervalId?: number | NodeJS.Timeout;
 
-  constructor(opts?: { expiresInSec?: number }) {
+  constructor(
+    private repository: Repository<BaseRepo>,
+    opts?: { expiresInSec?: number }
+  ) {
     this.expiresInMS =
       opts?.expiresInSec !== undefined ? opts?.expiresInSec * 1000 : 180000;
-    this.states = new Map();
   }
   async clearAll(): Promise<void> {
-    this.states.clear();
+    await this.repository.delete({});
+  }
+
+  async all(): Promise<T[]> {
+    return this.repository.find() as unknown as T[];
   }
 
   async clearExpired(timestamp?: number): Promise<void> {
-    const states = Array.from(this.states.entries());
     const ts = timestamp ?? +new Date();
-    for (const [id, state] of states) {
-      if (state.createdAt + this.expiresInMS < ts) {
-        this.states.delete(id);
-      }
-    }
+    await this.repository.delete({ createdAt: LessThan(ts) });
   }
 
   async delete(id: string): Promise<boolean> {
     if (!id) {
       throw Error('No id supplied');
     }
-    return this.states.delete(id);
+    const result = await this.repository.delete(id);
+    return result.affected === 1;
   }
 
   async getAsserted(id: string): Promise<T> {
@@ -49,26 +56,29 @@ export class CustomStates<T extends StateType> implements IStateManager<T> {
     return result;
   }
 
-  async all(): Promise<T[]> {
-    return Array.from(this.states.values());
-  }
-
   async get(id: string): Promise<T | undefined> {
-    return this.states.get(id);
+    if (!id) {
+      throw Error('No id supplied');
+    }
+    const result = await this.repository.findOne({ where: { id } });
+    if (result) {
+      delete result.id;
+    }
+    return result as unknown as T;
   }
 
   async has(id: string): Promise<boolean> {
     if (!id) {
       throw Error('No id supplied');
     }
-    return this.states.has(id);
+    return (await this.repository.count({ where: { id } })) > 0;
   }
 
   async set(id: string, stateValue: T): Promise<void> {
     if (!id) {
       throw Error('No id supplied');
     }
-    this.states.set(id, stateValue);
+    await this.repository.save(this.repository.create({ ...stateValue, id }));
   }
 
   async startCleanupRoutine(timeout?: number): Promise<void> {

@@ -6,9 +6,22 @@ import { WellKnownController } from './well-known/well-known.controller';
 import { CredentialsModule } from '../credentials/credentials.module';
 import { StatusModule } from '../status/status.module';
 import { TemplatesModule } from '../templates/templates.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CNonceEntity } from './entities/c-nonce.entity';
+import { URIStateEntity } from './entities/uri-state.entity';
+import { CredentialOfferSessionEntity } from './entities/credential-offer-session.entity';
 
 @Module({
-  imports: [CredentialsModule, StatusModule, TemplatesModule],
+  imports: [
+    CredentialsModule,
+    StatusModule,
+    TemplatesModule,
+    TypeOrmModule.forFeature([
+      CNonceEntity,
+      URIStateEntity,
+      CredentialOfferSessionEntity,
+    ]),
+  ],
   controllers: [IssuerController, WellKnownController],
   providers: [IssuerService, IssuerDataService],
 })
