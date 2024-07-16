@@ -5,6 +5,7 @@ import {
   IssuerBackend,
   VerifierBackend,
 } from '@credhub/testing';
+import { appendFileSync } from 'fs';
 
 export interface GlobalConfig {
   holderFrontendPort: number;

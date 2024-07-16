@@ -11,7 +11,6 @@ let hostname: string;
 
 test.beforeAll(async ({ browser }) => {
   config = getConfig();
-  console.log(config);
   const page = await browser.newPage();
   hostname = `http://localhost:${config.holderFrontendPort}`;
   await register(page, hostname, username, password);
