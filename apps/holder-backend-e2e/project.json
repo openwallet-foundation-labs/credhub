@@ -9,7 +9,6 @@
       "outputs": ["{workspaceRoot}/coverage/{e2eProjectRoot}"],
       "options": {
         "jestConfig": "apps/holder-backend-e2e/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       },
       "dependsOn": ["holder-backend:container"]

@@ -1,4 +1,13 @@
 import { Page } from '@playwright/test';
+import { CONFIG_KEY, GlobalConfig } from '../global-setup';
+
+export function getConfig() {
+  const configContent = process.env[CONFIG_KEY];
+  if (!configContent) {
+    throw new Error('Config not found');
+  }
+  return JSON.parse(configContent) as GlobalConfig;
+}
 
 export async function register(
   page: Page,

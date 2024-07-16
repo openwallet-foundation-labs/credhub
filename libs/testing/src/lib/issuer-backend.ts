@@ -7,6 +7,7 @@ import {
   Network,
   StartedNetwork,
   StartedTestContainer,
+  TestContainers,
   Wait,
 } from 'testcontainers';
 import { Client } from 'pg';
@@ -52,6 +53,7 @@ export class IssuerBackend {
    * @param network
    */
   async start() {
+    const hostPort = Math.floor(Math.random() * 1000) + 7000;
     this.network = await new Network().start();
     this.postgresContainer = await new PostgreSqlContainer()
       .withNetwork(this.network)
@@ -65,7 +67,7 @@ export class IssuerBackend {
       'ghcr.io/openwallet-foundation-labs/credhub/issuer-backend'
     )
       .withNetwork(this.network)
-      .withExposedPorts(3000)
+      .withExposedPorts({ container: 3000, host: hostPort })
       .withWaitStrategy(Wait.forHttp('/health', 3000).forStatusCode(200))
       .withName('issuer-backend')
       .withEnvironment({
@@ -76,7 +78,7 @@ export class IssuerBackend {
         DB_USERNAME: this.postgresContainer.getUsername(),
         DB_PASSWORD: this.postgresContainer.getPassword(),
         DB_NAME: this.postgresContainer.getDatabase(),
-        ISSUER_BASE_URL: 'http://localhost:3001',
+        ISSUER_BASE_URL: `http://host.testcontainers.internal:${hostPort}`,
         CREDENTIALS_FOLDER: 'templates',
         KM_FOLDER: 'data',
       })
@@ -92,6 +94,7 @@ export class IssuerBackend {
         },
       ])
       .start();
+    await TestContainers.exposeHostPorts(this.instance.getMappedPort(3000));
   }
 
   /**

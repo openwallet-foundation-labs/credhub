@@ -76,6 +76,7 @@ export class StatusService {
     const { jwt, exp } = await this.packList(entry);
     entry.jwt = jwt;
     entry.exp = exp;
+
     return this.statusRepository.save(entry);
   }
 
@@ -210,7 +211,7 @@ export class StatusService {
       iss,
       sub: `${iss}/status/${list.id}`,
       iat: new Date().getTime() / 1000,
-      exp: new Date().getTime() / 1000 + lifetime,
+      exp: Math.round(new Date().getTime() / 1000 + lifetime),
       // ttl: lifetime,
     };
     const header: StatusListJWTHeaderParameters = {

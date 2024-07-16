@@ -146,7 +146,9 @@
   "pnpm": {
     "patchedDependencies": {
       "@sphereon/pex@3.3.3": "patches/@sphereon__pex@3.3.3.patch",
-      "@sphereon/ssi-express-support@0.26.0": "patches/@sphereon__ssi-express-support@0.26.0.patch"
+      "@sphereon/ssi-express-support@0.26.0": "patches/@sphereon__ssi-express-support@0.26.0.patch",
+      "@sphereon/oid4vci-client@0.14.0": "patches/@sphereon__oid4vci-client@0.14.0.patch",
+      "@sphereon/oid4vci-issuer@0.14.0": "patches/@sphereon__oid4vci-issuer@0.14.0.patch"
     }
   }
 }

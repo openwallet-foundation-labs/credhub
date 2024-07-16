@@ -48,7 +48,7 @@ jobs:
         run: echo "127.0.0.1       host.testcontainers.internal" | sudo tee -a /etc/hosts
 
       - name: Lint, test, build, e2e
-        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test e2e-ci
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test container e2e
 # comment out since the current e2e tests do not produce any artifacts
 #      - name: Upload coverage
 #        uses: codecov/codecov-action@v4

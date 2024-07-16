@@ -1,0 +1,13 @@
+diff --git a/dist/AccessTokenClient.js b/dist/AccessTokenClient.js
+index 6fdd0f28e961a8c5627a21b3c802c65c2e12e9bf..0b9d5d27afd12d18b5985d1f893058c73db0b259 100644
+--- a/dist/AccessTokenClient.js
++++ b/dist/AccessTokenClient.js
+@@ -79,7 +79,7 @@ class AccessTokenClient {
+             yield (0, functions_1.createJwtBearerClientAssertion)(request, Object.assign(Object.assign({}, opts), { credentialIssuer }));
+             if (credentialOfferRequest === null || credentialOfferRequest === void 0 ? void 0 : credentialOfferRequest.supportedFlows.includes(oid4vci_common_1.AuthzFlowType.PRE_AUTHORIZED_CODE_FLOW)) {
+                 this.assertAlphanumericPin(opts.pinMetadata, pin);
+-                request.user_pin = pin;
++                request.tx_code = pin;
+                 request.grant_type = oid4vci_common_1.GrantTypes.PRE_AUTHORIZED_CODE;
+                 // we actually know it is there because of the isPreAuthCode call
+                 request[oid4vci_common_1.PRE_AUTH_CODE_LITERAL] = (_g = (_f = credentialOfferRequest === null || credentialOfferRequest === void 0 ? void 0 : credentialOfferRequest.credential_offer.grants) === null || _f === void 0 ? void 0 : _f[oid4vci_common_1.PRE_AUTH_GRANT_LITERAL]) === null || _g === void 0 ? void 0 : _g[oid4vci_common_1.PRE_AUTH_CODE_LITERAL];

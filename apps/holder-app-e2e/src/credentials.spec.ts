@@ -1,54 +1,24 @@
 import { faker } from '@faker-js/faker';
 import { test, expect, Page } from '@playwright/test';
-import { register } from './helpers';
-import {
-  Keycloak,
-  HolderBackend,
-  HolderFrontend,
-  IssuerBackend,
-  VerifierBackend,
-} from '@credhub/testing';
+import { getConfig, register } from './helpers';
 import axios from 'axios';
+import { GlobalConfig } from '../global-setup';
 
 export const username = faker.internet.email();
 export const password = faker.internet.password();
 export let hostname: string;
-let keycloak: Keycloak;
-let backend: HolderBackend;
-let frontend: HolderFrontend;
-let issuerBackend: IssuerBackend;
-let verifierBackend: VerifierBackend;
 let page: Page;
+let config: GlobalConfig;
 
 test.beforeAll(async ({ browser }) => {
-  if (process.env['NO_CONTAINER']) {
-    hostname = 'http://localhost:4200';
-  } else {
-    keycloak = await Keycloak.init();
-    backend = await HolderBackend.init(keycloak);
-    frontend = await HolderFrontend.init(backend);
-    issuerBackend = await IssuerBackend.init(keycloak);
-    verifierBackend = await VerifierBackend.init(keycloak);
-    hostname = `http://localhost:${frontend.instance.getMappedPort(80)}`;
-  }
-
   page = await browser.newPage();
+  config = getConfig();
+  hostname = `http://localhost:${config.holderFrontendPort}`;
   await register(page, hostname, username, password);
 });
 
-test.afterAll(async () => {
-  if (process.env['NO_CONTAINER']) {
-    return;
-  }
-  await verifierBackend.stop();
-  await issuerBackend.stop();
-  await keycloak.stop();
-  await backend.stop();
-  await frontend.stop();
-});
-
 function getToken() {
-  const keycloakUrl = 'http://localhost:8080';
+  const keycloakUrl = `http://localhost:${config.keycloakPort}`;
   const realm = 'wallet';
   const clientId = 'relying-party';
   const clientSecret = 'hA0mbfpKl8wdMrUxr2EjKtL5SGsKFW5D';
@@ -66,22 +36,18 @@ function getToken() {
 }
 
 async function getAxiosInstance(port: number) {
-  if (process.env['NO_CONTAINER']) {
-    const token = await getToken();
-    const host = 'localhost';
-    return axios.create({
-      baseURL: `http://${host}:${port}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  } else {
-    return issuerBackend.getAxiosInstance();
-  }
+  const token = await getToken();
+  const host = 'localhost';
+  return axios.create({
+    baseURL: `http://${host}:${port}`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 }
 
 async function receiveCredential(pin = false) {
-  const axios = await getAxiosInstance(3001);
+  const axios = await getAxiosInstance(config.issuerPort);
   const response = await axios.post(`/sessions`, {
     credentialSubject: {
       prename: 'Max',
@@ -99,10 +65,15 @@ async function receiveCredential(pin = false) {
   const inserButton = await page.waitForSelector('#insert');
   await inserButton.click();
   if (userPin) {
-    const el = await page.waitForSelector('#pin-field');
-    await el.fill(userPin);
+    await page
+      .waitForSelector('#pin-field')
+      .then((element) => element.fill(userPin));
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(500);
     await page.click('#send');
   }
+  // eslint-disable-next-line playwright/no-wait-for-timeout
+  await page.waitForTimeout(500);
   const acceptButton = await page.waitForSelector('#accept');
   await acceptButton.click();
   await page.waitForSelector('#credential');
@@ -123,9 +94,14 @@ test('issuance with pin', async () => {
 test('verify credential', async () => {
   await receiveCredential();
   const credentialId = 'Identity';
-  const axios = await getAxiosInstance(3002);
-  const response = await axios.post(`/siop/${credentialId}`);
-  const uri = response.data.uri;
+  const axios = await getAxiosInstance(config.verifierPort);
+  let uri = '';
+  try {
+    const response = await axios.post(`/siop/${credentialId}`);
+    uri = response.data.uri;
+  } catch (e) {
+    console.log(e);
+  }
   await page.evaluate(`navigator.clipboard.writeText("${uri}")`);
   await page.goto(`${hostname}/scan`);
   await page.waitForSelector('#menu').then((menu) => menu.click());
