@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { IssuerDataService } from './issuer-data.service';
 import { IssuerService } from './issuer.service';
 import { IssuerController } from './issuer.controller';
@@ -12,4 +12,14 @@ import { TemplatesModule } from '../templates/templates.module';
   controllers: [IssuerController, WellKnownController],
   providers: [IssuerService, IssuerDataService],
 })
-export class IssuerModule {}
+export class IssuerModule implements OnModuleInit {
+  constructor(
+    private issuerDataService: IssuerDataService,
+    private issuerService: IssuerService
+  ) {}
+
+  async onModuleInit() {
+    await this.issuerDataService.loadConfig();
+    await this.issuerService.init();
+  }
+}

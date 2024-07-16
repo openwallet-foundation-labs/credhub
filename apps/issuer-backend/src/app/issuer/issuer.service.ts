@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  OnModuleInit,
-} from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
@@ -53,7 +48,7 @@ interface CredentialDataSupplierInput {
 }
 
 @Injectable()
-export class IssuerService implements OnModuleInit {
+export class IssuerService {
   private express: ExpressSupport;
   vcIssuer: VcIssuer<DIDDocument>;
 
@@ -70,9 +65,6 @@ export class IssuerService implements OnModuleInit {
   ) {
     this.express = this.getExpressInstance();
     this.crypto = this.cryptoService.getCrypto();
-  }
-  async onModuleInit() {
-    await this.init();
   }
 
   /**

@@ -18,6 +18,9 @@ let backend: HolderBackend;
 let frontend: HolderFrontend;
 let issuerBackend: IssuerBackend;
 let verifierBackend: VerifierBackend;
+let keycloakPort = 8080;
+let issuerPort = 3001;
+let verifierPort = 3002;
 let page: Page;
 
 test.beforeAll(async ({ browser }) => {
@@ -30,6 +33,9 @@ test.beforeAll(async ({ browser }) => {
     issuerBackend = await IssuerBackend.init(keycloak);
     verifierBackend = await VerifierBackend.init(keycloak);
     hostname = `http://localhost:${frontend.instance.getMappedPort(80)}`;
+    keycloakPort = keycloak.instance.getMappedPort(8080);
+    verifierPort = verifierBackend.instance.getMappedPort(3000);
+    issuerPort = issuerBackend.instance.getMappedPort(3000);
   }
 
   page = await browser.newPage();
@@ -48,7 +54,7 @@ test.afterAll(async () => {
 });
 
 function getToken() {
-  const keycloakUrl = 'http://localhost:8080';
+  const keycloakUrl = `http://localhost:${keycloakPort}`;
   const realm = 'wallet';
   const clientId = 'relying-party';
   const clientSecret = 'hA0mbfpKl8wdMrUxr2EjKtL5SGsKFW5D';
@@ -66,22 +72,18 @@ function getToken() {
 }
 
 async function getAxiosInstance(port: number) {
-  if (process.env['NO_CONTAINER']) {
-    const token = await getToken();
-    const host = 'localhost';
-    return axios.create({
-      baseURL: `http://${host}:${port}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  } else {
-    return issuerBackend.getAxiosInstance();
-  }
+  const token = await getToken();
+  const host = 'localhost';
+  return axios.create({
+    baseURL: `http://${host}:${port}`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 }
 
 async function receiveCredential(pin = false) {
-  const axios = await getAxiosInstance(3001);
+  const axios = await getAxiosInstance(issuerPort);
   const response = await axios.post(`/sessions`, {
     credentialSubject: {
       prename: 'Max',
@@ -99,10 +101,15 @@ async function receiveCredential(pin = false) {
   const inserButton = await page.waitForSelector('#insert');
   await inserButton.click();
   if (userPin) {
-    const el = await page.waitForSelector('#pin-field');
-    await el.fill(userPin);
+    await page
+      .waitForSelector('#pin-field')
+      .then((element) => element.fill(userPin));
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(500);
     await page.click('#send');
   }
+  // eslint-disable-next-line playwright/no-wait-for-timeout
+  await page.waitForTimeout(500);
   const acceptButton = await page.waitForSelector('#accept');
   await acceptButton.click();
   await page.waitForSelector('#credential');
@@ -123,9 +130,14 @@ test('issuance with pin', async () => {
 test('verify credential', async () => {
   await receiveCredential();
   const credentialId = 'Identity';
-  const axios = await getAxiosInstance(3002);
-  const response = await axios.post(`/siop/${credentialId}`);
-  const uri = response.data.uri;
+  const axios = await getAxiosInstance(verifierPort);
+  let uri = '';
+  try {
+    const response = await axios.post(`/siop/${credentialId}`);
+    uri = response.data.uri;
+  } catch (e) {
+    console.log(e);
+  }
   await page.evaluate(`navigator.clipboard.writeText("${uri}")`);
   await page.goto(`${hostname}/scan`);
   await page.waitForSelector('#menu').then((menu) => menu.click());

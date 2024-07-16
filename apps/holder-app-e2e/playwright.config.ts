@@ -20,7 +20,7 @@ export default defineConfig({
   workers: 1,
   //globalSetup: require.resolve('./global-setup'),
   //globalTeardown: require.resolve('./global-teardown'),
-  retries: process.env['CI'] ? 2 : 0,
+  retries: 0,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL,
