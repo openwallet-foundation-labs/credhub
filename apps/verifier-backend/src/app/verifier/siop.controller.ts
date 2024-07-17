@@ -24,7 +24,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { v4 } from 'uuid';
 import { AuthResponseRequestDto } from './dto/auth-repsonse-request.dto';
-import { InMemoryRPSessionManager } from './session-manager';
+import { DBRPSessionManager } from './session-manager';
 
 @ApiTags('siop')
 @UseGuards(AuthGuard)
@@ -77,6 +77,7 @@ export class SiopController {
       await instance.rp.sessionManager.getRequestStateByCorrelationId(
         correlationId
       );
+    console.log(request.request);
     return await request?.request.requestObject?.toJwt();
   }
 
@@ -85,7 +86,7 @@ export class SiopController {
   async getAllAuthRequest(@Param('rp') rp: string) {
     const instance = await this.relyingPartyManagerService.getOrCreate(rp);
     return (
-      instance.rp.sessionManager as InMemoryRPSessionManager
+      instance.rp.sessionManager as DBRPSessionManager
     ).getAllRequestStates();
   }
 

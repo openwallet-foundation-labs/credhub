@@ -22,7 +22,7 @@ import { KbVerifier, Verifier } from '@sd-jwt/types';
 import { PresentationSubmission } from '@sphereon/pex-models';
 import { W3CVerifiablePresentation, CompactJWT } from '@sphereon/ssi-types';
 import { importJWK, jwtVerify } from 'jose';
-import { InMemoryRPSessionManager } from './session-manager';
+import { DBRPSessionManager } from './session-manager';
 import { EventEmitter } from 'node:events';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -36,6 +36,12 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { TemplatesService } from '../templates/templates.service';
 import { Template } from '../templates/dto/template.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { AuthRequestStateEntity } from './entity/auth-request-state.entity';
+import { AuthResponseStateEntity } from './entity/auth-response-state.entity';
+import { NonceEntity } from './entity/nonce.entity';
+import { StateEntity } from './entity/state.entity';
 
 @Injectable()
 export class RelyingPartyManagerService {
@@ -43,7 +49,7 @@ export class RelyingPartyManagerService {
   private rp: Map<string, RPInstance> = new Map();
   //TODO: replace its with the nestjs event emitter
   private eventEmitter = new EventEmitter();
-  private sessionManager: InMemoryRPSessionManager;
+  private sessionManager: DBRPSessionManager;
 
   constructor(
     @Inject('KeyService') private keyService: KeyService,
@@ -51,11 +57,29 @@ export class RelyingPartyManagerService {
     private configService: ConfigService,
     private httpSerivce: HttpService,
     private cryptoService: CryptoService,
-    private templateService: TemplatesService
+    private templateService: TemplatesService,
+    @InjectRepository(AuthRequestStateEntity)
+    requestRepository: Repository<AuthRequestStateEntity>,
+    @InjectRepository(AuthRequestStateEntity)
+    responseRepository: Repository<AuthResponseStateEntity>,
+    @InjectRepository(NonceEntity) nonceRepository: Repository<NonceEntity>,
+    @InjectRepository(StateEntity) stateRepository: Repository<StateEntity>
   ) {
-    this.sessionManager = new InMemoryRPSessionManager(this.eventEmitter, {
-      // maxAgeInSeconds: 10,
+    this.eventEmitter.eventNames().forEach((event) => {
+      this.eventEmitter.on(event, (...args) => {
+        console.log('Event:', event, args);
+      });
     });
+    this.sessionManager = new DBRPSessionManager(
+      requestRepository,
+      responseRepository,
+      nonceRepository,
+      stateRepository,
+      this.eventEmitter,
+      {
+        // maxAgeInSeconds: 10,
+      }
+    );
   }
 
   /**
@@ -90,7 +114,7 @@ export class RelyingPartyManagerService {
     if (
       !force &&
       //the limit for a session is 5 minutes, so after this a session becomes idle an can be removed.
-      !(await (rp.rp.sessionManager as InMemoryRPSessionManager).isIdle())
+      !(await (rp.rp.sessionManager as DBRPSessionManager).isIdle())
     ) {
       // we have active sessions, we don't want to remove the rp. But at this point we do not know if they have already finished it. We just know they are not over the maximum defined limit (default 5 minutes).
       return;

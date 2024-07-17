@@ -10,41 +10,29 @@ import {
   AuthorizationResponseStateStatus,
 } from '@sphereon/did-auth-siop';
 import { EventEmitter } from 'node:events';
-
-//we copied the code from the session manager to implement a function that allows to check if there are still active sessions so we can reinint the rp that should use other definitions.
-
-/**
- * Please note that this session manager is not really meant to be used in large production settings, as it stores everything in memory!
- * It also doesn't do scheduled cleanups. It runs a cleanup whenever a request or response is received. In a high-volume production setting you will want scheduled cleanups running in the background
- * Since this is a low level library we have not created a full-fledged implementation.
- * We suggest to create your own implementation using the event system of the library
- */
-export class InMemoryRPSessionManager implements IRPSessionManager {
-  private readonly authorizationRequests: Record<
-    string,
-    AuthorizationRequestState
-  > = {};
-  private readonly authorizationResponses: Record<
-    string,
-    AuthorizationResponseState
-  > = {};
-
-  // stored by hashcode
-  private readonly nonceMapping: Record<number, string> = {};
-  // stored by hashcode
-  private readonly stateMapping: Record<number, string> = {};
+import { Repository } from 'typeorm';
+import { AuthRequestStateEntity } from './entity/auth-request-state.entity';
+import { AuthResponseStateEntity } from './entity/auth-response-state.entity';
+import { NonceEntity } from './entity/nonce.entity';
+import { StateEntity } from './entity/state.entity';
+import { BaseState } from './entity/base-state.entity';
+export class DBRPSessionManager implements IRPSessionManager {
   private readonly maxAgeInSeconds: number;
 
   private static getKeysForCorrelationId(
-    mapping: Record<number, string>,
+    repo: Repository<NonceEntity | StateEntity>,
     correlationId: string
-  ): number[] {
-    return Object.entries(mapping)
-      .filter((entry) => entry[1] === correlationId)
-      .map((filtered) => Number.parseInt(filtered[0]));
+  ): Promise<number[]> {
+    return repo
+      .findBy({ id: correlationId })
+      .then((entries) => entries.map((entry) => entry.hash));
   }
 
   public constructor(
+    private requestRepository: Repository<AuthRequestStateEntity>,
+    private responseRepository: Repository<AuthResponseStateEntity>,
+    private nonceRepository: Repository<NonceEntity>,
+    private stateRepository: Repository<StateEntity>,
     eventEmitter: EventEmitter,
     opts?: { maxAgeInSeconds?: number }
   ) {
@@ -58,7 +46,7 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
       AuthorizationEvents.ON_AUTH_REQUEST_CREATED_SUCCESS,
       this.onAuthorizationRequestCreatedSuccess.bind(this)
     );
-    eventEmitter.on(
+    /* eventEmitter.on(
       AuthorizationEvents.ON_AUTH_REQUEST_CREATED_FAILED,
       this.onAuthorizationRequestCreatedFailed.bind(this)
     );
@@ -85,7 +73,7 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
     eventEmitter.on(
       AuthorizationEvents.ON_AUTH_RESPONSE_VERIFIED_FAILED,
       this.onAuthorizationResponseVerifiedFailed.bind(this)
-    );
+    ); */
   }
 
   /**
@@ -93,26 +81,37 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
    */
   isIdle(): Promise<boolean> {
     return this.cleanup().then(
-      () =>
-        Object.keys(this.authorizationRequests).length === 0 &&
-        Object.keys(this.authorizationResponses).length === 0
+      async () =>
+        (await this.requestRepository.count()) === 0 &&
+        (await this.responseRepository.count()) === 0
     );
   }
 
   getAllRequestStates(): Promise<AuthorizationRequestState[]> {
-    return Promise.resolve(Object.values(this.authorizationRequests));
+    return this.requestRepository.find() as unknown as Promise<
+      AuthorizationRequestState[]
+    >;
   }
 
   async getRequestStateByCorrelationId(
-    correlationId: string,
+    id: string,
     errorOnNotFound?: boolean
   ): Promise<AuthorizationRequestState | undefined> {
-    return await this.getFromMapping(
-      'correlationId',
-      correlationId,
-      this.authorizationRequests,
-      errorOnNotFound
-    );
+    const findRequest = errorOnNotFound
+      ? this.requestRepository.findOneByOrFail({ id })
+      : this.requestRepository.findOneBy({ id });
+
+    const res = await findRequest;
+    if (!res) return;
+
+    return {
+      lastUpdated: res.lastUpdated,
+      timestamp: res.timestamp,
+      correlationId: res.correlationId,
+      error: res.error ? new Error(res.error.message) : undefined,
+      status: res.status,
+      request: await AuthorizationRequest.fromUriOrJwt(res.jwt),
+    };
   }
 
   async getRequestStateByNonce(
@@ -122,7 +121,7 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
     return await this.getFromMapping(
       'nonce',
       nonce,
-      this.authorizationRequests,
+      this.requestRepository,
       errorOnNotFound
     );
   }
@@ -134,7 +133,7 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
     return await this.getFromMapping(
       'state',
       state,
-      this.authorizationRequests,
+      this.requestRepository,
       errorOnNotFound
     );
   }
@@ -143,12 +142,10 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
     correlationId: string,
     errorOnNotFound?: boolean
   ): Promise<AuthorizationResponseState | undefined> {
-    return await this.getFromMapping(
-      'correlationId',
-      correlationId,
-      this.authorizationResponses,
-      errorOnNotFound
-    );
+    if (errorOnNotFound) {
+      return this.responseRepository.findOneByOrFail({ correlationId });
+    }
+    return this.responseRepository.findOneBy({ correlationId });
   }
 
   async getResponseStateByNonce(
@@ -158,7 +155,7 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
     return await this.getFromMapping(
       'nonce',
       nonce,
-      this.authorizationResponses,
+      this.responseRepository,
       errorOnNotFound
     );
   }
@@ -170,43 +167,53 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
     return await this.getFromMapping(
       'state',
       state,
-      this.authorizationResponses,
+      this.responseRepository,
       errorOnNotFound
     );
   }
 
-  private async getFromMapping<T>(
+  private async getFromMapping<T extends BaseState>(
     type: 'nonce' | 'state' | 'correlationId',
     value: string,
-    mapping: Record<string, T>,
+    repo: Repository<BaseState>,
     errorOnNotFound?: boolean
   ): Promise<T> {
+    console.log('get by', type);
     const correlationId = await this.getCorrelationIdImpl(
       type,
       value,
       errorOnNotFound
     );
-    const result = mapping[correlationId as string] as T;
+    const result = await repo.findOneBy({ correlationId });
     if (!result && errorOnNotFound) {
       throw Error(
         `Could not find ${type} from correlation id ${correlationId}`
       );
     }
-    return result;
+    return result as T;
   }
 
   private async onAuthorizationRequestCreatedSuccess(
     event: AuthorizationEvent<AuthorizationRequest>
   ): Promise<void> {
     this.cleanup().catch((error) => console.log(JSON.stringify(error)));
-    this.updateState(
-      'request',
-      event,
-      AuthorizationRequestStateStatus.CREATED
-    ).catch((error) => console.log(JSON.stringify(error)));
+    this.requestRepository.save(
+      this.requestRepository.create({
+        id: event.correlationId,
+        jwt: await (
+          event as AuthorizationEvent<AuthorizationRequest>
+        ).subject.requestObjectJwt(),
+        uri: (event as AuthorizationEvent<AuthorizationRequest>).subject.payload
+          .redirect_uri,
+        timestamp: event.timestamp,
+        lastUpdated: event.timestamp,
+        status: AuthorizationRequestStateStatus.CREATED,
+      })
+    );
+    //.catch((error) => console.log(JSON.stringify(error)));
   }
 
-  private async onAuthorizationRequestCreatedFailed(
+  /* private async onAuthorizationRequestCreatedFailed(
     event: AuthorizationEvent<AuthorizationRequest>
   ): Promise<void> {
     this.cleanup().catch((error) => console.log(JSON.stringify(error)));
@@ -279,7 +286,7 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
       event,
       AuthorizationResponseStateStatus.VERIFIED
     );
-  }
+  } */
 
   public async getCorrelationIdByNonce(
     nonce: string,
@@ -300,6 +307,7 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
     value: string,
     errorOnNotFound?: boolean
   ): Promise<string | undefined> {
+    console.log('get me by', type);
     if (!value || !type) {
       throw Error('No type or value provided');
     }
@@ -307,40 +315,41 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
       return value;
     }
     const hash = await hashCode(value);
-    const correlationId =
-      type === 'nonce' ? this.nonceMapping[hash] : this.stateMapping[hash];
-    if (!correlationId && errorOnNotFound) {
+    const entry = await (type === 'nonce'
+      ? this.nonceRepository.findOneBy({ hash })
+      : this.stateRepository.findOneBy({ hash }));
+    if (!entry && errorOnNotFound) {
       throw Error(`Could not find ${type} value for ${value}`);
     }
-    return correlationId;
+    return entry.id;
   }
 
   private async updateMapping(
-    mapping: Record<number, string>,
+    repo: Repository<StateEntity | NonceEntity>,
     event: AuthorizationEvent<AuthorizationRequest | AuthorizationResponse>,
     key: string,
     value: string | undefined,
     allowExisting: boolean
   ) {
     const hash = await hashcodeForValue(event, key);
-    const existing = mapping[hash];
+    const existing = await repo.findOneBy({ hash });
     if (existing) {
       if (!allowExisting) {
         throw Error(
           `Mapping exists for key ${key} and we do not allow overwriting values`
         );
-      } else if (value && existing !== value) {
+      } else if (value && existing.id !== value) {
         throw Error('Value changed for key');
       }
     }
     if (!value) {
-      delete mapping[hash];
+      await repo.delete({ hash });
     } else {
-      mapping[hash] = value;
+      repo.save({ hash, id: value });
     }
   }
 
-  private async updateState(
+  /*   private async updateState(
     type: 'request' | 'response',
     event: AuthorizationEvent<AuthorizationRequest | AuthorizationResponse>,
     status: AuthorizationRequestStateStatus | AuthorizationResponseStateStatus
@@ -355,63 +364,76 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
     try {
       const eventState = {
         correlationId: event.correlationId,
-        ...(type === 'request' ? { request: event.subject } : {}),
-        ...(type === 'response' ? { response: event.subject } : {}),
+        jwt: await (
+          event as AuthorizationEvent<AuthorizationRequest>
+        ).subject.requestObjectJwt(),
+        uri: (event as AuthorizationEvent<AuthorizationRequest>).subject.payload
+          .redirect_uri,
         ...(event.error ? { error: event.error } : {}),
         status,
         timestamp: event.timestamp,
         lastUpdated: event.timestamp,
       };
+      console.log(event.subject);
+      console.log(eventState);
       if (type === 'request') {
-        this.authorizationRequests[event.correlationId] =
-          eventState as AuthorizationRequestState;
+        await this.requestRepository.save(
+          this.requestRepository.create({
+            id: event.correlationId,
+          })
+        );
         // We do not await these
         this.updateMapping(
-          this.nonceMapping,
+          this.nonceRepository,
           event,
           'nonce',
           event.correlationId,
           true
         ).catch((error) => console.log(JSON.stringify(error)));
         this.updateMapping(
-          this.stateMapping,
+          this.stateRepository,
           event,
           'state',
           event.correlationId,
           true
         ).catch((error) => console.log(JSON.stringify(error)));
       } else {
-        this.authorizationResponses[event.correlationId] =
-          eventState as AuthorizationResponseState;
+        await this.responseRepository.save(
+          this.responseRepository.create({
+            id: event.correlationId,
+            ...(eventState as AuthorizationResponseState),
+          })
+        );
       }
     } catch (error: unknown) {
       console.log(`Error in update state happened: ${error}`);
       // TODO VDX-166 handle error
     }
-  }
+  } */
 
   async deleteStateForCorrelationId(correlationId: string) {
-    InMemoryRPSessionManager.cleanMappingForCorrelationId(
-      this.nonceMapping,
+    DBRPSessionManager.cleanMappingForCorrelationId(
+      this.nonceRepository,
       correlationId
     ).catch((error) => console.log(JSON.stringify(error)));
-    InMemoryRPSessionManager.cleanMappingForCorrelationId(
-      this.stateMapping,
+    DBRPSessionManager.cleanMappingForCorrelationId(
+      this.stateRepository,
       correlationId
     ).catch((error) => console.log(JSON.stringify(error)));
-    delete this.authorizationRequests[correlationId];
-    delete this.authorizationResponses[correlationId];
+    await this.requestRepository.delete({ correlationId });
+    await this.responseRepository.delete({ correlationId });
   }
   private static async cleanMappingForCorrelationId(
-    mapping: Record<number, string>,
+    repo: Repository<NonceEntity | StateEntity>,
     correlationId: string
   ): Promise<void> {
-    const keys = InMemoryRPSessionManager.getKeysForCorrelationId(
-      mapping,
+    const keys = await DBRPSessionManager.getKeysForCorrelationId(
+      repo,
       correlationId
     );
     if (keys && keys.length > 0) {
-      keys.forEach((key) => delete mapping[key]);
+      //TODO: maybe pass all keys to the delete function
+      await Promise.all(keys.map((key) => repo.delete({ hash: key })));
     }
   }
 
@@ -422,7 +444,7 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
     const cleanupCorrelations = (
       reqByCorrelationId: [
         string,
-        AuthorizationRequestState | AuthorizationResponseState
+        AuthRequestStateEntity | AuthResponseStateEntity
       ]
     ) => {
       const correlationId = reqByCorrelationId[0];
@@ -434,15 +456,17 @@ export class InMemoryRPSessionManager implements IRPSessionManager {
         }
       }
     };
-
-    Object.entries(this.authorizationRequests).forEach((reqByCorrelationId) => {
-      cleanupCorrelations.call(this, reqByCorrelationId);
-    });
-    Object.entries(this.authorizationResponses).forEach(
-      (resByCorrelationId) => {
-        cleanupCorrelations.call(this, resByCorrelationId);
-      }
+    const requestCleanup = this.requestRepository.find().then((requests) =>
+      requests.forEach((req) => {
+        cleanupCorrelations([req.correlationId, req]);
+      })
     );
+    const responseCleanup = this.responseRepository.find().then((responses) =>
+      responses.forEach((res) => {
+        cleanupCorrelations([res.correlationId, res]);
+      })
+    );
+    await Promise.all([requestCleanup, responseCleanup]);
   }
 }
 

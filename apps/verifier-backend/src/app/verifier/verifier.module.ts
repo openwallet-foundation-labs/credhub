@@ -4,9 +4,24 @@ import { SiopController } from './siop.controller';
 import { ResolverModule } from '../resolver/resolver.module';
 import { HttpModule } from '@nestjs/axios';
 import { TemplatesModule } from '../templates/templates.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthRequestStateEntity } from './entity/auth-request-state.entity';
+import { AuthResponseStateEntity } from './entity/auth-response-state.entity';
+import { NonceEntity } from './entity/nonce.entity';
+import { StateEntity } from './entity/state.entity';
 
 @Module({
-  imports: [ResolverModule, HttpModule, TemplatesModule],
+  imports: [
+    ResolverModule,
+    HttpModule,
+    TemplatesModule,
+    TypeOrmModule.forFeature([
+      AuthRequestStateEntity,
+      AuthResponseStateEntity,
+      NonceEntity,
+      StateEntity,
+    ]),
+  ],
   controllers: [SiopController],
   providers: [RelyingPartyManagerService],
 })
