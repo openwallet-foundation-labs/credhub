@@ -1,20 +1,15 @@
 import {
-  AuthorizationResponse,
-  AuthorizationResponseState,
+  AuthorizationResponsePayload,
   AuthorizationResponseStateStatus,
 } from '@sphereon/did-auth-siop';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { BaseState } from './base-state.entity';
 
 @Entity()
-export class AuthResponseStateEntity
-  extends BaseState
-  implements AuthorizationResponseState
-{
+export class AuthResponseStateEntity {
   @PrimaryColumn()
-  id: string;
+  correlationId: string;
   @Column({ type: 'json' })
-  response: AuthorizationResponse;
+  payload: AuthorizationResponsePayload;
   @Column({ enum: AuthorizationResponseStateStatus })
   status: AuthorizationResponseStateStatus;
   @Column({ type: 'bigint' })

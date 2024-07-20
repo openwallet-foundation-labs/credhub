@@ -1,11 +1,10 @@
 import { AuthorizationRequestStateStatus } from '@sphereon/did-auth-siop';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { BaseState } from './base-state.entity';
 
 @Entity()
-export class AuthRequestStateEntity extends BaseState {
+export class AuthRequestStateEntity {
   @PrimaryColumn()
-  id: string;
+  correlationId: string;
   @Column({ nullable: true })
   uri: string;
   @Column()

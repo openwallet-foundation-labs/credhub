@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+} from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { FlexLayoutModule } from 'ng-flex-layout';
@@ -34,7 +39,8 @@ export class AppComponent implements OnInit {
   constructor(
     private checkForUpdatesService: CheckForUpdatesService,
     private settingsService: SettingsService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
   async ngOnInit(): Promise<void> {
     const loggedIn = await firstValueFrom(
@@ -46,5 +52,11 @@ export class AppComponent implements OnInit {
     } else {
       document.getElementById('content')?.removeAttribute('class');
     }
+  }
+
+  showScanner() {
+    this.router
+      .navigateByUrl('/', { skipLocationChange: true })
+      .then(() => this.router.navigateByUrl('/scan'));
   }
 }

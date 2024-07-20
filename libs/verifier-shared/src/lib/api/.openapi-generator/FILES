@@ -8,6 +8,7 @@ configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/authRequestStateEntity.ts
 model/authResponseRequestDto.ts
 model/constraints.ts
 model/field.ts

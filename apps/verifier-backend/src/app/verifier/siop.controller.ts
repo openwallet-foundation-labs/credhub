@@ -27,8 +27,6 @@ import { AuthResponseRequestDto } from './dto/auth-repsonse-request.dto';
 import { DBRPSessionManager } from './session-manager';
 
 @ApiTags('siop')
-@UseGuards(AuthGuard)
-@ApiOAuth2([])
 @Controller('siop')
 export class SiopController {
   constructor(
@@ -36,6 +34,8 @@ export class SiopController {
     private configService: ConfigService
   ) {}
 
+  @UseGuards(AuthGuard)
+  @ApiOAuth2([])
   @Roles({ roles: ['realm:verifier'], mode: RoleMatchingMode.ALL })
   @ApiOperation({ summary: 'Create a session' })
   @Post(':id')
@@ -77,10 +77,11 @@ export class SiopController {
       await instance.rp.sessionManager.getRequestStateByCorrelationId(
         correlationId
       );
-    console.log(request.request);
     return await request?.request.requestObject?.toJwt();
   }
 
+  @UseGuards(AuthGuard)
+  @ApiOAuth2([])
   @ApiOperation({ summary: 'Get all auth request' })
   @Get(':rp/auth-request')
   async getAllAuthRequest(@Param('rp') rp: string) {
@@ -93,6 +94,8 @@ export class SiopController {
   /**
    * Add the route to get the status of the request
    */
+  @UseGuards(AuthGuard)
+  @ApiOAuth2([])
   @ApiOperation({ summary: 'Get the status of the auth request' })
   @Get(':rp/auth-request/:correlationId/status')
   async getAuthRequestStatus(
@@ -111,8 +114,40 @@ export class SiopController {
     if (!request) {
       throw new ConflictException('Request not found');
     }
-    return { status: response?.status || request?.status };
+    return {
+      status: response?.status || request?.status,
+      lastUpdated: response?.lastUpdated || request?.lastUpdated,
+      request: request?.request.payload,
+      response: response.response.payload,
+    };
   }
+
+  /**
+   * Add the route to get the status of the request
+   */
+  @UseGuards(AuthGuard)
+  @ApiOAuth2([])
+  @ApiOperation({ summary: 'Get the info of the auth request' })
+  @Get(':rp/auth-request/:correlationId/info')
+  async getRequestInfo(
+    @Param('rp') rp: string,
+    @Param('correlationId') correlationId: string
+  ) {
+    const instance = await this.relyingPartyManagerService.getOrCreate(rp);
+    const request =
+      await instance.rp.sessionManager.getRequestStateByCorrelationId(
+        correlationId
+      );
+    const response =
+      await instance.rp.sessionManager.getResponseStateByCorrelationId(
+        correlationId
+      );
+    if (!request) {
+      throw new ConflictException('Request not found');
+    }
+    return { request, response };
+  }
+
   /**
    * Add the route to get the response object
    */
@@ -132,7 +167,7 @@ export class SiopController {
       const response = await instance.rp.verifyAuthorizationResponse(
         body as AuthorizationResponsePayload,
         {
-          correlationId: correlationId,
+          correlationId,
           //TODO: do we need it here when we added it in the constructor?
           presentationDefinitions: {
             definition: instance.verifier.request,
@@ -147,9 +182,23 @@ export class SiopController {
     }
   }
 
+  @UseGuards(AuthGuard)
+  @ApiOAuth2([])
+  @ApiOperation({ summary: 'delete a rp auth request' })
+  @Delete(':rp/auth-request/:correlationId')
+  async deleteAuthRequest(
+    @Param('rp') rp: string,
+    @Param('correlationId') correlationId: string
+  ) {
+    const instance = await this.relyingPartyManagerService.getOrCreate(rp);
+    await instance.rp.sessionManager.deleteStateForCorrelationId(correlationId);
+  }
+
   /**
    * This will remove a rp so it can be reloaded with new values
    */
+  @UseGuards(AuthGuard)
+  @ApiOAuth2([])
   @Roles({ roles: ['realm:verifier'], mode: RoleMatchingMode.ALL })
   @ApiOperation({ summary: 'Remove a relying party' })
   @Delete(':rp')

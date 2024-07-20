@@ -71,6 +71,6 @@ export class TemplatesRequestComponent implements OnInit, OnDestroy {
 
   copyValue(value: string) {
     navigator.clipboard.writeText(value);
-    this.snackBar.open('Copied to clipboard', 'Close', { duration: 2000 });
+    this.snackBar.open('URL copied to clipboard');
   }
 }
