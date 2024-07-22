@@ -36,15 +36,13 @@ export class IssuerController {
 
   @ApiOperation({ summary: 'Returns the status for a session' })
   @Get(':id')
-  async getSession(@Param('id') id: string): Promise<SessionStatus> {
+  async getSession(@Param('id') id: string): Promise<CredentialOfferSession> {
     const session =
       await this.issuerService.vcIssuer.credentialOfferSessions.get(id);
     if (!session) {
       throw new NotFoundException(`Session with id ${id} not found`);
     }
-    return {
-      status: session.status,
-    };
+    return session;
   }
 
   @ApiOperation({ summary: 'Creates a new session request' })
