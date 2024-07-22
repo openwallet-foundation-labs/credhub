@@ -15,6 +15,6 @@ export class URIStateEntity implements URIState {
   @Column()
   uri: string;
 
-  @Column()
+  @Column({ type: 'bigint' })
   createdAt: number;
 }

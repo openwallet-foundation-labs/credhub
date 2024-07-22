@@ -29,6 +29,6 @@ export class StatusList {
   /**
    * Expiration time of the JWT
    */
-  @Column()
+  @Column({ type: 'bigint' })
   exp: number;
 }

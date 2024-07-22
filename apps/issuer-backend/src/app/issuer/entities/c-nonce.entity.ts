@@ -15,6 +15,6 @@ export class CNonceEntity implements CNonceState {
   @Column({ nullable: true })
   preAuthorizedCode?: string;
 
-  @Column()
+  @Column({ type: 'bigint' })
   createdAt: number;
 }

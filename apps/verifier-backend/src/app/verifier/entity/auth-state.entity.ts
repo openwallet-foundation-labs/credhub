@@ -16,9 +16,9 @@ export class AuthStateEntity {
   jwt: string;
   @Column({ enum: AuthorizationRequestStateStatus })
   status: AuthorizationRequestStateStatus | AuthorizationResponseStateStatus;
-  @Column()
+  @Column({ type: 'bigint' })
   timestamp: number;
-  @Column()
+  @Column({ type: 'bigint' })
   lastUpdated: number;
   @Column({ type: 'json', nullable: true })
   error?: Error;

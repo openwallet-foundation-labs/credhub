@@ -22,7 +22,7 @@ export class CredentialOfferSessionEntity implements CredentialOfferSession {
   status: IssueStatus;
   @Column({ nullable: true })
   error?: string;
-  @Column()
+  @Column({ type: 'bigint' })
   lastUpdatedAt: number;
   @Column()
   notification_id: string;
@@ -30,6 +30,6 @@ export class CredentialOfferSessionEntity implements CredentialOfferSession {
   issuerState?: string;
   @Column({ nullable: true })
   preAuthorizedCode?: string;
-  @Column()
+  @Column({ type: 'bigint' })
   createdAt: number;
 }
