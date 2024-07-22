@@ -86,9 +86,7 @@ export class SiopController {
   @Get(':rp/auth-request')
   async getAllAuthRequest(@Param('rp') rp: string) {
     const instance = await this.relyingPartyManagerService.getOrCreate(rp);
-    return (
-      instance.rp.sessionManager as DBRPSessionManager
-    ).getAllRequestStates();
+    return (instance.rp.sessionManager as DBRPSessionManager).getAllStates();
   }
 
   /**
@@ -118,7 +116,7 @@ export class SiopController {
       status: response?.status || request?.status,
       lastUpdated: response?.lastUpdated || request?.lastUpdated,
       request: request?.request.payload,
-      response: response.response.payload,
+      response: response?.response.payload,
     };
   }
 

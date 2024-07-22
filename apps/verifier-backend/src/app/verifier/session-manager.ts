@@ -11,14 +11,13 @@ import {
 } from '@sphereon/did-auth-siop';
 import { EventEmitter } from 'node:events';
 import { Repository } from 'typeorm';
-import { AuthRequestStateEntity } from './entity/auth-request-state.entity';
-import { AuthResponseStateEntity } from './entity/auth-response-state.entity';
+import { AuthStateEntity } from './entity/auth-state.entity';
+
 export class DBRPSessionManager implements IRPSessionManager {
   private readonly maxAgeInSeconds: number;
 
   public constructor(
-    private requestRepository: Repository<AuthRequestStateEntity>,
-    private responseRepository: Repository<AuthResponseStateEntity>,
+    private authStateRepository: Repository<AuthStateEntity>,
     eventEmitter: EventEmitter,
     opts?: { maxAgeInSeconds?: number }
   ) {
@@ -69,8 +68,8 @@ export class DBRPSessionManager implements IRPSessionManager {
     return Promise.resolve(false);
   }
 
-  getAllRequestStates() {
-    return this.requestRepository.find({ order: { timestamp: 'DESC' } });
+  getAllStates() {
+    return this.authStateRepository.find({ order: { timestamp: 'DESC' } });
   }
 
   async getRequestStateByCorrelationId(
@@ -78,8 +77,8 @@ export class DBRPSessionManager implements IRPSessionManager {
     errorOnNotFound?: boolean
   ): Promise<AuthorizationRequestState | undefined> {
     const findRequest = errorOnNotFound
-      ? this.requestRepository.findOneByOrFail({ correlationId: id })
-      : this.requestRepository.findOneBy({ correlationId: id });
+      ? this.authStateRepository.findOneByOrFail({ correlationId: id })
+      : this.authStateRepository.findOneBy({ correlationId: id });
 
     const res = await findRequest;
     if (!res) return;
@@ -89,7 +88,7 @@ export class DBRPSessionManager implements IRPSessionManager {
       timestamp: res.timestamp,
       correlationId: res.correlationId,
       error: res.error ? new Error(res.error.message) : undefined,
-      status: res.status,
+      status: res.status as AuthorizationRequestStateStatus,
       request: await AuthorizationRequest.fromUriOrJwt(res.jwt),
     };
   }
@@ -113,8 +112,8 @@ export class DBRPSessionManager implements IRPSessionManager {
     errorOnNotFound?: boolean
   ): Promise<AuthorizationResponseState | undefined> {
     const findRequest = errorOnNotFound
-      ? this.responseRepository.findOneByOrFail({ correlationId })
-      : this.responseRepository.findOneBy({ correlationId });
+      ? this.authStateRepository.findOneByOrFail({ correlationId })
+      : this.authStateRepository.findOneBy({ correlationId });
 
     const res = await findRequest;
     if (!res || !res.payload) return;
@@ -123,7 +122,7 @@ export class DBRPSessionManager implements IRPSessionManager {
       timestamp: res.timestamp,
       correlationId: res.correlationId,
       error: res.error ? new Error(res.error.message) : undefined,
-      status: res.status,
+      status: res.status as AuthorizationResponseStateStatus,
       response: await AuthorizationResponse.fromPayload(res.payload),
     };
   }
@@ -145,8 +144,8 @@ export class DBRPSessionManager implements IRPSessionManager {
   private async onAuthorizationRequestCreatedSuccess(
     event: AuthorizationEvent<AuthorizationRequest>
   ): Promise<void> {
-    this.requestRepository.save(
-      this.requestRepository.create({
+    this.authStateRepository.save(
+      this.authStateRepository.create({
         correlationId: event.correlationId,
         jwt: await (
           event as AuthorizationEvent<AuthorizationRequest>
@@ -163,7 +162,7 @@ export class DBRPSessionManager implements IRPSessionManager {
   private async onAuthorizationRequestCreatedFailed(
     event: AuthorizationEvent<AuthorizationRequest>
   ): Promise<void> {
-    await this.requestRepository.update(
+    await this.authStateRepository.update(
       { correlationId: event.correlationId },
       {
         status: AuthorizationRequestStateStatus.ERROR,
@@ -176,7 +175,7 @@ export class DBRPSessionManager implements IRPSessionManager {
   private async onAuthorizationRequestSentSuccess(
     event: AuthorizationEvent<AuthorizationRequest>
   ): Promise<void> {
-    await this.requestRepository.update(
+    await this.authStateRepository.update(
       { correlationId: event.correlationId },
       {
         status: AuthorizationRequestStateStatus.SENT,
@@ -188,7 +187,7 @@ export class DBRPSessionManager implements IRPSessionManager {
   private async onAuthorizationRequestSentFailed(
     event: AuthorizationEvent<AuthorizationRequest>
   ): Promise<void> {
-    await this.requestRepository.update(
+    await this.authStateRepository.update(
       { correlationId: event.correlationId },
       {
         status: AuthorizationRequestStateStatus.ERROR,
@@ -203,7 +202,7 @@ export class DBRPSessionManager implements IRPSessionManager {
   ): Promise<void> {
     console.log('save response');
     console.log(event.subject.payload);
-    const element = this.responseRepository.create({
+    const element = this.authStateRepository.create({
       correlationId: event.correlationId,
       status: AuthorizationResponseStateStatus.RECEIVED,
       timestamp: event.timestamp,
@@ -211,13 +210,13 @@ export class DBRPSessionManager implements IRPSessionManager {
       payload: event.subject.payload,
     });
     console.log(element);
-    await this.responseRepository.save(element);
+    await this.authStateRepository.save(element);
   }
 
   private async onAuthorizationResponseReceivedFailed(
     event: AuthorizationEvent<AuthorizationResponse>
   ): Promise<void> {
-    await this.responseRepository.update(
+    await this.authStateRepository.update(
       { correlationId: event.correlationId },
       {
         status: AuthorizationResponseStateStatus.ERROR,
@@ -230,7 +229,7 @@ export class DBRPSessionManager implements IRPSessionManager {
   private async onAuthorizationResponseVerifiedFailed(
     event: AuthorizationEvent<AuthorizationResponse>
   ): Promise<void> {
-    await this.responseRepository.update(
+    await this.authStateRepository.update(
       { correlationId: event.correlationId },
       {
         status: AuthorizationResponseStateStatus.ERROR,
@@ -243,7 +242,7 @@ export class DBRPSessionManager implements IRPSessionManager {
   private async onAuthorizationResponseVerifiedSuccess(
     event: AuthorizationEvent<AuthorizationResponse>
   ): Promise<void> {
-    await this.responseRepository.update(
+    await this.authStateRepository.update(
       { correlationId: event.correlationId },
       {
         status: AuthorizationResponseStateStatus.VERIFIED,
@@ -267,7 +266,7 @@ export class DBRPSessionManager implements IRPSessionManager {
   }
 
   async deleteStateForCorrelationId(correlationId: string) {
-    await this.requestRepository.delete({ correlationId });
-    await this.responseRepository.delete({ correlationId });
+    await this.authStateRepository.delete({ correlationId });
+    await this.authStateRepository.delete({ correlationId });
   }
 }

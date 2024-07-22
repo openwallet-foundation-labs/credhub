@@ -38,8 +38,7 @@ import { TemplatesService } from '../templates/templates.service';
 import { Template } from '../templates/dto/template.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AuthRequestStateEntity } from './entity/auth-request-state.entity';
-import { AuthResponseStateEntity } from './entity/auth-response-state.entity';
+import { AuthStateEntity } from './entity/auth-state.entity';
 
 @Injectable()
 export class RelyingPartyManagerService {
@@ -56,10 +55,8 @@ export class RelyingPartyManagerService {
     private httpSerivce: HttpService,
     private cryptoService: CryptoService,
     private templateService: TemplatesService,
-    @InjectRepository(AuthRequestStateEntity)
-    requestRepository: Repository<AuthRequestStateEntity>,
-    @InjectRepository(AuthResponseStateEntity)
-    responseRepository: Repository<AuthResponseStateEntity>
+    @InjectRepository(AuthStateEntity)
+    authStateRepository: Repository<AuthStateEntity>
   ) {
     this.eventEmitter.eventNames().forEach((event) => {
       this.eventEmitter.on(event, (...args) => {
@@ -67,8 +64,7 @@ export class RelyingPartyManagerService {
       });
     });
     this.sessionManager = new DBRPSessionManager(
-      requestRepository,
-      responseRepository,
+      authStateRepository,
       this.eventEmitter,
       {
         // maxAgeInSeconds: 10,

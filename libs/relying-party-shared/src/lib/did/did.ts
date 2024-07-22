@@ -1,8 +1,4 @@
-import {
-  DIDResolutionOptions,
-  DIDResolutionResult,
-  Resolvable,
-} from 'did-resolver';
+import { DIDResolutionResult, Resolvable } from 'did-resolver';
 import { type JWK } from 'jose';
 
 /**
@@ -20,10 +16,7 @@ export function encodeDidJWK(key: JWK) {
  * Resolve a did document for a did:jwk
  */
 export class JWkResolver implements Resolvable {
-  resolve(
-    didUrl: string,
-    options?: DIDResolutionOptions | undefined
-  ): Promise<DIDResolutionResult> {
+  resolve(didUrl: string): Promise<DIDResolutionResult> {
     return Promise.resolve({
       didDocument: {
         id: didUrl,
