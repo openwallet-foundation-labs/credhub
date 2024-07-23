@@ -151,7 +151,7 @@ export class RelyingPartyManagerService {
       .withHasher(digest)
       //TODO: right now the verifier sdk only supports did usage
       .withSuppliedSignature(
-        this.keyService.signer as any,
+        this.keyService.signer as unknown as (data: string) => Promise<string>,
         did,
         did,
         SigningAlgo.ES256

@@ -17,22 +17,25 @@ import { SdJwtDecodedVerifiableCredentialWithKbJwtInput } from '@sphereon/pex';
 import { v4 as uuid } from 'uuid';
 import { Oid4vpParseRepsonse } from './dto/parse-response.dto';
 import { Oid4vpParseRequest } from './dto/parse-request.dto';
-import { Session } from './session';
 import { CompactSdJwtVc } from '@sphereon/ssi-types';
 import { CredentialsService } from '../../credentials/credentials.service';
 import { HistoryService } from '../../history/history.service';
 import { KeysService } from '../../keys/keys.service';
 import { JWkResolver } from '@credhub/relying-party-shared';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { VPSessionEntity } from './entities/vp-session.entity';
 
 @Injectable()
 export class Oid4vpService {
-  sessions: Map<string, Session> = new Map();
-  sdjwt: SDJwtVcInstance;
+  private sdjwt: SDJwtVcInstance;
 
   constructor(
     @Inject('KeyService') private keysService: KeysService,
     private credentialsService: CredentialsService,
-    private historyService: HistoryService
+    private historyService: HistoryService,
+    @InjectRepository(VPSessionEntity)
+    private sessionRepository: Repository<VPSessionEntity>
   ) {
     this.sdjwt = new SDJwtVcInstance({ hasher: digest });
   }
@@ -57,9 +60,7 @@ export class Oid4vpService {
           .client_metadata as RPRegistrationMetadataPayload
       ).client_name ?? verifiedAuthReqWithJWT.issuer;
     const logo = verifiedAuthReqWithJWT.registrationMetadataPayload.logo_uri;
-    if (!data.noSession) {
-      await this.historyService.add(sessionId, user, issuer, logo, data.url);
-    }
+    await this.historyService.add(sessionId, user, issuer, logo, data.url);
 
     // get all credentials from the client, required for the presentation exchange
     const credentials = (await this.credentialsService.findAll(user)).map(
@@ -81,17 +82,16 @@ export class Oid4vpService {
       throw new Error('No matching credentials found');
     }
 
-    if (!data.noSession) {
-      // store the session
-      this.sessions.set(sessionId, {
+    await this.sessionRepository.save(
+      this.sessionRepository.create({
+        id: sessionId,
+        // we need to store the JWT, because it serializes an object that can not be stored in the DB
+        requestObjectJwt: parsedAuthReqURI.requestObjectJwt as string,
         user,
-        verifiedAuthReqWithJWT,
-        created: new Date(),
-        pex,
-        op,
-        pd: pds[0],
-      });
-    }
+        pds,
+      })
+    );
+
     // select the credentials for the presentation
     const result = await pex
       .selectVerifiableCredentialsForSubmission(pds[0].definition)
@@ -139,10 +139,16 @@ export class Oid4vpService {
     value: Record<string, string>
   ): Promise<void> {
     // get the session, throw an error if not found
-    const session = this.sessions.get(sessionId);
-    if (!session || session.user !== user) {
+    const session = await this.sessionRepository.findOneBy({ id: sessionId });
+    if (session.user !== user) {
       throw new ConflictException('Session not found');
     }
+
+    const op = await this.getOp(user);
+
+    //technically we do not need to verify it again, but for now it's easier when using a db as a persisted store.
+    const verifiedAuthReqWithJWT: VerifiedAuthorizationRequest =
+      await op.verifyAuthorizationRequest(session.requestObjectJwt, {});
 
     /**
      * The presentation sign callback. This is called when the verifier needs to sign the presentation.
@@ -154,8 +160,7 @@ export class Oid4vpService {
         args.presentation as SdJwtDecodedVerifiableCredentialWithKbJwtInput
       ).kbJwt;
       args.selectedCredentials[0];
-      const aud =
-        session.verifiedAuthReqWithJWT.authorizationRequest.payload.client_id;
+      const aud = verifiedAuthReqWithJWT.authorizationRequest.payload.client_id;
       const cnf = args.presentation.decodedPayload.cnf;
       const signwedKbJwt = await this.keysService.signkbJwt(
         user,
@@ -175,38 +180,43 @@ export class Oid4vpService {
       credentials.push(credential);
     }
 
-    const verifiablePresentationResult =
-      await session.pex.createVerifiablePresentation(
-        session.pd.definition,
-        // we can only pass one credential to the presentation since the PEX lib has this limitation for now: https://github.com/Sphereon-Opensource/PEX/issues/149
-        credentials,
-        presentationSignCallback,
-        {
-          proofOptions: {
-            nonce:
-              session.verifiedAuthReqWithJWT.authorizationRequestPayload.nonce,
-          },
-        }
-      );
-    const authenticationResponseWithJWT =
-      await session.op.createAuthorizationResponse(
-        session.verifiedAuthReqWithJWT,
-        {
-          presentationExchange: {
-            verifiablePresentations: [
-              verifiablePresentationResult.verifiablePresentation,
-            ],
-            vpTokenLocation: VPTokenLocation.AUTHORIZATION_RESPONSE,
-            presentationSubmission:
-              verifiablePresentationResult.presentationSubmission,
-          },
-        }
-      );
-    await session.op.submitAuthorizationResponse(authenticationResponseWithJWT);
+    //init the pex instance
+    const pex = new PresentationExchange({
+      allVerifiableCredentials: credentials,
+      hasher: digest,
+    });
+
+    const verifiablePresentationResult = await pex.createVerifiablePresentation(
+      session.pds[0].definition,
+      // we can only pass one credential to the presentation since the PEX lib has this limitation for now: https://github.com/Sphereon-Opensource/PEX/issues/149
+      credentials,
+      presentationSignCallback,
+      {
+        proofOptions: {
+          nonce: verifiedAuthReqWithJWT.authorizationRequestPayload.nonce,
+        },
+      }
+    );
+
+    const authenticationResponseWithJWT = await op.createAuthorizationResponse(
+      verifiedAuthReqWithJWT,
+      {
+        presentationExchange: {
+          verifiablePresentations: [
+            verifiablePresentationResult.verifiablePresentation,
+          ],
+          vpTokenLocation: VPTokenLocation.AUTHORIZATION_RESPONSE,
+          presentationSubmission:
+            verifiablePresentationResult.presentationSubmission,
+        },
+      }
+    );
+    await op.submitAuthorizationResponse(authenticationResponseWithJWT);
     const response = authenticationResponseWithJWT.response.payload
       .vp_token as CompactSdJwtVc;
     await this.historyService.accept(sessionId, response);
-    this.sessions.delete(sessionId);
+
+    await this.sessionRepository.remove(session);
   }
 
   /**
@@ -215,13 +225,12 @@ export class Oid4vpService {
    * @param user
    */
   async decline(id: string, user: string) {
-    //TODO: document that the user declined it
-    const session = this.sessions.get(id);
+    const session = await this.sessionRepository.findOneBy({ id });
     if (!session || session.user !== user) {
       throw new ConflictException('Session not found');
     }
     await this.historyService.decline(id);
-    this.sessions.delete(id);
+    await this.sessionRepository.remove(session);
   }
 
   private async getOp(user: string) {

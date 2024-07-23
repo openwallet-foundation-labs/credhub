@@ -93,17 +93,15 @@ export class DBRPSessionManager implements IRPSessionManager {
     };
   }
 
-  async getRequestStateByNonce(
-    nonce: string,
-    errorOnNotFound?: boolean
-  ): Promise<AuthorizationRequestState | undefined> {
+  async getRequestStateByNonce(): Promise<
+    AuthorizationRequestState | undefined
+  > {
     throw Error('get request by nonce not implemented');
   }
 
-  async getRequestStateByState(
-    state: string,
-    errorOnNotFound?: boolean
-  ): Promise<AuthorizationRequestState | undefined> {
+  async getRequestStateByState(): Promise<
+    AuthorizationRequestState | undefined
+  > {
     throw Error('get request by state not implemented');
   }
 
@@ -127,17 +125,15 @@ export class DBRPSessionManager implements IRPSessionManager {
     };
   }
 
-  async getResponseStateByNonce(
-    nonce: string,
-    errorOnNotFound?: boolean
-  ): Promise<AuthorizationResponseState | undefined> {
+  async getResponseStateByNonce(): Promise<
+    AuthorizationResponseState | undefined
+  > {
     throw Error('get response by nonce not implemented');
   }
 
-  async getResponseStateByState(
-    state: string,
-    errorOnNotFound?: boolean
-  ): Promise<AuthorizationResponseState | undefined> {
+  async getResponseStateByState(): Promise<
+    AuthorizationResponseState | undefined
+  > {
     throw Error('get response by state not implemented');
   }
 
@@ -251,17 +247,11 @@ export class DBRPSessionManager implements IRPSessionManager {
     );
   }
 
-  public async getCorrelationIdByNonce(
-    nonce: string,
-    errorOnNotFound?: boolean
-  ): Promise<string | undefined> {
+  public async getCorrelationIdByNonce(): Promise<string | undefined> {
     throw new Error('Not implemented');
   }
 
-  public async getCorrelationIdByState(
-    state: string,
-    errorOnNotFound?: boolean
-  ): Promise<string | undefined> {
+  public async getCorrelationIdByState(): Promise<string | undefined> {
     throw new Error('Not implemented');
   }
 

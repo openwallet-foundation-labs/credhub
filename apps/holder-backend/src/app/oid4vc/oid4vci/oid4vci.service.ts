@@ -9,10 +9,8 @@ import {
   GrantTypes,
   IssuerMetadataV1_0_13,
   JwtVerifyResult,
-  type CredentialConfigurationSupported,
   type CredentialSupportedSdJwtVc,
   type Jwt,
-  type MetadataDisplay,
   type ProofOfPossessionCallbacks,
 } from '@sphereon/oid4vci-common';
 import { DIDDocument } from 'did-resolver';
@@ -23,31 +21,27 @@ import { decodeJwt } from 'jose';
 import { CredentialsService } from '../../credentials/credentials.service';
 import { KeysService } from '../../keys/keys.service';
 import { AcceptRequestDto } from './dto/accept-request.dto';
-
-type Session = {
-  //instead of storing the client, we could also generate it on demand. In this case we need to store the uri
-  client: OpenID4VCIClient;
-  relyingParty: string;
-  credentials: CredentialConfigurationSupported[];
-  issuer: MetadataDisplay;
-  created: Date;
-  pinRequired: boolean;
-};
+import { InjectRepository } from '@nestjs/typeorm';
+import { VCISessionEntity } from './entities/vci-session.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class Oid4vciService {
-  sessions: Map<string, Session> = new Map();
-
-  sdjwt: SDJwtVcInstance;
+  private sdjwt: SDJwtVcInstance;
 
   constructor(
     private credentialsService: CredentialsService,
-    @Inject('KeyService') private keysService: KeysService
+    @Inject('KeyService') private keysService: KeysService,
+    @InjectRepository(VCISessionEntity)
+    private sessionRepository: Repository<VCISessionEntity>
   ) {
     this.sdjwt = new SDJwtVcInstance({ hasher: digest });
   }
 
-  async parse(data: Oid4vciParseRequest): Promise<Oid4vciParseRepsonse> {
+  async parse(
+    data: Oid4vciParseRequest,
+    user: string
+  ): Promise<Oid4vciParseRepsonse> {
     if (data.url.startsWith('openid-credential-offer')) {
       const client = await OpenID4VCIClient.fromURI({
         uri: data.url,
@@ -56,26 +50,15 @@ export class Oid4vciService {
       // get the credential offer
       const metadata =
         (await client.retrieveServerMetadata()) as EndpointMetadataResultV1_0_13;
-      const supportedCredentials = (
-        metadata.credentialIssuerMetadata as IssuerMetadataV1_0_13
-      ).credential_configurations_supported;
-      const credentials = (
-        client.credentialOffer.credential_offer as CredentialOfferPayloadV1_0_13
-      ).credential_configuration_ids.map(
-        (credential) => supportedCredentials[credential]
-      );
+      const credentials = this.getCredentials(client, metadata);
       const id = uuid();
-      if (!data.noSession) {
-        this.sessions.set(id, {
-          client,
-          relyingParty: client.getIssuer(),
-          credentials,
-          //allows use to remove the session after a certain time
-          created: new Date(),
-          issuer: metadata.credentialIssuerMetadata.display[0],
-          pinRequired: client.credentialOffer.userPinRequired,
-        });
-      }
+      await this.sessionRepository.save(
+        this.sessionRepository.create({
+          id,
+          state: await client.exportState(),
+          user,
+        })
+      );
       return {
         sessionId: id,
         credentials,
@@ -88,11 +71,29 @@ export class Oid4vciService {
     }
   }
 
+  private getCredentials(
+    client: OpenID4VCIClient,
+    metadata: EndpointMetadataResultV1_0_13
+  ) {
+    const supportedCredentials = (
+      metadata.credentialIssuerMetadata as IssuerMetadataV1_0_13
+    ).credential_configurations_supported;
+    return (
+      client.credentialOffer.credential_offer as CredentialOfferPayloadV1_0_13
+    ).credential_configuration_ids.map(
+      (credential) => supportedCredentials[credential]
+    );
+  }
+
   async accept(accept: AcceptRequestDto, user: string) {
-    const data = this.sessions.get(accept.id);
-    if (!data) {
-      throw new Error('Session not found');
+    const session = await this.sessionRepository.findOneBy({
+      id: accept.id,
+    });
+
+    if (!session || session.user !== user) {
+      throw new ConflictException('Invalid session');
     }
+    const client = await OpenID4VCIClient.fromState({ state: session.state });
 
     //use the first key, can be changed to use a specific or unique key
     const key = await this.keysService.firstOrCreate(user);
@@ -113,13 +114,19 @@ export class Oid4vciService {
         }),
     };
 
-    if (data.pinRequired && !accept.txCode) {
+    if (client.credentialOffer.userPinRequired && !accept.txCode) {
       throw new ConflictException('PIN required');
     }
 
-    await data.client.acquireAccessToken({ pin: accept.txCode });
-    for (const credential of data.credentials) {
-      const credentialResponse = await data.client.acquireCredentials({
+    await client.acquireAccessToken({ pin: accept.txCode });
+
+    const metadata =
+      (await client.retrieveServerMetadata()) as EndpointMetadataResultV1_0_13;
+
+    const credentials = this.getCredentials(client, metadata);
+
+    for (const credential of credentials) {
+      const credentialResponse = await client.acquireCredentials({
         credentialTypes: (credential as CredentialSupportedSdJwtVc).vct,
         proofCallbacks,
         alg: Alg.ES256,
@@ -135,7 +142,7 @@ export class Oid4vciService {
           value: credentialResponse.credential as string,
           id: sdjwtvc.jwt.payload.jti as string,
           metaData: credential,
-          issuer: data.issuer,
+          issuer: metadata.credentialIssuerMetadata.display[0],
         },
         user
       );
@@ -151,7 +158,7 @@ export class Oid4vciService {
       } */
 
       //remove the old session
-      this.sessions.delete(accept.id);
+      await this.sessionRepository.delete({ id: accept.id });
       return { id: credentialEntry.id };
     }
   }

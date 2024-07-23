@@ -47,7 +47,6 @@ export class ScannerService {
       const result = await firstValueFrom(
         this.oid4vciApiService.oid4vciControllerParse({
           url,
-          noSession: true,
         })
       );
       this.zone.run(() => {
@@ -61,7 +60,7 @@ export class ScannerService {
       });
     } else {
       const result = await firstValueFrom(
-        this.oid4vpApiService.oid4vpControllerParse({ url, noSession: true })
+        this.oid4vpApiService.oid4vpControllerParse({ url })
       );
       this.zone.run(() => {
         this.results.push({

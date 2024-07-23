@@ -7,7 +7,7 @@ import {
 export class CredentialOfferSession implements ICredentialOfferSession {
   clientId?: string;
   credentialOffer: AssertedUniformCredentialOffer;
-  credentialDataSupplierInput?: any;
+  credentialDataSupplierInput?: unknown;
   userPin?: string;
   status: IssueStatus;
   error?: string;

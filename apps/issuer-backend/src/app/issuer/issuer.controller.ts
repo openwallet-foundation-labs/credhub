@@ -13,7 +13,6 @@ import { SessionRequestDto } from './dto/session-request.dto';
 import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'nest-keycloak-connect';
 import { SessionResponseDto } from './dto/session-response.dto';
-import { SessionStatus } from './dto/session-status.dto';
 import { CredentialOfferSession as ICredentialOfferSession } from '@sphereon/oid4vci-common';
 import { CredentialOfferSession } from './dto/credential-offer-session.dto';
 import { DBStates } from '@credhub/relying-party-shared';

@@ -26,7 +26,7 @@ export class DBStates<T extends StateType> implements IStateManager<T> {
   }
 
   async all(): Promise<T[]> {
-    return this.repository.find() as unknown as T[];
+    return this.repository.find({ order: { createdAt: -1 } }) as unknown as T[];
   }
 
   async clearExpired(timestamp?: number): Promise<void> {
