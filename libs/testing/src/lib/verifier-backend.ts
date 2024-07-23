@@ -14,6 +14,7 @@ import { Client } from 'pg';
 import { Keycloak } from './keycloak';
 import axios from 'axios';
 import { join } from 'node:path';
+import { saveLogs } from './utilts';
 
 /**
  * HolderBackend to manage the holder backend container
@@ -70,6 +71,7 @@ export class VerifierBackend {
       .withExposedPorts({ container: 3000, host: hostPort })
       .withWaitStrategy(Wait.forHttp('/health', 3000).forStatusCode(200))
       .withName('verifier-backend')
+      .withLogConsumer((stream) => saveLogs('verifier-backend', stream))
       .withEnvironment({
         ...this.oidc,
         DB_TYPE: 'postgres',

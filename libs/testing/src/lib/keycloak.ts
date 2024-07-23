@@ -11,6 +11,8 @@ import {
   Wait,
 } from 'testcontainers';
 import axios from 'axios';
+import { createWriteStream } from 'node:fs';
+import { saveLogs } from './utilts';
 
 export class Keycloak {
   // Keycloak admin credentials
@@ -40,6 +42,7 @@ export class Keycloak {
 
     //generate a random port between 7000 and 8000
     const hostPort = Math.floor(Math.random() * 1000) + 7000;
+
     //create a keycloak instance
     this.instance = await new GenericContainer(
       'ghcr.io/openwallet-foundation-labs/credhub/keycloak'
@@ -59,6 +62,7 @@ export class Keycloak {
         KEYCLOAK_ADMIN_PASSWORD: this.ADMIN_PASSWORD,
         KEYCLOAK_IMPORT: '/opt/keycloak/data/import/realm-export.json',
       })
+      .withLogConsumer((stream) => saveLogs('keycloak', stream))
       .withCommand([
         'start',
         '--optimized',

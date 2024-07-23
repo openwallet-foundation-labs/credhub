@@ -56,8 +56,15 @@ jobs:
 #          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload playwright results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-results
           path: dist/.playwright
+          retention-days: 30
+
+      - name: Upload testcontainer logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: testcontainer-logs
+          path: tmp/logs
           retention-days: 30
