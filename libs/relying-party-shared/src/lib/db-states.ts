@@ -6,8 +6,8 @@ import {
 import { LessThan, Repository } from 'typeorm';
 
 class BaseRepo implements StateType {
-  id: string;
-  createdAt: number;
+  id?: string;
+  createdAt!: number;
 }
 
 export class DBStates<T extends StateType> implements IStateManager<T> {

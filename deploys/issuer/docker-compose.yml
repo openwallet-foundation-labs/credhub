@@ -50,6 +50,9 @@ services:
       POSTGRES_HOST: $DB_HOST
     ports:
       - $DB_PORT:5432
+    volumes:
+      - issuer-db:/var/lib/postgresql/data
 
 volumes:
   issuer:
+  issuer-db:

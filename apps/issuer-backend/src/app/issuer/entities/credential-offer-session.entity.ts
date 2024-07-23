@@ -18,6 +18,8 @@ export class CredentialOfferSessionEntity implements CredentialOfferSession {
   credentialDataSupplierInput?: any;
   @Column({ nullable: true })
   txCode?: string;
+  @Column({ nullable: true })
+  userPin?: string;
   @Column()
   status: IssueStatus;
   @Column({ nullable: true })
