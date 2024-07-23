@@ -13,6 +13,5 @@
 
 export interface Oid4vpParseRequest { 
     url: string;
-    noSession?: boolean;
 }
 

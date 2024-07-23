@@ -22,7 +22,7 @@ import { KbVerifier, Verifier } from '@sd-jwt/types';
 import { PresentationSubmission } from '@sphereon/pex-models';
 import { W3CVerifiablePresentation, CompactJWT } from '@sphereon/ssi-types';
 import { importJWK, jwtVerify } from 'jose';
-import { InMemoryRPSessionManager } from './session-manager';
+import { DBRPSessionManager } from './session-manager';
 import { EventEmitter } from 'node:events';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -36,6 +36,9 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { TemplatesService } from '../templates/templates.service';
 import { Template } from '../templates/dto/template.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { AuthStateEntity } from './entity/auth-state.entity';
 
 @Injectable()
 export class RelyingPartyManagerService {
@@ -43,7 +46,7 @@ export class RelyingPartyManagerService {
   private rp: Map<string, RPInstance> = new Map();
   //TODO: replace its with the nestjs event emitter
   private eventEmitter = new EventEmitter();
-  private sessionManager: InMemoryRPSessionManager;
+  private sessionManager: DBRPSessionManager;
 
   constructor(
     @Inject('KeyService') private keyService: KeyService,
@@ -51,11 +54,22 @@ export class RelyingPartyManagerService {
     private configService: ConfigService,
     private httpSerivce: HttpService,
     private cryptoService: CryptoService,
-    private templateService: TemplatesService
+    private templateService: TemplatesService,
+    @InjectRepository(AuthStateEntity)
+    authStateRepository: Repository<AuthStateEntity>
   ) {
-    this.sessionManager = new InMemoryRPSessionManager(this.eventEmitter, {
-      // maxAgeInSeconds: 10,
+    this.eventEmitter.eventNames().forEach((event) => {
+      this.eventEmitter.on(event, (...args) => {
+        console.log('Event:', event, args);
+      });
     });
+    this.sessionManager = new DBRPSessionManager(
+      authStateRepository,
+      this.eventEmitter,
+      {
+        // maxAgeInSeconds: 10,
+      }
+    );
   }
 
   /**
@@ -90,7 +104,7 @@ export class RelyingPartyManagerService {
     if (
       !force &&
       //the limit for a session is 5 minutes, so after this a session becomes idle an can be removed.
-      !(await (rp.rp.sessionManager as InMemoryRPSessionManager).isIdle())
+      !(await (rp.rp.sessionManager as DBRPSessionManager).isIdle())
     ) {
       // we have active sessions, we don't want to remove the rp. But at this point we do not know if they have already finished it. We just know they are not over the maximum defined limit (default 5 minutes).
       return;
@@ -137,7 +151,7 @@ export class RelyingPartyManagerService {
       .withHasher(digest)
       //TODO: right now the verifier sdk only supports did usage
       .withSuppliedSignature(
-        this.keyService.signer as any,
+        this.keyService.signer as unknown as (data: string) => Promise<string>,
         did,
         did,
         SigningAlgo.ES256

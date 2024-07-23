@@ -12,6 +12,7 @@ import {
 import { Client } from 'pg';
 import { Keycloak } from './keycloak';
 import axios from 'axios';
+import { saveLogs } from './utilts';
 
 /**
  * HolderBackend to manage the holder backend container
@@ -71,6 +72,7 @@ export class HolderBackend {
       .withExposedPorts(3000)
       .withWaitStrategy(Wait.forHttp('/health', 3000).forStatusCode(200))
       .withName('holder-backend')
+      .withLogConsumer((stream) => saveLogs('holder-backend', stream))
       .withEnvironment({
         ...this.oidc,
         DB_TYPE: 'postgres',

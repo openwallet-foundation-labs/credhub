@@ -9,7 +9,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatIconModule } from '@angular/material/icon';
-import { SessionsListComponent } from '../../sessions-list/sessions-list.component';
+import { SessionsListComponent } from '../../sessions/sessions-list/sessions-list.component';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-templates-show',
@@ -22,6 +23,7 @@ import { SessionsListComponent } from '../../sessions-list/sessions-list.compone
     MatCardModule,
     FlexLayoutModule,
     SessionsListComponent,
+    MatListModule,
   ],
   templateUrl: './templates-show.component.html',
   styleUrl: './templates-show.component.scss',

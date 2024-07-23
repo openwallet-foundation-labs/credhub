@@ -4,6 +4,7 @@ import { TemplatesCreateComponent } from './templates/templates-create/templates
 import { TemplatesShowComponent } from './templates/templates-show/templates-show.component';
 import { TemplatesRequestComponent } from './templates/templates-request/templates-request.component';
 import { TemplatesEditComponent } from './templates/templates-edit/templates-edit.component';
+import { SessionsShowComponent } from './sessions/sessions-show/sessions-show.component';
 
 export const routes: Routes = [
   {
@@ -33,6 +34,10 @@ export const routes: Routes = [
       {
         path: ':id/request',
         component: TemplatesRequestComponent,
+      },
+      {
+        path: ':id/:sessionId',
+        component: SessionsShowComponent,
       },
     ],
   },

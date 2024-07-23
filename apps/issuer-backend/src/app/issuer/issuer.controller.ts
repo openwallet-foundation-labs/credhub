@@ -13,10 +13,9 @@ import { SessionRequestDto } from './dto/session-request.dto';
 import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'nest-keycloak-connect';
 import { SessionResponseDto } from './dto/session-response.dto';
-import { SessionStatus } from './dto/session-status.dto';
-import { CustomStates } from './state';
 import { CredentialOfferSession as ICredentialOfferSession } from '@sphereon/oid4vci-common';
 import { CredentialOfferSession } from './dto/credential-offer-session.dto';
+import { DBStates } from '@credhub/relying-party-shared';
 
 @UseGuards(AuthGuard)
 @ApiOAuth2([])
@@ -30,21 +29,19 @@ export class IssuerController {
   async listAll(): Promise<CredentialOfferSession[]> {
     return (
       this.issuerService.vcIssuer
-        .credentialOfferSessions as CustomStates<ICredentialOfferSession>
+        .credentialOfferSessions as DBStates<ICredentialOfferSession>
     ).all();
   }
 
   @ApiOperation({ summary: 'Returns the status for a session' })
   @Get(':id')
-  async getSession(@Param('id') id: string): Promise<SessionStatus> {
+  async getSession(@Param('id') id: string): Promise<CredentialOfferSession> {
     const session =
       await this.issuerService.vcIssuer.credentialOfferSessions.get(id);
     if (!session) {
       throw new NotFoundException(`Session with id ${id} not found`);
     }
-    return {
-      status: session.status,
-    };
+    return session;
   }
 
   @ApiOperation({ summary: 'Creates a new session request' })

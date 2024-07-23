@@ -22,8 +22,11 @@ export class Oid4vciController {
   @ApiOperation({ summary: 'parse a URL, returns the included information' })
   @Post('parse')
   @ApiCreatedResponse({ description: 'URL parsed', type: Oid4vciParseRepsonse })
-  parse(@Body() value: Oid4vciParseRequest): Promise<Oid4vciParseRepsonse> {
-    return this.oid4vciService.parse(value);
+  parse(
+    @Body() value: Oid4vciParseRequest,
+    @AuthenticatedUser() user: KeycloakUser
+  ): Promise<Oid4vciParseRepsonse> {
+    return this.oid4vciService.parse(value, user.sub);
   }
 
   @ApiOperation({ summary: 'accept a credential' })

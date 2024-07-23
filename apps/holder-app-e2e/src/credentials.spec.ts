@@ -48,14 +48,19 @@ async function getAxiosInstance(port: number) {
 
 async function receiveCredential(pin = false) {
   const axios = await getAxiosInstance(config.issuerPort);
-  const response = await axios.post(`/sessions`, {
-    credentialSubject: {
-      prename: 'Max',
-      surname: 'Mustermann',
-    },
-    credentialId: 'Identity',
-    pin,
-  });
+  const response = await axios
+    .post(`/sessions`, {
+      credentialSubject: {
+        prename: 'Max',
+        surname: 'Mustermann',
+      },
+      credentialId: 'Identity',
+      pin,
+    })
+    .catch((e) => {
+      console.log(e);
+      throw Error('Failed to create session');
+    });
   const uri = response.data.uri;
   const userPin = response.data.userPin;
   await page.evaluate(`navigator.clipboard.writeText("${uri}")`);

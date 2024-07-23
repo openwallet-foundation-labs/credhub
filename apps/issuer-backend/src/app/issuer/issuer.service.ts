@@ -16,7 +16,6 @@ import {
   CredentialDataSupplier,
   CredentialSignerCallback,
   VcIssuer,
-  MemoryStates,
 } from '@sphereon/oid4vci-issuer';
 import { OID4VCIServer } from '@sphereon/oid4vci-issuer-server';
 import { SdJwtDecodedVerifiableCredentialPayload } from '@sphereon/ssi-types';
@@ -34,13 +33,18 @@ import { CredentialsService } from '../credentials/credentials.service';
 import {
   CryptoImplementation,
   CryptoService,
+  DBStates,
   KeyService,
 } from '@credhub/relying-party-shared';
 import { IssuerMetadata } from './types';
 import { StatusService } from '../status/status.service';
 import { SessionResponseDto } from './dto/session-response.dto';
 import { ConfigService } from '@nestjs/config';
-import { CustomStates } from './state';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CNonceEntity } from './entities/c-nonce.entity';
+import { URIStateEntity } from './entities/uri-state.entity';
+import { CredentialOfferSessionEntity } from './entities/credential-offer-session.entity';
 
 interface CredentialDataSupplierInput {
   credentialSubject: Record<string, unknown>;
@@ -61,7 +65,13 @@ export class IssuerService {
     private credentialsService: CredentialsService,
     private statusService: StatusService,
     private configService: ConfigService,
-    private cryptoService: CryptoService
+    private cryptoService: CryptoService,
+    @InjectRepository(CNonceEntity)
+    private cNonceRepository: Repository<CNonceEntity>,
+    @InjectRepository(URIStateEntity)
+    private uriStateRepository: Repository<URIStateEntity>,
+    @InjectRepository(CredentialOfferSessionEntity)
+    private credentialOfferSessionRepository: Repository<CredentialOfferSessionEntity>
   ) {
     this.express = this.getExpressInstance();
     this.crypto = this.cryptoService.getCrypto();
@@ -257,9 +267,11 @@ export class IssuerService {
       {
         cNonceExpiresIn: 300,
         //TODO: use persistant session managements in production
-        credentialOfferSessions: new CustomStates<CredentialOfferSession>(),
-        cNonces: new MemoryStates<CNonceState>(),
-        uris: new MemoryStates<URIState>(),
+        credentialOfferSessions: new DBStates<CredentialOfferSession>(
+          this.credentialOfferSessionRepository
+        ),
+        cNonces: new DBStates<CNonceState>(this.cNonceRepository),
+        uris: new DBStates<URIState>(this.uriStateRepository),
         jwtVerifyCallback,
         credentialDataSupplier,
         credentialSignerCallback,

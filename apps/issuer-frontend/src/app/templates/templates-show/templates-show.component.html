@@ -1,18 +1,30 @@
-<mat-card *ngIf="template">
-  <mat-card-header>
-    <mat-card-title fxLayout="row" fxLayoutAlign="start center">
-      <button mat-icon-button routerLink="/">
-        <mat-icon>arrow_back_ios</mat-icon>
-      </button>
-      <span>{{ template.schema.id }}</span>
-    </mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <app-sessions-list></app-sessions-list>
-  </mat-card-content>
-  <mat-card-actions fxLayoutGap="16px">
-    <button mat-flat-button color="primary" routerLink="issue">Issue</button>
-    <button mat-flat-button color="primary" routerLink="edit">Edit</button>
-    <button mat-button color="warn" (click)="delete()">Delete</button>
-  </mat-card-actions>
-</mat-card>
+<div fxLayout="row" fxLayoutGap="16px" fxLayoutAlign=" start">
+  <mat-card *ngIf="template" fxFlex="30">
+    <mat-card-header>
+      <mat-card-title fxLayout="row" fxLayoutAlign="start center">
+        <button mat-icon-button routerLink="/">
+          <mat-icon>arrow_back_ios</mat-icon>
+        </button>
+        <span>{{ template.schema.id }}</span>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-nav-list>
+        <a mat-list-item routerLink="issue">
+          <mat-icon matListItemIcon>add</mat-icon>
+          <p matListItemLine>Issue</p>
+        </a>
+        <a mat-list-item routerLink="edit">
+          <mat-icon matListItemIcon>edit</mat-icon>
+          <p matListItemLine>Edit</p>
+        </a>
+        <a mat-list-item (click)="delete()">
+          <mat-icon matListItemIcon>delete</mat-icon>
+          <p matListItemLine>Delete</p>
+        </a>
+      </mat-nav-list>
+    </mat-card-content>
+  </mat-card>
+
+  <app-sessions-list fxFlex="70"></app-sessions-list>
+</div>

@@ -1,0 +1,48 @@
+<div fxLayout="row" fxLayoutAlign="space-between center">
+  <h3>Sessions</h3>
+  <button
+    mat-icon-button
+    (click)="deleteSelected()"
+    [disabled]="selection.isEmpty()"
+  >
+    <mat-icon>delete</mat-icon>
+  </button>
+</div>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <ng-container matColumnDef="select">
+    <th mat-header-cell *matHeaderCellDef>
+      <mat-checkbox
+        (change)="$event ? toggleAllRows() : null"
+        [checked]="selection.hasValue() && isAllSelected()"
+        [indeterminate]="selection.hasValue() && !isAllSelected()"
+      >
+      </mat-checkbox>
+    </th>
+    <td mat-cell *matCellDef="let row">
+      <mat-checkbox
+        (click)="$event.stopPropagation()"
+        (change)="$event ? selection.toggle(row) : null"
+        [checked]="selection.isSelected(row)"
+      >
+      </mat-checkbox>
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="correlationId">
+    <th mat-header-cell *matHeaderCellDef>Correlation ID</th>
+    <td mat-cell *matCellDef="let session">
+      <a [routerLink]="session.correlationId">{{ session.correlationId }}</a>
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef>Status</th>
+    <td mat-cell *matCellDef="let session">{{ session.status }}</td>
+  </ng-container>
+  <ng-container matColumnDef="timestamp">
+    <th mat-header-cell *matHeaderCellDef>Last update</th>
+    <td mat-cell *matCellDef="let session">
+      {{ session.lastUpdated | date : 'medium' }}
+    </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
