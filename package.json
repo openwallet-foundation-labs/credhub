@@ -111,15 +111,15 @@
     "@sentry/angular": "^8.13.0",
     "@simplewebauthn/browser": "^10.0.0",
     "@simplewebauthn/server": "^10.0.0",
-    "@sphereon/did-auth-siop": "^0.6.4",
-    "@sphereon/oid4vci-client": "^0.14.0",
-    "@sphereon/oid4vci-common": "^0.14.0",
-    "@sphereon/oid4vci-issuer": "^0.14.0",
-    "@sphereon/oid4vci-issuer-server": "^0.14.0",
-    "@sphereon/pex": "^3.3.3",
+    "@sphereon/did-auth-siop": "^0.15.0",
+    "@sphereon/oid4vci-client": "^0.15.0",
+    "@sphereon/oid4vci-common": "^0.15.0",
+    "@sphereon/oid4vci-issuer": "^0.15.0",
+    "@sphereon/oid4vci-issuer-server": "^0.15.0",
+    "@sphereon/pex": "3.3.4-unstable.0",
     "@sphereon/pex-models": "^2.2.4",
-    "@sphereon/ssi-express-support": "^0.26.0",
-    "@sphereon/ssi-types": "^0.26.0",
+    "@sphereon/ssi-express-support": "^0.27.0",
+    "@sphereon/ssi-types": "^0.27.0",
     "angular-oauth2-oidc": "^17.0.2",
     "axios": "^1.6.8",
     "class-transformer": "^0.5.1",
@@ -142,13 +142,5 @@
     "web-did-resolver": "^2.0.27",
     "zone.js": "~0.14.5"
   },
-  "packageManager": "pnpm@8.15.8+sha256.691fe176eea9a8a80df20e4976f3dfb44a04841ceb885638fe2a26174f81e65e",
-  "pnpm": {
-    "patchedDependencies": {
-      "@sphereon/pex@3.3.3": "patches/@sphereon__pex@3.3.3.patch",
-      "@sphereon/ssi-express-support@0.26.0": "patches/@sphereon__ssi-express-support@0.26.0.patch",
-      "@sphereon/oid4vci-client@0.14.0": "patches/@sphereon__oid4vci-client@0.14.0.patch",
-      "@sphereon/oid4vci-issuer@0.14.0": "patches/@sphereon__oid4vci-issuer@0.14.0.patch"
-    }
-  }
+  "pnpm": {}
 }

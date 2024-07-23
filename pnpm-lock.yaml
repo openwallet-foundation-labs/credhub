@@ -4,20 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  '@sphereon/oid4vci-client@0.14.0':
-    hash: uthox6jiksztarlkge33toosii
-    path: patches/@sphereon__oid4vci-client@0.14.0.patch
-  '@sphereon/oid4vci-issuer@0.14.0':
-    hash: q5mm7hof6wn636fwwu6okejr7y
-    path: patches/@sphereon__oid4vci-issuer@0.14.0.patch
-  '@sphereon/pex@3.3.3':
-    hash: bzkrsrlwcpq6eepymelnbd2pca
-    path: patches/@sphereon__pex@3.3.3.patch
-  '@sphereon/ssi-express-support@0.26.0':
-    hash: tpbu4tlseyturmm3mamihb4kae
-    path: patches/@sphereon__ssi-express-support@0.26.0.patch
-
 importers:
 
   .:
@@ -104,32 +90,32 @@ importers:
         specifier: ^10.0.0
         version: 10.0.0(encoding@0.1.13)
       '@sphereon/did-auth-siop':
-        specifier: ^0.6.4
-        version: 0.6.4(encoding@0.1.13)
+        specifier: ^0.15.0
+        version: 0.15.0(encoding@0.1.13)
       '@sphereon/oid4vci-client':
-        specifier: ^0.14.0
-        version: 0.14.0(patch_hash=uthox6jiksztarlkge33toosii)(encoding@0.1.13)
+        specifier: ^0.15.0
+        version: 0.15.0(encoding@0.1.13)
       '@sphereon/oid4vci-common':
-        specifier: ^0.14.0
-        version: 0.14.0(encoding@0.1.13)
+        specifier: ^0.15.0
+        version: 0.15.0(encoding@0.1.13)
       '@sphereon/oid4vci-issuer':
-        specifier: ^0.14.0
-        version: 0.14.0(patch_hash=q5mm7hof6wn636fwwu6okejr7y)(encoding@0.1.13)
+        specifier: ^0.15.0
+        version: 0.15.0(encoding@0.1.13)
       '@sphereon/oid4vci-issuer-server':
-        specifier: ^0.14.0
-        version: 0.14.0(encoding@0.1.13)
+        specifier: ^0.15.0
+        version: 0.15.0(encoding@0.1.13)
       '@sphereon/pex':
-        specifier: ^3.3.3
-        version: 3.3.3(patch_hash=bzkrsrlwcpq6eepymelnbd2pca)
+        specifier: 3.3.4-unstable.0
+        version: 3.3.4-unstable.0
       '@sphereon/pex-models':
         specifier: ^2.2.4
         version: 2.2.4
       '@sphereon/ssi-express-support':
-        specifier: ^0.26.0
-        version: 0.26.0(patch_hash=tpbu4tlseyturmm3mamihb4kae)
+        specifier: ^0.27.0
+        version: 0.27.0
       '@sphereon/ssi-types':
-        specifier: ^0.26.0
-        version: 0.26.0
+        specifier: ^0.27.0
+        version: 0.27.0
       angular-oauth2-oidc:
         specifier: ^17.0.2
         version: 17.0.2(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.7))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.7))
@@ -3137,27 +3123,27 @@ packages:
   '@sinonjs/fake-timers@10.3.0':
     resolution: {integrity: sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA==}
 
-  '@sphereon/did-auth-siop@0.6.4':
-    resolution: {integrity: sha512-0hw/lypy7kHpChJc/206XFd1XVhfUEIg2RIuw2u0RE3POqMeuOL5DWiPHh3e7Oo0nzG9gdgJC8Yffv69d9QIrg==}
+  '@sphereon/did-auth-siop@0.15.0':
+    resolution: {integrity: sha512-3f/anBHOyZYsaRCW3iW8cu4xQ+DfcyyXRpe0cusdYCM03Wgc9tODOBBIQ98Mrq26EUhWZoOdYSX9nYTA9g6CbQ==}
     engines: {node: '>=18'}
 
   '@sphereon/did-uni-client@0.6.3':
     resolution: {integrity: sha512-g7LD7ofbE36slHN7Bhr5dwUrj6t0BuZeXBYJMaVY/pOeL1vJxW1cZHbZqu0NSfOmzyBg4nsYVlgTjyi/Aua2ew==}
 
-  '@sphereon/oid4vci-client@0.14.0':
-    resolution: {integrity: sha512-4QuXPnGI4TBH6YytTBEWSHCMLdTvUnTpTZEVrFM2H/wZxYd+EpCvULX3g6GQtEsDV2svuqH80cZaTv78RSnq2A==}
+  '@sphereon/oid4vci-client@0.15.0':
+    resolution: {integrity: sha512-fPMFvgxaRxeejrkrHm1cuX2B3vv661QOrcNDQfCoGD5jhvv6G1iXnVNIAfow89nb8seBJoUJ91I4fkypQBAYIQ==}
     engines: {node: '>=18'}
 
-  '@sphereon/oid4vci-common@0.14.0':
-    resolution: {integrity: sha512-AubbtqNTnW5U+RFaiVWR28RsWdsvKnmmLKYsUW7T2Q+mmwHCAVNZhc8BP+JRdxN0cRYC4JVaXiUS797Odfiavg==}
+  '@sphereon/oid4vci-common@0.15.0':
+    resolution: {integrity: sha512-dwEuukE3Z512X3CAKoGZQ2E2duxukqIrELwsvdVGBLBxfNppRTI2H51ZYirbKYiYbbcV6uvqhKqWZ5Ela6LkKw==}
     engines: {node: '>=18'}
 
-  '@sphereon/oid4vci-issuer-server@0.14.0':
-    resolution: {integrity: sha512-pnPTyNm7x7aP88TSxa3bq0TQBeE4SQOUA/ENwAZks5/M+CZu2U1zCBNbrskc0RtaHx7q6wS16LRbwPpIZNqiGA==}
+  '@sphereon/oid4vci-issuer-server@0.15.0':
+    resolution: {integrity: sha512-3lN2fwXSeaCpcbxQ3kPGMNVTj8b/cmdon7QnugDOplKOXrzjccgdguw1JJL6Tll1Hh6qnPyRtjiYIv5vsAt42A==}
     engines: {node: '>=18'}
 
-  '@sphereon/oid4vci-issuer@0.14.0':
-    resolution: {integrity: sha512-GImbDB/yesPK7iAD575J1ZNF8bjs4DinrMuLFfXqFPzLeJeyYZf8NgqG0W7KHtS37njNtchGsuGnammHFJl5ZA==}
+  '@sphereon/oid4vci-issuer@0.15.0':
+    resolution: {integrity: sha512-sc+GbJNFgT8PWSNMIyNxHnMJNyFJygMcOAHjhYTAaRSsYhA8ym17cGRe4r/Fnic/jq1nRsi3Woq2ruZea2CVuQ==}
     engines: {node: '>=18'}
     peerDependencies:
       awesome-qr: ^2.1.5-rc.0
@@ -3172,19 +3158,9 @@ packages:
     resolution: {integrity: sha512-CXwdEcMTUh2z/5AriBn3OuShEG06l2tgiIr7qDJthnkez8DQ3sZo2vr4NEQWKKAL+DeAWAI4FryQGO4KuK7yfg==}
     engines: {node: '>=18'}
 
-  '@sphereon/ssi-express-support@0.26.0':
-    resolution: {integrity: sha512-wnhPpQVt1ULdHNQfjE7rm515BeGPsi/UrsuzY/L65ZAy/9kQS1dV5KMbM6bpmSNPl1ZY2OykalPGXVs/Vhs5fw==}
-    peerDependencies:
-      '@noble/hashes': 1.2.0
-      passport-azure-ad: ^4.3.5
-      passport-http-bearer: ^1.0.1
-    peerDependenciesMeta:
-      '@noble/hashes':
-        optional: true
-      passport-azure-ad:
-        optional: true
-      passport-http-bearer:
-        optional: true
+  '@sphereon/pex@3.3.4-unstable.0':
+    resolution: {integrity: sha512-1DdCgdKM7IPSQLieOOSRXGPpawdT+VyRr9iHuvNX8JlHLXhX20p15fNLHvaOR65YaHS52n4oo6VyNHyFM3aSWQ==}
+    engines: {node: '>=18'}
 
   '@sphereon/ssi-express-support@0.26.1-next.6':
     resolution: {integrity: sha512-Wo5Qa/ILGHCzef67JuwkOAHHTlC8R7YRkVitW/g+HCzHzaEEwoMh44cgYf65fufem00dYvPN15/gNWNQPaJZOw==}
@@ -3200,17 +3176,31 @@ packages:
       passport-http-bearer:
         optional: true
 
+  '@sphereon/ssi-express-support@0.27.0':
+    resolution: {integrity: sha512-IHkZXFgDdXPn1XA1PA822pyJ2/VVeET/JifXIvgROLt/cOExDtRkMwa5wQKe64xyXY4+WujcK7SMnEtZ9g06Vg==}
+    peerDependencies:
+      '@noble/hashes': 1.2.0
+      passport-azure-ad: ^4.3.5
+      passport-http-bearer: ^1.0.1
+    peerDependenciesMeta:
+      '@noble/hashes':
+        optional: true
+      passport-azure-ad:
+        optional: true
+      passport-http-bearer:
+        optional: true
+
   '@sphereon/ssi-types@0.22.0':
     resolution: {integrity: sha512-YPJAZlKmzNALXK8ohP3ETxj1oVzL4+M9ljj3fD5xrbacvYax1JPCVKc8BWSubGcQckKHPbgbpcS7LYEeghyT9Q==}
-
-  '@sphereon/ssi-types@0.26.0':
-    resolution: {integrity: sha512-r4JQIN7rnPunEv0HvCFC1ZCc9qlWcegYvhJbMJqSvyFE6VhmT5NNdH9jNV9QetgMa0yo5r3k+TnHNv3nH58Dmg==}
 
   '@sphereon/ssi-types@0.26.1-next.132':
     resolution: {integrity: sha512-coqhozmVf2phy40l1htj/zbLJLJhyD69ZukBVR4gKn35t8q2B2EZhJbCIPWKk2HWT6+gV+JUBQ9n4v3cSHNCJg==}
 
   '@sphereon/ssi-types@0.26.1-next.6':
     resolution: {integrity: sha512-YloKFKuUfx7JOyxJPig6YLPJ04owQpbaF0WWOfu5MB+EFJIgSrl3GLO391/FZh8MYxTHh9+QpkpAxfVLXFpJ2A==}
+
+  '@sphereon/ssi-types@0.27.0':
+    resolution: {integrity: sha512-u9x85H0Dr53ArqdtMdNiEDZcR1sr6g6yaiKo+nYVPnPpNfjaL1RvAEcRfigZoK6zP50bQEkCjrxVplxQNF8Mvg==}
 
   '@sphereon/ssi-types@0.9.0':
     resolution: {integrity: sha512-umCr/syNcmvMMbQ+i/r/mwjI1Qw2aFPp9AwBTvTo1ailAVaaJjJGPkkVz1K9/2NZATNdDiQ3A8yGzdVJoKh9pA==}
@@ -3220,60 +3210,6 @@ packages:
 
   '@sqltools/formatter@1.2.5':
     resolution: {integrity: sha512-Uy0+khmZqUrUGm5dmMqVlnvufZRSK0FbYzVgp0UMstm+F5+W2/jnEEQyc9vo1ZR/E5ZI/B1WjjoTqBqwJL6Krw==}
-
-  '@stablelib/aead@1.0.1':
-    resolution: {integrity: sha512-q39ik6sxGHewqtO0nP4BuSe3db5G1fEJE8ukvngS2gLkBXyy6E7pLubhbYgnkDFv6V8cWaxcE4Xn0t6LWcJkyg==}
-
-  '@stablelib/binary@1.0.1':
-    resolution: {integrity: sha512-ClJWvmL6UBM/wjkvv/7m5VP3GMr9t0osr4yVgLZsLCOz4hGN9gIAFEqnJ0TsSMAN+n840nf2cHZnA5/KFqHC7Q==}
-
-  '@stablelib/bytes@1.0.1':
-    resolution: {integrity: sha512-Kre4Y4kdwuqL8BR2E9hV/R5sOrUj6NanZaZis0V6lX5yzqC3hBuVSDXUIBqQv/sCpmuWRiHLwqiT1pqqjuBXoQ==}
-
-  '@stablelib/chacha20poly1305@1.0.1':
-    resolution: {integrity: sha512-MmViqnqHd1ymwjOQfghRKw2R/jMIGT3wySN7cthjXCBdO+qErNPUBnRzqNpnvIwg7JBCg3LdeCZZO4de/yEhVA==}
-
-  '@stablelib/chacha@1.0.1':
-    resolution: {integrity: sha512-Pmlrswzr0pBzDofdFuVe1q7KdsHKhhU24e8gkEwnTGOmlC7PADzLVxGdn2PoNVBBabdg0l/IfLKg6sHAbTQugg==}
-
-  '@stablelib/constant-time@1.0.1':
-    resolution: {integrity: sha512-tNOs3uD0vSJcK6z1fvef4Y+buN7DXhzHDPqRLSXUel1UfqMB1PWNsnnAezrKfEwTLpN0cGH2p9NNjs6IqeD0eg==}
-
-  '@stablelib/ed25519@1.0.3':
-    resolution: {integrity: sha512-puIMWaX9QlRsbhxfDc5i+mNPMY+0TmQEskunY1rZEBPi1acBCVQAhnsk/1Hk50DGPtVsZtAWQg4NHGlVaO9Hqg==}
-
-  '@stablelib/hash@1.0.1':
-    resolution: {integrity: sha512-eTPJc/stDkdtOcrNMZ6mcMK1e6yBbqRBaNW55XA1jU8w/7QdnCF0CmMmOD1m7VSkBR44PWrMHU2l6r8YEQHMgg==}
-
-  '@stablelib/int@1.0.1':
-    resolution: {integrity: sha512-byr69X/sDtDiIjIV6m4roLVWnNNlRGzsvxw+agj8CIEazqWGOQp2dTYgQhtyVXV9wpO6WyXRQUzLV/JRNumT2w==}
-
-  '@stablelib/keyagreement@1.0.1':
-    resolution: {integrity: sha512-VKL6xBwgJnI6l1jKrBAfn265cspaWBPAPEc62VBQrWHLqVgNRE09gQ/AnOEyKUWrrqfD+xSQ3u42gJjLDdMDQg==}
-
-  '@stablelib/poly1305@1.0.1':
-    resolution: {integrity: sha512-1HlG3oTSuQDOhSnLwJRKeTRSAdFNVB/1djy2ZbS35rBSJ/PFqx9cf9qatinWghC2UbfOYD8AcrtbUQl8WoxabA==}
-
-  '@stablelib/random@1.0.2':
-    resolution: {integrity: sha512-rIsE83Xpb7clHPVRlBj8qNe5L8ISQOzjghYQm/dZ7VaM2KHYwMW5adjQjrzTZCchFnNCNhkwtnOBa9HTMJCI8w==}
-
-  '@stablelib/sha256@1.0.1':
-    resolution: {integrity: sha512-GIIH3e6KH+91FqGV42Kcj71Uefd/QEe7Dy42sBTeqppXV95ggCcxLTk39bEr+lZfJmp+ghsR07J++ORkRELsBQ==}
-
-  '@stablelib/sha512@1.0.1':
-    resolution: {integrity: sha512-13gl/iawHV9zvDKciLo1fQ8Bgn2Pvf7OV6amaRVKiq3pjQ3UmEpXxWiAfV8tYjUpeZroBxtyrwtdooQT/i3hzw==}
-
-  '@stablelib/wipe@1.0.1':
-    resolution: {integrity: sha512-WfqfX/eXGiAd3RJe4VU2snh/ZPwtSjLG4ynQ/vYzvghTh7dHFcI1wl+nrkWG6lGhukOxOsUHfv8dUXr58D0ayg==}
-
-  '@stablelib/x25519@1.0.3':
-    resolution: {integrity: sha512-KnTbKmUhPhHavzobclVJQG5kuivH+qDLpe84iRqX3CLrKp881cF160JvXJ+hjn1aMyCwYOKeIZefIH/P5cJoRw==}
-
-  '@stablelib/xchacha20@1.0.1':
-    resolution: {integrity: sha512-1YkiZnFF4veUwBVhDnDYwo6EHeKzQK4FnLiO7ezCl/zu64uG0bCCAUROJaBkaLH+5BEsO3W7BTXTguMbSLlWSw==}
-
-  '@stablelib/xchacha20poly1305@1.0.1':
-    resolution: {integrity: sha512-B1Abj0sMJ8h3HNmGnJ7vHBrAvxuNka6cJJoZ1ILN7iuacXp7sUYcgOVEOTLWj+rtQMpspY9tXSCRLPmN1mQNWg==}
 
   '@swc-node/core@1.13.2':
     resolution: {integrity: sha512-skceAbeKUmEK8z1nxStJTTsbIInKqW4n4+ZCYFexy6UsHjsc7MAfR2v5QqNJr/Fl/j+yLY6UkXY2VUU63nEC/Q==}
@@ -4193,9 +4129,6 @@ packages:
   bcrypt-pbkdf@1.0.2:
     resolution: {integrity: sha512-qeFIXtP4MSoi6NLqO12WfqARWWuCKi2Rn/9hJLEmtB5yTNr9DqFWkJRCf2qShWzPeAMRnOgCrq0sg/KLv5ES9w==}
 
-  bech32@2.0.0:
-    resolution: {integrity: sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg==}
-
   before-after-hook@2.2.3:
     resolution: {integrity: sha512-NzUnlZexiaH/46WDhANlyR2bXRopNg4F/zuSA3OpZnllCUgRaOF2znDioDWrmbNVsuZk6l9pMquQB38cfBZwkQ==}
 
@@ -4331,9 +4264,6 @@ packages:
 
   caniuse-lite@1.0.30001642:
     resolution: {integrity: sha512-3XQ0DoRgLijXJErLSl+bLnJ+Et4KqV1PY6JJBGAFlsNsz31zeAIncyeZfLCabHK/jtSh+671RM9YMldxjUPZtA==}
-
-  canonicalize@2.0.0:
-    resolution: {integrity: sha512-ulDEYPv7asdKvqahuAY35c1selLdzDwHqugK92hfkzvlDCwXRRelDkR+Er33md/PtnpqHemgkuDPanZ4fiYZ8w==}
 
   casbin@5.30.0:
     resolution: {integrity: sha512-GDc8sImStd+ddBVBfLpe5fJPBWRjeEaz7fkiAGuw0+LTHF2TVvVsMALIMOx+ofzQhm+EHCH7mfiJsrS1Kgef2w==}
@@ -5001,9 +4931,6 @@ packages:
   dezalgo@1.0.4:
     resolution: {integrity: sha512-rXSP0bf+5n0Qonsb+SVVfNfIsimO4HEtmnIpPHY8Q1UCzKlQrDMfdobr8nJOOsRgWCyMRqeSBQzmWUMq7zvVig==}
 
-  did-jwt@6.11.6:
-    resolution: {integrity: sha512-OfbWknRxJuUqH6Lk0x+H1FsuelGugLbBDEwsoJnicFOntIG/A4y19fn0a8RLxaQbWQ5gXg0yDq5E2huSBiiXzw==}
-
   did-resolver@4.1.0:
     resolution: {integrity: sha512-S6fWHvCXkZg2IhS4RcVHxwuyVejPR7c+a4Go0xbQ9ps5kILa8viiYQgrM4gfTyeTjJ0ekgJH9gk/BawTpmkbZA==}
 
@@ -5096,9 +5023,6 @@ packages:
 
   electron-to-chromium@1.4.825:
     resolution: {integrity: sha512-OCcF+LwdgFGcsYPYC5keEEFC2XT0gBhrYbeGzHCx7i9qRFbzO/AqTmc/C/1xNhJj+JA7rzlN7mpBuStshh96Cg==}
-
-  elliptic@6.5.5:
-    resolution: {integrity: sha512-7EjbcmUm17NQFu4Pmgmq2olYMj8nwMnpcddByChSUjArp8F5DQWcIcpriwO4ZToLNAJig0yiyjswfyGNje/ixw==}
 
   elliptic@6.5.6:
     resolution: {integrity: sha512-mpzdtpeCLuS3BmE3pO3Cpp5bbjlOPY2Q0PgoF+Od1XZrHLYI28Xe3ossCmYCQt11FQKEYd9+PF8jymTvtWJSHQ==}
@@ -6390,9 +6314,6 @@ packages:
 
   js-base64@3.7.7:
     resolution: {integrity: sha512-7rCnleh0z2CkXhH67J8K1Ytz0b2Y+yxTPL+/KOJoa20hfnVQ/3/T6W/KflYI4bRHRagNeXeU2bkNGI3v1oS/lw==}
-
-  js-sha3@0.8.0:
-    resolution: {integrity: sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -14401,18 +14322,17 @@ snapshots:
     dependencies:
       '@sinonjs/commons': 3.0.1
 
-  '@sphereon/did-auth-siop@0.6.4(encoding@0.1.13)':
+  '@sphereon/did-auth-siop@0.15.0(encoding@0.1.13)':
     dependencies:
       '@astronautlabs/jsonpath': 1.1.2
       '@sphereon/did-uni-client': 0.6.3(encoding@0.1.13)
-      '@sphereon/pex': 3.3.3(patch_hash=bzkrsrlwcpq6eepymelnbd2pca)
+      '@sphereon/pex': 3.3.3
       '@sphereon/pex-models': 2.2.4
       '@sphereon/ssi-types': 0.22.0
       '@sphereon/wellknown-dids-client': 0.1.3(encoding@0.1.13)
       cross-fetch: 4.0.0(encoding@0.1.13)
-      did-jwt: 6.11.6
-      did-resolver: 4.1.0
       events: 3.3.0
+      jwt-decode: 4.0.0
       language-tags: 1.0.9
       multiformats: 12.1.3
       qs: 6.12.3
@@ -14429,9 +14349,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@sphereon/oid4vci-client@0.14.0(patch_hash=uthox6jiksztarlkge33toosii)(encoding@0.1.13)':
+  '@sphereon/oid4vci-client@0.15.0(encoding@0.1.13)':
     dependencies:
-      '@sphereon/oid4vci-common': 0.14.0(encoding@0.1.13)
+      '@sphereon/oid4vci-common': 0.15.0(encoding@0.1.13)
       '@sphereon/ssi-types': 0.26.1-next.132
       cross-fetch: 3.1.8(encoding@0.1.13)
       debug: 4.3.5
@@ -14439,7 +14359,7 @@ snapshots:
       - encoding
       - supports-color
 
-  '@sphereon/oid4vci-common@0.14.0(encoding@0.1.13)':
+  '@sphereon/oid4vci-common@0.15.0(encoding@0.1.13)':
     dependencies:
       '@sphereon/ssi-types': 0.26.1-next.132
       cross-fetch: 3.1.8(encoding@0.1.13)
@@ -14450,10 +14370,10 @@ snapshots:
       - encoding
       - supports-color
 
-  '@sphereon/oid4vci-issuer-server@0.14.0(encoding@0.1.13)':
+  '@sphereon/oid4vci-issuer-server@0.15.0(encoding@0.1.13)':
     dependencies:
-      '@sphereon/oid4vci-common': 0.14.0(encoding@0.1.13)
-      '@sphereon/oid4vci-issuer': 0.14.0(patch_hash=q5mm7hof6wn636fwwu6okejr7y)(encoding@0.1.13)
+      '@sphereon/oid4vci-common': 0.15.0(encoding@0.1.13)
+      '@sphereon/oid4vci-issuer': 0.15.0(encoding@0.1.13)
       '@sphereon/ssi-express-support': 0.26.1-next.6
       '@sphereon/ssi-types': 0.26.1-next.6
       body-parser: 1.20.2
@@ -14472,9 +14392,9 @@ snapshots:
       - passport-http-bearer
       - supports-color
 
-  '@sphereon/oid4vci-issuer@0.14.0(patch_hash=q5mm7hof6wn636fwwu6okejr7y)(encoding@0.1.13)':
+  '@sphereon/oid4vci-issuer@0.15.0(encoding@0.1.13)':
     dependencies:
-      '@sphereon/oid4vci-common': 0.14.0(encoding@0.1.13)
+      '@sphereon/oid4vci-common': 0.15.0(encoding@0.1.13)
       '@sphereon/ssi-types': 0.26.1-next.132
       uuid: 9.0.1
     transitivePeerDependencies:
@@ -14483,7 +14403,7 @@ snapshots:
 
   '@sphereon/pex-models@2.2.4': {}
 
-  '@sphereon/pex@3.3.3(patch_hash=bzkrsrlwcpq6eepymelnbd2pca)':
+  '@sphereon/pex@3.3.3':
     dependencies:
       '@astronautlabs/jsonpath': 1.1.2
       '@sd-jwt/decode': 0.6.1
@@ -14491,14 +14411,29 @@ snapshots:
       '@sd-jwt/types': 0.6.1
       '@sphereon/pex-models': 2.2.4
       '@sphereon/ssi-types': 0.22.0
-      ajv: 8.16.0
-      ajv-formats: 2.1.1(ajv@8.16.0)
+      ajv: 8.17.1
+      ajv-formats: 2.1.1(ajv@8.17.1)
       jwt-decode: 3.1.2
       nanoid: 3.3.7
       string.prototype.matchall: 4.0.11
       uint8arrays: 3.1.1
 
-  '@sphereon/ssi-express-support@0.26.0(patch_hash=tpbu4tlseyturmm3mamihb4kae)':
+  '@sphereon/pex@3.3.4-unstable.0':
+    dependencies:
+      '@astronautlabs/jsonpath': 1.1.2
+      '@sd-jwt/decode': 0.6.1
+      '@sd-jwt/present': 0.6.1
+      '@sd-jwt/types': 0.6.1
+      '@sphereon/pex-models': 2.2.4
+      '@sphereon/ssi-types': 0.22.0
+      ajv: 8.17.1
+      ajv-formats: 2.1.1(ajv@8.17.1)
+      jwt-decode: 3.1.2
+      nanoid: 3.3.7
+      string.prototype.matchall: 4.0.11
+      uint8arrays: 3.1.1
+
+  '@sphereon/ssi-express-support@0.26.1-next.6':
     dependencies:
       body-parser: 1.20.2
       casbin: 5.30.0
@@ -14516,7 +14451,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@sphereon/ssi-express-support@0.26.1-next.6':
+  '@sphereon/ssi-express-support@0.27.0':
     dependencies:
       body-parser: 1.20.2
       casbin: 5.30.0
@@ -14539,15 +14474,6 @@ snapshots:
       '@sd-jwt/decode': 0.6.1
       jwt-decode: 3.1.2
 
-  '@sphereon/ssi-types@0.26.0':
-    dependencies:
-      '@sd-jwt/decode': 0.6.1
-      debug: 4.3.5
-      events: 3.3.0
-      jwt-decode: 3.1.2
-    transitivePeerDependencies:
-      - supports-color
-
   '@sphereon/ssi-types@0.26.1-next.132':
     dependencies:
       '@sd-jwt/decode': 0.6.1
@@ -14558,6 +14484,15 @@ snapshots:
       - supports-color
 
   '@sphereon/ssi-types@0.26.1-next.6':
+    dependencies:
+      '@sd-jwt/decode': 0.6.1
+      debug: 4.3.5
+      events: 3.3.0
+      jwt-decode: 3.1.2
+    transitivePeerDependencies:
+      - supports-color
+
+  '@sphereon/ssi-types@0.27.0':
     dependencies:
       '@sd-jwt/decode': 0.6.1
       debug: 4.3.5
@@ -14579,88 +14514,6 @@ snapshots:
       - encoding
 
   '@sqltools/formatter@1.2.5': {}
-
-  '@stablelib/aead@1.0.1': {}
-
-  '@stablelib/binary@1.0.1':
-    dependencies:
-      '@stablelib/int': 1.0.1
-
-  '@stablelib/bytes@1.0.1': {}
-
-  '@stablelib/chacha20poly1305@1.0.1':
-    dependencies:
-      '@stablelib/aead': 1.0.1
-      '@stablelib/binary': 1.0.1
-      '@stablelib/chacha': 1.0.1
-      '@stablelib/constant-time': 1.0.1
-      '@stablelib/poly1305': 1.0.1
-      '@stablelib/wipe': 1.0.1
-
-  '@stablelib/chacha@1.0.1':
-    dependencies:
-      '@stablelib/binary': 1.0.1
-      '@stablelib/wipe': 1.0.1
-
-  '@stablelib/constant-time@1.0.1': {}
-
-  '@stablelib/ed25519@1.0.3':
-    dependencies:
-      '@stablelib/random': 1.0.2
-      '@stablelib/sha512': 1.0.1
-      '@stablelib/wipe': 1.0.1
-
-  '@stablelib/hash@1.0.1': {}
-
-  '@stablelib/int@1.0.1': {}
-
-  '@stablelib/keyagreement@1.0.1':
-    dependencies:
-      '@stablelib/bytes': 1.0.1
-
-  '@stablelib/poly1305@1.0.1':
-    dependencies:
-      '@stablelib/constant-time': 1.0.1
-      '@stablelib/wipe': 1.0.1
-
-  '@stablelib/random@1.0.2':
-    dependencies:
-      '@stablelib/binary': 1.0.1
-      '@stablelib/wipe': 1.0.1
-
-  '@stablelib/sha256@1.0.1':
-    dependencies:
-      '@stablelib/binary': 1.0.1
-      '@stablelib/hash': 1.0.1
-      '@stablelib/wipe': 1.0.1
-
-  '@stablelib/sha512@1.0.1':
-    dependencies:
-      '@stablelib/binary': 1.0.1
-      '@stablelib/hash': 1.0.1
-      '@stablelib/wipe': 1.0.1
-
-  '@stablelib/wipe@1.0.1': {}
-
-  '@stablelib/x25519@1.0.3':
-    dependencies:
-      '@stablelib/keyagreement': 1.0.1
-      '@stablelib/random': 1.0.2
-      '@stablelib/wipe': 1.0.1
-
-  '@stablelib/xchacha20@1.0.1':
-    dependencies:
-      '@stablelib/binary': 1.0.1
-      '@stablelib/chacha': 1.0.1
-      '@stablelib/wipe': 1.0.1
-
-  '@stablelib/xchacha20poly1305@1.0.1':
-    dependencies:
-      '@stablelib/aead': 1.0.1
-      '@stablelib/chacha20poly1305': 1.0.1
-      '@stablelib/constant-time': 1.0.1
-      '@stablelib/wipe': 1.0.1
-      '@stablelib/xchacha20': 1.0.1
 
   '@swc-node/core@1.13.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(@swc/types@0.1.12)':
     dependencies:
@@ -15375,10 +15228,6 @@ snapshots:
     optionalDependencies:
       ajv: 8.12.0
 
-  ajv-formats@2.1.1(ajv@8.16.0):
-    optionalDependencies:
-      ajv: 8.16.0
-
   ajv-formats@2.1.1(ajv@8.17.1):
     optionalDependencies:
       ajv: 8.17.1
@@ -15804,8 +15653,6 @@ snapshots:
     dependencies:
       tweetnacl: 0.14.5
 
-  bech32@2.0.0: {}
-
   before-after-hook@2.2.3: {}
 
   big.js@5.2.2: {}
@@ -15981,8 +15828,6 @@ snapshots:
       lodash.uniq: 4.5.0
 
   caniuse-lite@1.0.30001642: {}
-
-  canonicalize@2.0.0: {}
 
   casbin@5.30.0:
     dependencies:
@@ -16682,21 +16527,6 @@ snapshots:
       asap: 2.0.6
       wrappy: 1.0.2
 
-  did-jwt@6.11.6:
-    dependencies:
-      '@stablelib/ed25519': 1.0.3
-      '@stablelib/random': 1.0.2
-      '@stablelib/sha256': 1.0.1
-      '@stablelib/x25519': 1.0.3
-      '@stablelib/xchacha20poly1305': 1.0.1
-      bech32: 2.0.0
-      canonicalize: 2.0.0
-      did-resolver: 4.1.0
-      elliptic: 6.5.5
-      js-sha3: 0.8.0
-      multiformats: 9.9.0
-      uint8arrays: 3.1.1
-
   did-resolver@4.1.0: {}
 
   diff-sequences@29.6.3: {}
@@ -16785,16 +16615,6 @@ snapshots:
       jake: 10.9.1
 
   electron-to-chromium@1.4.825: {}
-
-  elliptic@6.5.5:
-    dependencies:
-      bn.js: 4.12.0
-      brorand: 1.1.0
-      hash.js: 1.1.7
-      hmac-drbg: 1.0.1
-      inherits: 2.0.4
-      minimalistic-assert: 1.0.1
-      minimalistic-crypto-utils: 1.0.1
 
   elliptic@6.5.6:
     dependencies:
@@ -18542,8 +18362,6 @@ snapshots:
   jose@5.6.3: {}
 
   js-base64@3.7.7: {}
-
-  js-sha3@0.8.0: {}
 
   js-tokens@4.0.0: {}
 
@@ -21720,6 +21538,17 @@ snapshots:
     optionalDependencies:
       webpack: 5.92.1(@swc/core@1.5.7(@swc/helpers@0.5.11))(esbuild@0.21.5)(webpack-cli@5.1.4(webpack-dev-server@5.0.4)(webpack@5.93.0))
 
+  webpack-dev-middleware@7.2.1(webpack@5.93.0(@swc/core@1.5.7(@swc/helpers@0.5.11))(esbuild@0.23.0)(webpack-cli@5.1.4)):
+    dependencies:
+      colorette: 2.0.20
+      memfs: 4.9.3
+      mime-types: 2.1.35
+      on-finished: 2.4.1
+      range-parser: 1.2.1
+      schema-utils: 4.2.0
+    optionalDependencies:
+      webpack: 5.93.0(@swc/core@1.5.7(@swc/helpers@0.5.11))(esbuild@0.23.0)(webpack-cli@5.1.4)
+
   webpack-dev-server@4.15.2(webpack-cli@5.1.4(webpack-dev-server@5.0.4)(webpack@5.93.0))(webpack@5.93.0(@swc/core@1.5.7(@swc/helpers@0.5.11))(esbuild@0.23.0)(webpack-cli@5.1.4)):
     dependencies:
       '@types/bonjour': 3.5.13
@@ -21791,7 +21620,7 @@ snapshots:
       serve-index: 1.9.1
       sockjs: 0.3.24
       spdy: 4.0.2
-      webpack-dev-middleware: 7.2.1(webpack@5.92.1(@swc/core@1.5.7(@swc/helpers@0.5.11))(esbuild@0.21.5)(webpack-cli@5.1.4(webpack-dev-server@5.0.4)(webpack@5.93.0)))
+      webpack-dev-middleware: 7.2.1(webpack@5.93.0(@swc/core@1.5.7(@swc/helpers@0.5.11))(esbuild@0.23.0)(webpack-cli@5.1.4))
       ws: 8.18.0
     optionalDependencies:
       webpack: 5.92.1(@swc/core@1.5.7(@swc/helpers@0.5.11))(esbuild@0.21.5)(webpack-cli@5.1.4(webpack-dev-server@5.0.4)(webpack@5.93.0))
