@@ -36,6 +36,12 @@ export class ResolverService {
       }
       return cert.publicKey.export({ format: 'jwk' }) as JWK;
     }
+    //checl if the key is in the header as jwk
+    if (header.jwk) {
+      return header.jwk as JWK;
+    }
+
+    //check if the issuer is a did
     if (payload.iss.startsWith('did:')) {
       const did = await resolver.resolve(payload.iss);
       if (!did) {
@@ -56,7 +62,6 @@ export class ResolverService {
       return key.publicKeyJwk;
     }
 
-    // lets look for a did
     const response = await firstValueFrom(
       this.httpService.get<IssuerMetadata>(
         `${payload.iss}/.well-known/jwt-vc-issuer`

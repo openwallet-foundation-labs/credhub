@@ -20,19 +20,6 @@ index b749cf35e6962380cee8671bd6c5f033ce9dcb78..b6db8459009e0b00e1328b7a103886b0
                      },
                  };
                  presentation = Object.assign(Object.assign({}, presentation), { kbJwt });
-diff --git a/dist/browser/lib/signing/types.d.ts b/dist/browser/lib/signing/types.d.ts
-index 979338af02eb6923b98642bf2f84ebca808f090a..2a9ae541faef1ef5ed269c9754a7fb0d43e391dc 100644
---- a/dist/browser/lib/signing/types.d.ts
-+++ b/dist/browser/lib/signing/types.d.ts
-@@ -66,7 +66,7 @@ export interface SdJwtKbJwtInput {
-     };
-     payload: {
-         iat: number;
--        _sd_hash: string;
-+        sd_hash: string;
-         nonce?: string;
-     };
- }
 diff --git a/dist/main/lib/PEX.js b/dist/main/lib/PEX.js
 index b749cf35e6962380cee8671bd6c5f033ce9dcb78..b6db8459009e0b00e1328b7a103886b0edb6891e 100644
 --- a/dist/main/lib/PEX.js
@@ -55,19 +42,6 @@ index b749cf35e6962380cee8671bd6c5f033ce9dcb78..b6db8459009e0b00e1328b7a103886b0
                      },
                  };
                  presentation = Object.assign(Object.assign({}, presentation), { kbJwt });
-diff --git a/dist/main/lib/signing/types.d.ts b/dist/main/lib/signing/types.d.ts
-index 979338af02eb6923b98642bf2f84ebca808f090a..2a9ae541faef1ef5ed269c9754a7fb0d43e391dc 100644
---- a/dist/main/lib/signing/types.d.ts
-+++ b/dist/main/lib/signing/types.d.ts
-@@ -66,7 +66,7 @@ export interface SdJwtKbJwtInput {
-     };
-     payload: {
-         iat: number;
--        _sd_hash: string;
-+        sd_hash: string;
-         nonce?: string;
-     };
- }
 diff --git a/dist/module/lib/PEX.js b/dist/module/lib/PEX.js
 index 65aa74adf86973e99345938c826613ddcba6ca7e..464545177f8d156ba07019e20e0e6c17e6d086ef 100644
 --- a/dist/module/lib/PEX.js
@@ -90,16 +64,3 @@ index 65aa74adf86973e99345938c826613ddcba6ca7e..464545177f8d156ba07019e20e0e6c17
                  },
              };
              presentation = {
-diff --git a/dist/module/lib/signing/types.d.ts b/dist/module/lib/signing/types.d.ts
-index 979338af02eb6923b98642bf2f84ebca808f090a..2a9ae541faef1ef5ed269c9754a7fb0d43e391dc 100644
---- a/dist/module/lib/signing/types.d.ts
-+++ b/dist/module/lib/signing/types.d.ts
-@@ -66,7 +66,7 @@ export interface SdJwtKbJwtInput {
-     };
-     payload: {
-         iat: number;
--        _sd_hash: string;
-+        sd_hash: string;
-         nonce?: string;
-     };
- }

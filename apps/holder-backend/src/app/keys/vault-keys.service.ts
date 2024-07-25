@@ -136,9 +136,11 @@ export class VaultKeysService extends KeysService {
         },
         this.headers
       )
-    ).then((res) =>
-      this.derToJwtSignature(res.data.data.signature.split(':')[2])
-    );
+    )
+      .then((res) =>
+        this.derToJwtSignature(res.data.data.signature.split(':')[2])
+      )
+      .then((signature) => `${value.data}.${signature}`);
   }
 
   /**

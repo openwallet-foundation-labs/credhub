@@ -22,6 +22,7 @@ import { Key } from './entities/key.entity';
 import { KeysService } from './keys.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import { USER_DELETED_EVENT, UserDeletedEvent } from '../auth/auth.service';
+import { calculateJwkThumbprintUri } from '@sphereon/did-auth-siop';
 
 @Injectable()
 export class DbKeysService extends KeysService {
@@ -51,6 +52,8 @@ export class DbKeysService extends KeysService {
     key.user = user;
     key.privateKey = privateKey as unknown as JsonWebKey;
     key.publicKey = publicKey as unknown as JsonWebKey;
+    key.publicKey.alg = createKeyDto.type;
+    key.privateKey.alg = createKeyDto.type;
     const entity = await this.keyRepository.save(key);
     return {
       id: entity.id,
@@ -71,17 +74,26 @@ export class DbKeysService extends KeysService {
     return this.keyRepository
       .findOneOrFail({ where: { id, user } })
       .then(async (key) => {
-        const jwk = await importJWK(key.privateKey, 'ES256');
+        const jwk = await importJWK(
+          key.privateKey,
+          key.privateKey.alg as string
+        );
         const header = JSON.parse(
           this.decodeBase64Url(value.data.split('.')[0])
         ) as JWTHeaderParameters;
+        //add the key to the header
+        header.jwk = key.publicKey;
+
         const payload = JSON.parse(
           this.decodeBase64Url(value.data.split('.')[1])
         ) as JWTPayload;
+        //required by siop
+        payload.sub_jwk = await calculateJwkThumbprintUri(key.publicKey);
+
         const jwt = await new SignJWT(payload)
           .setProtectedHeader(header)
           .sign(jwk);
-        return jwt.split('.')[2];
+        return jwt;
       });
   }
 

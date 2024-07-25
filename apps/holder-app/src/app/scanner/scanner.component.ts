@@ -53,7 +53,20 @@ export class ScannerComponent implements OnInit, OnDestroy {
   /**
    * Init the scanner
    */
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    //check if there is a string already in the clipboard, if so, automaticall start the flow
+    if (this.readFromClipboard && document.hasFocus()) {
+      await navigator.clipboard.readText().then((text) => {
+        if (text.startsWith('openid-credential-offer://')) {
+          this.showRequest(text, 'receive');
+        } else if (text.startsWith('openid://')) {
+          this.showRequest(text, 'send');
+        }
+      });
+      this.loading = false;
+      return;
+    }
+
     this.status = 'scanning';
     this.loading = true;
     // This method will trigger user permissions
@@ -171,9 +184,7 @@ export class ScannerComponent implements OnInit, OnDestroy {
     navigator.clipboard.readText().then(
       (text) => this.onScanSuccess(text),
       () =>
-        alert(
-          'CUnable to read from clipboard, have you granted the permission?'
-        )
+        alert('Unable to read from clipboard, have you granted the permission?')
     );
   }
 

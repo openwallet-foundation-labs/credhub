@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   UseGuards,
@@ -25,13 +26,15 @@ import { ConfigService } from '@nestjs/config';
 import { v4 } from 'uuid';
 import { AuthResponseRequestDto } from './dto/auth-repsonse-request.dto';
 import { DBRPSessionManager } from './session-manager';
+import { KeyService } from '@credhub/relying-party-shared';
 
 @ApiTags('siop')
 @Controller('siop')
 export class SiopController {
   constructor(
     private readonly relyingPartyManagerService: RelyingPartyManagerService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    @Inject('KeyService') private keyService: KeyService
   ) {}
 
   @UseGuards(AuthGuard)
@@ -41,6 +44,7 @@ export class SiopController {
   @Post(':id')
   async createSession(@Param('id') id: string) {
     const instance = await this.relyingPartyManagerService.getOrCreate(id);
+    const jwk = await this.keyService.getPublicKey();
 
     const correlationId = v4();
     const nonce = v4();
@@ -59,6 +63,7 @@ export class SiopController {
       requestByReferenceURI,
       responseURI,
       responseURIType: 'response_uri',
+      jwtIssuer: { method: 'jwk', jwk },
     });
     return {
       uri: request.encodedUri,

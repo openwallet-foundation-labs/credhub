@@ -1,13 +1,10 @@
 {
   "dependencies": {
-    "@sphereon/pex": "^3.3.3",
-    "@sphereon/oid4vci-client": "^0.14.0",
     "pg": "^8.11.5"
   },
   "pnpm": {
     "patchedDependencies": {
-      "@sphereon/pex@3.3.3": "patches/@sphereon__pex@3.3.3.patch",
-      "@sphereon/oid4vci-client@0.14.0": "patches/@sphereon__oid4vci-client@0.14.0.patch"
+      "@sphereon/pex@3.3.3": "patches/@sphereon__pex@3.3.3.patch"
     }
   }
 }

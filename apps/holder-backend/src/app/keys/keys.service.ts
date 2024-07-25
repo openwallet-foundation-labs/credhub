@@ -19,15 +19,6 @@ export abstract class KeysService {
     kbJwt: SdJwtKbJwtInput,
     aud: string
   ): Promise<string>;
-  /**
-   * Encodes a public key as a DID JWK.
-   * @param key
-   */
-  encodeDidJWK(key: JsonWebKey) {
-    return `did:jwk:${Buffer.from(JSON.stringify(key)).toString(
-      'base64url'
-    )}#0`;
-  }
 
   /**
    * Decodes a base64url to a string.
