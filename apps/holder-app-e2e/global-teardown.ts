@@ -1,7 +1,7 @@
 import { GlobalThisConfig } from './global-setup';
 
 export default async function globalTeardown() {
-  if (process.env['NO_CONTAINER']) {
+  if (process.env['NO_CONTAINER'] === 'true') {
     return;
   }
   const config = (globalThis as unknown as GlobalThisConfig).config;

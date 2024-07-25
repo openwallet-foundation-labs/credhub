@@ -16,8 +16,8 @@ export class CredentialOfferSessionEntity implements CredentialOfferSession {
   credentialOffer: AssertedUniformCredentialOffer;
   @Column({ nullable: true, type: 'json' })
   credentialDataSupplierInput?: unknown;
-  @Column({ nullable: true })
-  txCode?: string;
+  @Column({ nullable: true, type: 'json' })
+  txCode?: any;
   @Column({ nullable: true })
   userPin?: string;
   @Column()

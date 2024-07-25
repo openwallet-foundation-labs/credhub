@@ -65,10 +65,10 @@ async function receiveCredential(pin = false) {
   const userPin = response.data.userPin;
   await page.evaluate(`navigator.clipboard.writeText("${uri}")`);
   await page.goto(`${hostname}/scan`);
-  const menu = await page.waitForSelector('#menu');
+  /* const menu = await page.waitForSelector('#menu');
   await menu.click();
   const inserButton = await page.waitForSelector('#insert');
-  await inserButton.click();
+  await inserButton.click(); */
   if (userPin) {
     await page
       .waitForSelector('#pin-field')

@@ -78,6 +78,7 @@ export class DBStates<T extends StateType> implements IStateManager<T> {
     if (!id) {
       throw Error('No id supplied');
     }
+    console.log(JSON.stringify(stateValue, null, 2));
     await this.repository.save(this.repository.create({ ...stateValue, id }));
   }
 

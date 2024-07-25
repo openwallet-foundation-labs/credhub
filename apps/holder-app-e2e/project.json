@@ -5,5 +5,9 @@
   "sourceRoot": "apps/holder-app-e2e/src",
   "implicitDependencies": ["holder-app"],
   "// targets": "to see all targets run: nx show project holder-app-e2e --web",
-  "targets": {}
+  "targets": {
+    "dev": {
+      "command": "cd apps/holder-app-e2e && playwright test --ui"
+    }
+  }
 }
