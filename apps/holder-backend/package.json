@@ -4,7 +4,8 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "@sphereon/pex@3.3.3": "patches/@sphereon__pex@3.3.3.patch"
+      "@sphereon/pex@3.3.3": "patches/@sphereon__pex@3.3.3.patch",
+      "@sphereon/oid4vci-client@0.15.1": "patches/@sphereon__oid4vci-client@0.15.1.patch"
     }
   }
 }
