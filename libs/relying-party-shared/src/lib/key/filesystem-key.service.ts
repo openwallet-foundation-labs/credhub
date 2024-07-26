@@ -67,6 +67,7 @@ export class FileSystemKeyService implements KeyService {
       //add a random key id for reference
       publicKey.kid = v4();
       privateKey.kid = publicKey.kid;
+      publicKey.alg = this.crypto.alg;
       writeFileSync(`${folder}/private.json`, JSON.stringify(privateKey));
       writeFileSync(`${folder}/public.json`, JSON.stringify(publicKey));
     } else {

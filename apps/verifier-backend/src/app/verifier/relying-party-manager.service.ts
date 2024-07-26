@@ -1,8 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { digest } from '@sd-jwt/crypto-nodejs';
 import {
+  CreateJwtCallback,
   JWK,
   JWTPayload,
+  JwtHeader,
+  JwtIssuerWithContext,
+  JwtPayload,
+  JwtVerifier,
   PassBy,
   PresentationVerificationCallback,
   PresentationVerificationResult,
@@ -15,29 +20,25 @@ import {
   SigningAlgo,
   SubjectType,
   SupportedVersion,
+  VerifyJwtCallback,
 } from '@sphereon/did-auth-siop';
 import { RPInstance } from './types';
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { KbVerifier, Verifier } from '@sd-jwt/types';
 import { PresentationSubmission } from '@sphereon/pex-models';
 import { W3CVerifiablePresentation, CompactJWT } from '@sphereon/ssi-types';
-import { importJWK, jwtVerify } from 'jose';
+import { importJWK, jwtVerify, KeyLike } from 'jose';
 import { DBRPSessionManager } from './session-manager';
 import { EventEmitter } from 'node:events';
 import { ConfigService } from '@nestjs/config';
-import {
-  encodeDidJWK,
-  JWkResolver,
-  KeyService,
-  CryptoService,
-} from '@credhub/relying-party-shared';
+import { KeyService, CryptoService } from '@credhub/relying-party-shared';
 import { ResolverService } from '../resolver/resolver.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { TemplatesService } from '../templates/templates.service';
 import { Template } from '../templates/dto/template.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { AuthStateEntity } from './entity/auth-state.entity';
 
 @Injectable()
@@ -49,20 +50,15 @@ export class RelyingPartyManagerService {
   private sessionManager: DBRPSessionManager;
 
   constructor(
-    @Inject('KeyService') private keyService: KeyService,
     private resolverService: ResolverService,
     private configService: ConfigService,
     private httpSerivce: HttpService,
     private cryptoService: CryptoService,
     private templateService: TemplatesService,
     @InjectRepository(AuthStateEntity)
-    authStateRepository: Repository<AuthStateEntity>
+    authStateRepository: Repository<AuthStateEntity>,
+    @Inject('KeyService') private keyService: KeyService
   ) {
-    this.eventEmitter.eventNames().forEach((event) => {
-      this.eventEmitter.on(event, (...args) => {
-        console.log('Event:', event, args);
-      });
-    });
     this.sessionManager = new DBRPSessionManager(
       authStateRepository,
       this.eventEmitter,
@@ -118,12 +114,57 @@ export class RelyingPartyManagerService {
     if (!verifier) {
       throw new Error(`The verifier with the id ${id} is not supported.`);
     }
-    const did = encodeDidJWK(await this.keyService.getPublicKey());
+
+    /**
+     * Signs the jwt
+     * @param jwtIssuer
+     * @param jwt
+     * @returns
+     */
+    const createJwtCallback: CreateJwtCallback = async (
+      jwtIssuer: JwtIssuerWithContext,
+      jwt: { header: JwtHeader; payload: JwtPayload }
+    ) => {
+      jwt.header.alg = jwt.header.alg as string;
+      //Right now we are only supporting the jwk method to make it easier.
+      if (jwtIssuer.method === 'jwk') {
+        return this.keyService.signJWT(jwt.payload, jwt.header);
+      }
+      throw new Error(`Unsupported JWT issuer method ${jwtIssuer.method}`);
+    };
+
+    const verifyJwtCallback: VerifyJwtCallback = async (
+      jwtVerifier: JwtVerifier,
+      jwt: { header: JwtHeader; payload: JwtPayload; raw: string }
+    ) => {
+      let key: KeyLike;
+      if (jwtVerifier.method === 'jwk') {
+        // verify jwk certificate protected jwt's
+        key = (await importJWK(
+          jwtVerifier.jwk as JWK,
+          jwtVerifier.jwk.alg
+        )) as KeyLike;
+      } else {
+        // Only called if based on the jwt the verification method could not be determined
+        throw new Error(
+          `Unsupported JWT verifier method ${jwtVerifier.method}`
+        );
+      }
+      return jwtVerify(jwt.raw, key).then(
+        () => true,
+        (err) => {
+          console.log(err);
+          return false;
+        }
+      );
+    };
 
     const rp = RP.builder()
       .withClientId(verifier.metadata.clientId)
       .withIssuer(ResponseIss.SELF_ISSUED_V2)
       .withSupportedVersions([SupportedVersion.SIOPv2_D12_OID4VP_D18])
+      .withCreateJwtCallback(createJwtCallback)
+      .withVerifyJwtCallback(verifyJwtCallback)
       // TODO: we should probably allow some dynamic values here
       .withClientMetadata({
         client_id: verifier.metadata.clientId,
@@ -138,24 +179,16 @@ export class RelyingPartyManagerService {
         },
         scopesSupported: [Scope.OPENID_DIDAUTHN, Scope.OPENID],
         subjectTypesSupported: [SubjectType.PAIRWISE],
-        subject_syntax_types_supported: ['did:jwk'],
+        //subject_syntax_types_supported: [],
         passBy: PassBy.VALUE,
         logo_uri: verifier.metadata.logo_uri,
         clientName: verifier.metadata.clientName,
       })
       //right now we are only supporting the jwk method to make it easier.
-      .addResolver('jwk', new JWkResolver())
       .withResponseMode(ResponseMode.DIRECT_POST)
       .withResponseType([ResponseType.ID_TOKEN, ResponseType.VP_TOKEN])
       .withScope('openid')
       .withHasher(digest)
-      //TODO: right now the verifier sdk only supports did usage
-      .withSuppliedSignature(
-        this.keyService.signer as unknown as (data: string) => Promise<string>,
-        did,
-        did,
-        SigningAlgo.ES256
-      )
       .withSessionManager(this.sessionManager)
       .withEventEmitter(this.eventEmitter)
       .withPresentationDefinition({
@@ -217,7 +250,10 @@ export class RelyingPartyManagerService {
           //get the verifier based on the algorithm
           const crypto = this.cryptoService.getCrypto(header.alg as string);
           const verify = await crypto.getVerifier(publicKey);
-          return verify(data, signature);
+          return verify(data, signature).catch((err) => {
+            console.log(err);
+            return false;
+          });
         };
 
         /**

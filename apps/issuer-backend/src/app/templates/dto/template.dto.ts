@@ -9,13 +9,11 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import {
-  CredentialConfigurationSupportedV1_0_13 as ICredentialConfigurationSupportedV1_0_13,
-  CredentialDefinitionV1_0_13 as ICredentialDefinitionV1_0_13,
+  CredentialConfigurationSupportedSdJwtVcV1_0_13,
   CredentialsSupportedDisplay as ICredentialSupportDisplay,
   ImageInfo as IImageInfo,
   IssuerCredentialSubject,
   KeyProofType,
-  OID4VCICredentialFormat,
   ProofType,
 } from '@sphereon/oid4vci-common';
 import { DisclosureFrame } from '@sd-jwt/types';
@@ -49,24 +47,10 @@ class CredentialsSupportedDisplay implements ICredentialSupportDisplay {
   text_color?: string;
 }
 
-class CredentialDefinitionV1_0_13 implements ICredentialDefinitionV1_0_13 {
-  @IsString()
-  @IsOptional()
-  @IsArray()
-  type?: string[];
-
-  @IsOptional()
-  credentialSubject?: IssuerCredentialSubject;
-}
-
 export class CredentialConfigurationSupportedV1_0_13
-  implements ICredentialConfigurationSupportedV1_0_13
+  implements CredentialConfigurationSupportedSdJwtVcV1_0_13
 {
   [x: string]: unknown;
-
-  @ValidateNested()
-  @Type(() => CredentialDefinitionV1_0_13)
-  credential_definition: CredentialDefinitionV1_0_13;
 
   @IsOptional()
   vct: string;
@@ -79,7 +63,7 @@ export class CredentialConfigurationSupportedV1_0_13
   claims?: IssuerCredentialSubject;
 
   @IsNotEmpty()
-  format: OID4VCICredentialFormat;
+  format: 'vc+sd-jwt';
 
   @IsOptional()
   @IsString()

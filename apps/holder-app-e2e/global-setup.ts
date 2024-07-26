@@ -5,7 +5,6 @@ import {
   IssuerBackend,
   VerifierBackend,
 } from '@credhub/testing';
-import { appendFileSync } from 'fs';
 
 export interface GlobalConfig {
   holderFrontendPort: number;
@@ -27,13 +26,14 @@ export interface GlobalThisConfig {
 }
 
 export default async function globalSetup() {
-  if (process.env['NO_CONTAINER']) {
+  if (process.env['NO_CONTAINER'] === 'true') {
     process.env[CONFIG_KEY] = JSON.stringify({
       holderFrontendPort: 4200,
       keycloakPort: 8080,
       verifierPort: 3002,
       issuerPort: 3001,
     } as GlobalConfig);
+    return;
   }
 
   const keycloak = await Keycloak.init();

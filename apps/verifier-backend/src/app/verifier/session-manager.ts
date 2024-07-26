@@ -196,8 +196,6 @@ export class DBRPSessionManager implements IRPSessionManager {
   private async onAuthorizationResponseReceivedSuccess(
     event: AuthorizationEvent<AuthorizationResponse>
   ): Promise<void> {
-    console.log('save response');
-    console.log(event.subject.payload);
     const element = this.authStateRepository.create({
       correlationId: event.correlationId,
       status: AuthorizationResponseStateStatus.RECEIVED,

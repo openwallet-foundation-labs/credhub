@@ -1,0 +1,18 @@
+diff --git a/dist/VcIssuer.js b/dist/VcIssuer.js
+index dcc8414b751e89c26c40f55349706ccdc8b41bd4..f27899097e5d78f5dd52de6f65abbc04b2b63373 100644
+--- a/dist/VcIssuer.js
++++ b/dist/VcIssuer.js
+@@ -123,11 +123,11 @@ class VcIssuer {
+                 resolve: false, // We are creating the object, so do not resolve
+             });
+             const status = oid4vci_common_1.IssueStatus.OFFER_CREATED;
+-            const session = Object.assign(Object.assign(Object.assign(Object.assign({ preAuthorizedCode,
++            const session = Object.assign(Object.assign(Object.assign({ preAuthorizedCode,
+                 issuerState,
+                 createdAt,
+                 lastUpdatedAt,
+-                status, notification_id: (0, uuid_1.v4)() }, (userPin && { txCode: userPin })), (txCode && { txCode })), (opts.credentialDataSupplierInput && { credentialDataSupplierInput: opts.credentialDataSupplierInput })), { credentialOffer });
++                status, notification_id: (0, uuid_1.v4)() }, (userPin && { txCode: userPin })), (opts.credentialDataSupplierInput && { credentialDataSupplierInput: opts.credentialDataSupplierInput })), { credentialOffer });
+             if (preAuthorizedCode) {
+                 yield this.credentialOfferSessions.set(preAuthorizedCode, session);
+             }

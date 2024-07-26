@@ -2,15 +2,13 @@
   "dependencies": {
     "sqlite3": "^5.1.7",
     "pg": "^8.11.5",
-    "@sphereon/pex": "^3.3.3",
     "@sphereon/ssi-express-support": "0.26.0",
-    "@sphereon/oid4vci-issuer": "^0.14.0"
+    "@sphereon/oid4vci-issuer": "^0.15.1"
   },
   "pnpm": {
     "patchedDependencies": {
-      "@sphereon/pex@3.3.3": "patches/@sphereon__pex@3.3.3.patch",
       "@sphereon/ssi-express-support@0.26.0": "patches/@sphereon__ssi-express-support@0.26.0.patch",
-      "@sphereon/oid4vci-issuer@0.14.0": "patches/@sphereon__oid4vci-issuer@0.14.0.patch"
+      "@sphereon/oid4vci-issuer@0.15.1": "patches/@sphereon__oid4vci-issuer@0.15.1.patch"
     }
   }
 }

@@ -1,16 +1,4 @@
 import { DIDResolutionResult, Resolvable } from 'did-resolver';
-import { type JWK } from 'jose';
-
-/**
- * Encodes a public key as a DID JWK.
- * @param key
- * @returns
- */
-export function encodeDidJWK(key: JWK) {
-  key.key_ops = undefined;
-  key.ext = undefined;
-  return `did:jwk:${Buffer.from(JSON.stringify(key)).toString('base64url')}`;
-}
 
 /**
  * Resolve a did document for a did:jwk

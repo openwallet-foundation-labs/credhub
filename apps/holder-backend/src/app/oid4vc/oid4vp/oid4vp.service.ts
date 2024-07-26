@@ -7,13 +7,17 @@ import {
   PresentationExchange,
   type PresentationSignCallback,
   ResponseIss,
-  SigningAlgo,
   SupportedVersion,
   VPTokenLocation,
   type VerifiedAuthorizationRequest,
   RPRegistrationMetadataPayload,
+  JwtHeader,
+  JwtIssuerWithContext,
+  JwtPayload,
+  JwtVerifier,
+  CreateJwtCallback,
+  VerifyJwtCallback,
 } from '@sphereon/did-auth-siop';
-import { SdJwtDecodedVerifiableCredentialWithKbJwtInput } from '@sphereon/pex';
 import { v4 as uuid } from 'uuid';
 import { Oid4vpParseRepsonse } from './dto/parse-response.dto';
 import { Oid4vpParseRequest } from './dto/parse-request.dto';
@@ -21,10 +25,10 @@ import { CompactSdJwtVc } from '@sphereon/ssi-types';
 import { CredentialsService } from '../../credentials/credentials.service';
 import { HistoryService } from '../../history/history.service';
 import { KeysService } from '../../keys/keys.service';
-import { JWkResolver } from '@credhub/relying-party-shared';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { VPSessionEntity } from './entities/vp-session.entity';
+import { jwtVerify, importJWK, JWK, KeyLike } from 'jose';
 
 @Injectable()
 export class Oid4vpService {
@@ -156,9 +160,7 @@ export class Oid4vpService {
      * @returns
      */
     const presentationSignCallback: PresentationSignCallback = async (args) => {
-      const kbJwt = (
-        args.presentation as SdJwtDecodedVerifiableCredentialWithKbJwtInput
-      ).kbJwt;
+      const kbJwt = args.presentation.kbJwt;
       args.selectedCredentials[0];
       const aud = verifiedAuthReqWithJWT.authorizationRequest.payload.client_id;
       const cnf = args.presentation.decodedPayload.cnf;
@@ -235,23 +237,67 @@ export class Oid4vpService {
 
   private async getOp(user: string) {
     const key = await this.keysService.firstOrCreate(user);
-    const did = this.keysService.encodeDidJWK(key.publicKey);
-    const kid = key.id;
-    const alg = SigningAlgo.ES256;
 
-    const withSuppliedSignature = async (data: string | Uint8Array) => {
-      const signature = await this.keysService.sign(kid, user, {
-        data: data as string,
+    const createJwtCallback: CreateJwtCallback = async (
+      jwtIssuer: JwtIssuerWithContext,
+      jwt: { header: JwtHeader; payload: JwtPayload }
+    ) => {
+      console.log(jwtIssuer);
+      jwt.header.alg = key.publicKey.alg;
+      jwt.header.kid = key.id;
+      jwt.header.typ = 'JWT';
+
+      //encode the header and payload to be signed by the key
+      const header = Buffer.from(JSON.stringify(jwt.header)).toString(
+        'base64url'
+      );
+      const payload = Buffer.from(JSON.stringify(jwt.payload)).toString(
+        'base64url'
+      );
+      const data = `${header}.${payload}`;
+      return this.keysService.sign(key.id, user, {
+        data,
       });
-      return signature;
+    };
+
+    const presentationSignCallback: PresentationSignCallback = async (args) => {
+      console.log(args);
+      throw Error('Not implemented');
+    };
+
+    const verifyJwtCallback: VerifyJwtCallback = async (
+      jwtVerifier: JwtVerifier,
+      jwt: { header: JwtHeader; payload: JwtPayload; raw: string }
+    ) => {
+      let key: KeyLike;
+      if (jwtVerifier.method === 'jwk') {
+        // verify jwk certificate protected jwt's
+        key = (await importJWK(
+          jwtVerifier.jwk as JWK,
+          jwtVerifier.jwk.alg
+        )) as KeyLike;
+      } else {
+        // Only called if based on the jwt the verification method could not be determined
+        throw new Error(
+          `Unsupported JWT verifier method ${jwtVerifier.method}`
+        );
+      }
+      return jwtVerify(jwt.raw, key).then(
+        () => true,
+        (err) => {
+          console.log(err);
+          return false;
+        }
+      );
     };
 
     return OP.builder()
       .withExpiresIn(1000)
       .withHasher(digest)
+      .withCreateJwtCallback(createJwtCallback)
+      .withPresentationSignCallback(presentationSignCallback)
+      .withVerifyJwtCallback(verifyJwtCallback)
       .withIssuer(ResponseIss.SELF_ISSUED_V2)
-      .addResolver('jwk', new JWkResolver())
-      .withSuppliedSignature(withSuppliedSignature, did, kid, alg)
       .withSupportedVersions(SupportedVersion.SIOPv2_D12_OID4VP_D18)
       .build();
   }

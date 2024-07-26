@@ -1,6 +1,7 @@
 import { OnModuleInit } from '@nestjs/common';
 import { Signer } from '@sd-jwt/types';
-import { JWK, JWTHeaderParameters, JWTPayload } from 'jose';
+import { JWK } from 'jose';
+import { JwtHeader, JwtPayload } from '@sphereon/did-auth-siop';
 
 /**
  * Generic interface for a key service
@@ -35,8 +36,5 @@ export abstract class KeyService implements OnModuleInit {
    */
   // abstract sign(value: string): Promise<string>;
 
-  abstract signJWT(
-    payload: JWTPayload,
-    header: JWTHeaderParameters
-  ): Promise<string>;
+  abstract signJWT(payload: JwtPayload, header: JwtHeader): Promise<string>;
 }

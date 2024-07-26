@@ -15,7 +15,7 @@ COPY pnpm-lock.yaml ./
 COPY patches ./patches
 
 # Install pnpm and dependencies
-RUN npm install -g pnpm@8.15.8 && \
+RUN npm install -g pnpm@9.5.0 && \
     pnpm install --prod
 
 # Stage 2: Prepare the runtime image
