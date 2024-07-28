@@ -7,12 +7,12 @@
       "label": "Start issuer, holder, verifier",
       "dependsOrder": "parallel",
       "dependsOn": [
-        "serve issuer backend",
-        "serve holder backend",
-        "serve verifier backend",
         "serve issuer frontend",
+        "serve issuer backend",
         "serve holder app",
-        "serve verifier frontend"
+        "serve holder backend",
+        "serve verifier frontend",
+        "serve verifier backend"
       ]
     },
     {
