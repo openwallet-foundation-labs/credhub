@@ -16,6 +16,7 @@ import { CredentialResponse } from './dto/credential-response.dto';
 import { OnEvent } from '@nestjs/event-emitter';
 import { USER_DELETED_EVENT, UserDeletedEvent } from '../auth/auth.service';
 import { Interval } from '@nestjs/schedule';
+import { createHash } from 'crypto';
 
 type DateKey = 'exp' | 'nbf';
 @Injectable()
@@ -41,18 +42,26 @@ export class CredentialsService {
   }
 
   async create(createCredentialDto: CreateCredentialDto, user: string) {
-    const credential = new Credential();
-    credential.id = createCredentialDto.id;
-    credential.user = user;
-    credential.value = createCredentialDto.value;
-    credential.metaData = createCredentialDto.metaData;
-    credential.issuer = createCredentialDto.issuer;
-    credential.nbf = await this.getDate(createCredentialDto.value, 'nbf');
-    credential.exp = await this.getDate(createCredentialDto.value, 'exp');
+    const credential = this.credentialRepository.create({
+      ...createCredentialDto,
+      user,
+      id: this.getCredentialId(createCredentialDto),
+      nbf: await this.getDate(createCredentialDto.value, 'nbf'),
+      exp: await this.getDate(createCredentialDto.value, 'exp'),
+    });
     await this.credentialRepository.save(credential);
     return {
       id: credential.id,
     };
+  }
+
+  /**
+   * Create the id of the credential based on the hash of the value.
+   * @param createCredentialDto
+   * @returns
+   */
+  private getCredentialId(createCredentialDto: CreateCredentialDto): string {
+    return createHash('sha256').update(createCredentialDto.value).digest('hex');
   }
 
   /**

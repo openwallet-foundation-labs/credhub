@@ -159,7 +159,7 @@ importers:
         version: 1.10.0(@nestjs/common@10.3.10(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.1.14)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.1))(keycloak-connect@24.0.5)
       ng-flex-layout:
         specifier: ^18.1.1-beta.1
-        version: 18.1.1-beta.1(@angular/cdk@18.1.1(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(@angular/platform-browser@18.1.1(@angular/animations@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8)))(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8)))(rxjs@7.8.1)
+        version: 18.1.1-beta.2(@angular/cdk@18.1.1(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(@angular/platform-browser@18.1.1(@angular/animations@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8)))(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8)))(rxjs@7.8.1)
       pg:
         specifier: ^8.11.5
         version: 8.12.0
@@ -4208,8 +4208,8 @@ packages:
   casbin@5.30.0:
     resolution: {integrity: sha512-GDc8sImStd+ddBVBfLpe5fJPBWRjeEaz7fkiAGuw0+LTHF2TVvVsMALIMOx+ofzQhm+EHCH7mfiJsrS1Kgef2w==}
 
-  chai@4.4.1:
-    resolution: {integrity: sha512-13sOfMv2+DWduEU+/xbun3LScLoqN17nBeTLUsmDfKdoiC1fr0n9PU4guu4AhRcOVFk/sW8LyZWHuhWtQZiF+g==}
+  chai@4.5.0:
+    resolution: {integrity: sha512-RITGBfijLkBddZvnn8jdqoTypxvqbOLYQkGGxXzeFjVHvudaPw0HNFD9x928/eUwYWd2dPCugVqspGALTZZQKw==}
     engines: {node: '>=4'}
 
   chalk@2.4.2:
@@ -4953,8 +4953,8 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
-  electron-to-chromium@1.5.1:
-    resolution: {integrity: sha512-FKbOCOQ5QRB3VlIbl1LZQefWIYwszlBloaXcY2rbfpu9ioJnNh3TK03YtIDKDo3WKBi8u+YV4+Fn2CkEozgf4w==}
+  electron-to-chromium@1.5.2:
+    resolution: {integrity: sha512-kc4r3U3V3WLaaZqThjYz/Y6z8tJe+7K0bbjUVo3i+LWIypVdMx5nXCkwRe6SWbY6ILqLdc1rKcKmr3HoH7wjSQ==}
 
   elliptic@6.5.6:
     resolution: {integrity: sha512-mpzdtpeCLuS3BmE3pO3Cpp5bbjlOPY2Q0PgoF+Od1XZrHLYI28Xe3ossCmYCQt11FQKEYd9+PF8jymTvtWJSHQ==}
@@ -6438,8 +6438,8 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
-  libphonenumber-js@1.11.4:
-    resolution: {integrity: sha512-F/R50HQuWWYcmU/esP5jrH5LiWYaN7DpN0a/99U8+mnGGtnx8kmRE+649dQh3v+CowXXZc8vpkf5AmYkO0AQ7Q==}
+  libphonenumber-js@1.11.5:
+    resolution: {integrity: sha512-TwHR5BZxGRODtAfz03szucAkjT5OArXr+94SMtAM2pYXIlQNVMrxvb6uSCbnaJJV6QXEyICk7+l6QPgn72WHhg==}
 
   license-webpack-plugin@4.0.2:
     resolution: {integrity: sha512-771TFWFD70G1wLTC4oU2Cw4qvtmNrIw+wRvBtn+okgHl7slJVi7zfNcdmqDL72BojM30VNJ2UHylr1o77U37Jw==}
@@ -6869,8 +6869,8 @@ packages:
     resolution: {integrity: sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==}
     engines: {node: '>= 0.4.0'}
 
-  ng-flex-layout@18.1.1-beta.1:
-    resolution: {integrity: sha512-XfYsCZebK3f6oZ1YRdz9FOp2cwK0RAOKHBdbvfbCkDLuPan5Heyj6h49O5jvPrhCwJOrCdfHBmLZNd0XBqqbFg==}
+  ng-flex-layout@18.1.1-beta.2:
+    resolution: {integrity: sha512-yGYVDPxszS3cJq0Fch+Az+ETFklv3RhxMxW+SUtzzXCN8JUj2qfg1yT8u6tP3y92JlWiyIXYoTgKJeDGpURljg==}
     peerDependencies:
       '@angular/cdk': '>=18.0.0'
       '@angular/common': '>=18.0.0'
@@ -8704,6 +8704,10 @@ packages:
 
   type-detect@4.0.8:
     resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==}
+    engines: {node: '>=4'}
+
+  type-detect@4.1.0:
+    resolution: {integrity: sha512-Acylog8/luQ8L7il+geoSxhEkazvkslg7PSNKOX59mbB9cOveP5aq9h74Y7YU8yDpJwetzQQrfIwtf4Wp4LKcw==}
     engines: {node: '>=4'}
 
   type-fest@0.20.2:
@@ -14709,7 +14713,7 @@ snapshots:
     dependencies:
       '@vitest/spy': 1.6.0
       '@vitest/utils': 1.6.0
-      chai: 4.4.1
+      chai: 4.5.0
 
   '@vitest/runner@1.6.0':
     dependencies:
@@ -15406,7 +15410,7 @@ snapshots:
   browserslist@4.23.2:
     dependencies:
       caniuse-lite: 1.0.30001643
-      electron-to-chromium: 1.5.1
+      electron-to-chromium: 1.5.2
       node-releases: 2.0.18
       update-browserslist-db: 1.1.0(browserslist@4.23.2)
 
@@ -15528,7 +15532,7 @@ snapshots:
       expression-eval: 5.0.1
       minimatch: 7.4.6
 
-  chai@4.4.1:
+  chai@4.5.0:
     dependencies:
       assertion-error: 1.1.0
       check-error: 1.0.3
@@ -15536,7 +15540,7 @@ snapshots:
       get-func-name: 2.0.2
       loupe: 2.3.7
       pathval: 1.1.1
-      type-detect: 4.0.8
+      type-detect: 4.1.0
 
   chalk@2.4.2:
     dependencies:
@@ -15607,7 +15611,7 @@ snapshots:
   class-validator@0.14.1:
     dependencies:
       '@types/validator': 13.12.0
-      libphonenumber-js: 1.11.4
+      libphonenumber-js: 1.11.5
       validator: 13.12.0
 
   clean-stack@2.2.0: {}
@@ -16123,7 +16127,7 @@ snapshots:
 
   deep-eql@4.1.4:
     dependencies:
-      type-detect: 4.0.8
+      type-detect: 4.1.0
 
   deep-equal@1.0.1: {}
 
@@ -16292,7 +16296,7 @@ snapshots:
     dependencies:
       jake: 10.9.2
 
-  electron-to-chromium@1.5.1: {}
+  electron-to-chromium@1.5.2: {}
 
   elliptic@6.5.6:
     dependencies:
@@ -18279,7 +18283,7 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
-  libphonenumber-js@1.11.4: {}
+  libphonenumber-js@1.11.5: {}
 
   license-webpack-plugin@4.0.2(webpack@5.92.1(@swc/core@1.5.7(@swc/helpers@0.5.11))(esbuild@0.21.5)(webpack-cli@5.1.4(webpack-dev-server@5.0.4)(webpack@5.93.0))):
     dependencies:
@@ -18736,7 +18740,7 @@ snapshots:
   netmask@2.0.2:
     optional: true
 
-  ng-flex-layout@18.1.1-beta.1(@angular/cdk@18.1.1(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(@angular/platform-browser@18.1.1(@angular/animations@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8)))(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8)))(rxjs@7.8.1):
+  ng-flex-layout@18.1.1-beta.2(@angular/cdk@18.1.1(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(@angular/platform-browser@18.1.1(@angular/animations@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8)))(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8)))(rxjs@7.8.1):
     dependencies:
       '@angular/cdk': 18.1.1(@angular/common@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1))(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1)
       '@angular/common': 18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.8))(rxjs@7.8.1)
@@ -20843,6 +20847,8 @@ snapshots:
 
   type-detect@4.0.8: {}
 
+  type-detect@4.1.0: {}
+
   type-fest@0.20.2: {}
 
   type-fest@0.21.3: {}
@@ -21094,7 +21100,7 @@ snapshots:
       '@vitest/spy': 1.6.0
       '@vitest/utils': 1.6.0
       acorn-walk: 8.3.3
-      chai: 4.4.1
+      chai: 4.5.0
       debug: 4.3.5
       execa: 8.0.1
       local-pkg: 0.5.0
