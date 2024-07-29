@@ -71,10 +71,10 @@ export class SessionsListComponent implements OnInit, OnDestroy {
       : this.dataSource.data.forEach((row) => this.selection.select(row));
   }
 
-  deleteSelected() {
+  async deleteSelected() {
     if (!confirm('Are you sure you want to delete these sessions?')) return;
     for (const session of this.selection.selected) {
-      firstValueFrom(
+      await firstValueFrom(
         this.templatesApiService.siopControllerDeleteAuthRequest(
           this.id,
           session.correlationId

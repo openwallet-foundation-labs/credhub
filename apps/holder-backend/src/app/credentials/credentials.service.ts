@@ -45,7 +45,7 @@ export class CredentialsService {
     const credential = this.credentialRepository.create({
       ...createCredentialDto,
       user,
-      id: this.getCredentialId(createCredentialDto),
+      id: this.getCredentialId(createCredentialDto.value),
       nbf: await this.getDate(createCredentialDto.value, 'nbf'),
       exp: await this.getDate(createCredentialDto.value, 'exp'),
     });
@@ -57,11 +57,12 @@ export class CredentialsService {
 
   /**
    * Create the id of the credential based on the hash of the value.
-   * @param createCredentialDto
+   * @param value
    * @returns
    */
-  private getCredentialId(createCredentialDto: CreateCredentialDto): string {
-    return createHash('sha256').update(createCredentialDto.value).digest('hex');
+  getCredentialId(value: string): string {
+    //just use the first part since not all credentials have the disclosed values.
+    return createHash('sha256').update(value.split('~')[0]).digest('hex');
   }
 
   /**

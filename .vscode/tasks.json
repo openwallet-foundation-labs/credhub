@@ -7,43 +7,45 @@
       "label": "Start issuer, holder, verifier",
       "dependsOrder": "parallel",
       "dependsOn": [
-        "serve issuer frontend",
-        "serve issuer backend",
-        "serve holder app",
-        "serve holder backend",
-        "serve verifier frontend",
-        "serve verifier backend"
+        "nx run issuer-frontend:serve",
+        "nx run issuer-backend:serve",
+        "nx run holder-app:serve",
+        "nx run holder-backend:serve",
+        "nx run verifier-frontend:serve",
+        "nx run verifier-backend:serve"
       ]
     },
+
     {
-      "label": "serve issuer backend",
+      "label": "nx run issuer-frontend:serve",
       "type": "shell",
-      "command": "pnpm exec nx run issuer-backend:serve "
+      "command": "pnpm exec nx run issuer-frontend:serve"
     },
     {
-      "label": "serve holder backend",
+      "label": "nx run issuer-backend:serve",
       "type": "shell",
-      "command": "pnpm exec nx run holder-backend:serve "
+      "command": "pnpm exec nx run issuer-backend:serve"
     },
     {
-      "label": "serve verifier backend",
+      "label": "nx run holder-app:serve",
       "type": "shell",
-      "command": "pnpm exec nx run verifier-backend:serve "
+      "command": "pnpm exec nx run holder-app:serve"
     },
     {
-      "label": "serve issuer frontend",
+      "label": "nx run holder-backend:serve",
       "type": "shell",
-      "command": "pnpm exec nx run issuer-frontend:serve "
+      "command": "pnpm exec nx run holder-backend:serve"
+    },
+
+    {
+      "label": "nx run verifier-frontend:serve",
+      "type": "shell",
+      "command": "pnpm exec nx run verifier-frontend:serve"
     },
     {
-      "label": "serve holder app",
+      "label": "nx run verifier-backend:serve",
       "type": "shell",
-      "command": "pnpm exec nx run holder-app:serve "
-    },
-    {
-      "label": "serve verifier frontend",
-      "type": "shell",
-      "command": "pnpm exec nx run verifier-frontend:serve "
+      "command": "pnpm exec nx run verifier-backend:serve"
     }
   ]
 }

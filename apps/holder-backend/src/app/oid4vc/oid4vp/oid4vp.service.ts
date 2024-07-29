@@ -29,6 +29,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { VPSessionEntity } from './entities/vp-session.entity';
 import { jwtVerify, importJWK, JWK, KeyLike } from 'jose';
+import { SelectResults } from '@sphereon/pex/dist/main/lib';
 
 @Injectable()
 export class Oid4vpService {
@@ -99,8 +100,11 @@ export class Oid4vpService {
     // select the credentials for the presentation
     const result = await pex
       .selectVerifiableCredentialsForSubmission(pds[0].definition)
-      .catch((err) => {
+      .catch((err: SelectResults) => {
         console.log(err);
+        if (err.errors.length > 0) {
+          throw new ConflictException(err.errors);
+        }
         //instead of throwing an error, we return an empty array. This allows the user to show who sent the request for what.
         return { verifiableCredential: [] };
       });
@@ -109,10 +113,11 @@ export class Oid4vpService {
     const creds = [];
     for (const matchedCredential of result.verifiableCredential) {
       const sdjwtvc = await this.sdjwt.decode(matchedCredential as string);
+      const id = this.credentialsService.getCredentialId(matchedCredential);
       creds.push({
         vct: sdjwtvc.jwt.payload.vct,
         iss: sdjwtvc.jwt.payload.iss,
-        jti: sdjwtvc.jwt.payload.jti,
+        jti: id,
       });
     }
     const requests = pds[0].definition.input_descriptors.map(
@@ -242,7 +247,6 @@ export class Oid4vpService {
       jwtIssuer: JwtIssuerWithContext,
       jwt: { header: JwtHeader; payload: JwtPayload }
     ) => {
-      console.log(jwtIssuer);
       jwt.header.alg = key.publicKey.alg;
       jwt.header.kid = key.id;
       jwt.header.typ = 'JWT';
@@ -261,7 +265,6 @@ export class Oid4vpService {
     };
 
     const presentationSignCallback: PresentationSignCallback = async (args) => {
-      console.log(args);
       throw Error('Not implemented');
     };
 

@@ -24,8 +24,6 @@ import { CredentialOfferSession } from '../model/credentialOfferSession';
 import { SessionRequestDto } from '../model/sessionRequestDto';
 // @ts-ignore
 import { SessionResponseDto } from '../model/sessionResponseDto';
-// @ts-ignore
-import { SessionStatus } from '../model/sessionStatus';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -175,9 +173,9 @@ export class SessionsApiService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public issuerControllerGetSession(id: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SessionStatus>;
-    public issuerControllerGetSession(id: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SessionStatus>>;
-    public issuerControllerGetSession(id: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SessionStatus>>;
+    public issuerControllerGetSession(id: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CredentialOfferSession>;
+    public issuerControllerGetSession(id: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CredentialOfferSession>>;
+    public issuerControllerGetSession(id: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CredentialOfferSession>>;
     public issuerControllerGetSession(id: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling issuerControllerGetSession.');
@@ -227,7 +225,7 @@ export class SessionsApiService {
         }
 
         let localVarPath = `/sessions/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
-        return this.httpClient.request<SessionStatus>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<CredentialOfferSession>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
