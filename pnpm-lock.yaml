@@ -9,7 +9,7 @@ patchedDependencies:
     hash: jcl3jmtoszymqads6sgwzs2vqq
     path: patches/@sphereon__oid4vci-client@0.15.1.patch
   '@sphereon/oid4vci-issuer@0.15.1':
-    hash: 6zsh6jndwek5pgbrdztjynnymm
+    hash: e7slyjxcn4x4fbqs73al22rhqu
     path: patches/@sphereon__oid4vci-issuer@0.15.1.patch
   '@sphereon/pex@3.3.3':
     hash: rdno5nsap5xqbasvvgivbwatmq
@@ -111,7 +111,7 @@ importers:
         version: 0.15.1(encoding@0.1.13)
       '@sphereon/oid4vci-issuer':
         specifier: ^0.15.1
-        version: 0.15.1(patch_hash=6zsh6jndwek5pgbrdztjynnymm)(encoding@0.1.13)
+        version: 0.15.1(patch_hash=e7slyjxcn4x4fbqs73al22rhqu)(encoding@0.1.13)
       '@sphereon/oid4vci-issuer-server':
         specifier: ^0.15.1
         version: 0.15.1(encoding@0.1.13)
@@ -14229,7 +14229,7 @@ snapshots:
   '@sphereon/oid4vci-issuer-server@0.15.1(encoding@0.1.13)':
     dependencies:
       '@sphereon/oid4vci-common': 0.15.1(encoding@0.1.13)
-      '@sphereon/oid4vci-issuer': 0.15.1(patch_hash=6zsh6jndwek5pgbrdztjynnymm)(encoding@0.1.13)
+      '@sphereon/oid4vci-issuer': 0.15.1(patch_hash=e7slyjxcn4x4fbqs73al22rhqu)(encoding@0.1.13)
       '@sphereon/ssi-express-support': 0.28.0
       '@sphereon/ssi-types': 0.28.0
       body-parser: 1.20.2
@@ -14247,7 +14247,7 @@ snapshots:
       - passport-http-bearer
       - supports-color
 
-  '@sphereon/oid4vci-issuer@0.15.1(patch_hash=6zsh6jndwek5pgbrdztjynnymm)(encoding@0.1.13)':
+  '@sphereon/oid4vci-issuer@0.15.1(patch_hash=e7slyjxcn4x4fbqs73al22rhqu)(encoding@0.1.13)':
     dependencies:
       '@sphereon/oid4vci-common': 0.15.1(encoding@0.1.13)
       '@sphereon/ssi-types': 0.28.0
