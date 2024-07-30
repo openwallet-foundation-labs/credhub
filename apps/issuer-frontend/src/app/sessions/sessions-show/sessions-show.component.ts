@@ -1,16 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import {
-  AuthRequestStateEntity,
-  SiopApiService,
-} from '@credhub/verifier-shared';
 import { firstValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import {
   CredentialOfferSession,
   SessionsApiService,
-  SessionStatus,
 } from '@credhub/issuer-shared';
 
 @Component({
@@ -21,7 +16,7 @@ import {
   styleUrl: './sessions-show.component.scss',
 })
 export class SessionsShowComponent implements OnInit, OnDestroy {
-  session!: SessionStatus;
+  session!: CredentialOfferSession;
   interval!: ReturnType<typeof setInterval>;
   id!: string;
   sessionId!: string;

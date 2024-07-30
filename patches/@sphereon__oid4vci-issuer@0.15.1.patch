@@ -16,3 +16,22 @@ index dcc8414b751e89c26c40f55349706ccdc8b41bd4..f27899097e5d78f5dd52de6f65abbc04
              if (preAuthorizedCode) {
                  yield this.credentialOfferSessions.set(preAuthorizedCode, session);
              }
+diff --git a/dist/tokens/index.js b/dist/tokens/index.js
+index 66c4a3d4341593056d318adefe5652a371bd989a..7bb47f3a3568616b86182e8d364b3b6ed1591834 100644
+--- a/dist/tokens/index.js
++++ b/dist/tokens/index.js
+@@ -58,12 +58,12 @@ const assertValidAccessTokenRequest = (request, opts) => __awaiter(void 0, void
+    invalid_request:
+    the Authorization Server does not expect a PIN in the pre-authorized flow but the client provides a PIN
+     */
+-    if (!((_c = (_b = (_a = credentialOfferSession.credentialOffer.credential_offer) === null || _a === void 0 ? void 0 : _a.grants) === null || _b === void 0 ? void 0 : _b[oid4vci_common_1.GrantTypes.PRE_AUTHORIZED_CODE]) === null || _c === void 0 ? void 0 : _c.tx_code) && request.tx_code) {
++    if (!((_c = (_b = (_a = credentialOfferSession.credentialOffer.credential_offer) === null || _a === void 0 ? void 0 : _a.grants) === null || _b === void 0 ? void 0 : _b[oid4vci_common_1.GrantTypes.PRE_AUTHORIZED_CODE]) === null || _c === void 0 ? void 0 : _c.tx_code) && request.tx_code && !request.user_pin) {
+         // >= v13
+         throw new oid4vci_common_1.TokenError(400, oid4vci_common_1.TokenErrorResponse.invalid_request, oid4vci_common_1.USER_PIN_NOT_REQUIRED_ERROR);
+     }
+     else if (!((_f = (_e = (_d = credentialOfferSession.credentialOffer.credential_offer) === null || _d === void 0 ? void 0 : _d.grants) === null || _e === void 0 ? void 0 : _e[oid4vci_common_1.GrantTypes.PRE_AUTHORIZED_CODE]) === null || _f === void 0 ? void 0 : _f.user_pin_required) &&
+-        request.user_pin) {
++        request.user_pin && !request.tx_code) {
+         // <= v12
+         throw new oid4vci_common_1.TokenError(400, oid4vci_common_1.TokenErrorResponse.invalid_request, oid4vci_common_1.USER_PIN_NOT_REQUIRED_ERROR);
+     }

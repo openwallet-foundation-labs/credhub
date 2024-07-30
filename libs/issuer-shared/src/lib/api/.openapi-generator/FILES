@@ -16,7 +16,6 @@ model/changeStatusDto.ts
 model/createListDto.ts
 model/credential.ts
 model/credentialConfigurationSupportedV1013.ts
-model/credentialDefinitionV1013.ts
 model/credentialOfferSession.ts
 model/credentialsSupportedDisplay.ts
 model/imageInfo.ts
@@ -25,7 +24,6 @@ model/metadataDisplay.ts
 model/models.ts
 model/sessionRequestDto.ts
 model/sessionResponseDto.ts
-model/sessionStatus.ts
 model/statusList.ts
 model/template.ts
 param.ts

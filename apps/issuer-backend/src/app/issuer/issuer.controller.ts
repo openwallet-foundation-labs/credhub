@@ -13,7 +13,6 @@ import { SessionRequestDto } from './dto/session-request.dto';
 import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'nest-keycloak-connect';
 import { SessionResponseDto } from './dto/session-response.dto';
-import { CredentialOfferSession as ICredentialOfferSession } from '@sphereon/oid4vci-common';
 import { CredentialOfferSession } from './dto/credential-offer-session.dto';
 import { DBStates } from '@credhub/relying-party-shared';
 
@@ -29,7 +28,7 @@ export class IssuerController {
   async listAll(): Promise<CredentialOfferSession[]> {
     return (
       this.issuerService.vcIssuer
-        .credentialOfferSessions as DBStates<ICredentialOfferSession>
+        .credentialOfferSessions as DBStates<CredentialOfferSession>
     ).all();
   }
 
@@ -37,7 +36,9 @@ export class IssuerController {
   @Get(':id')
   async getSession(@Param('id') id: string): Promise<CredentialOfferSession> {
     const session =
-      await this.issuerService.vcIssuer.credentialOfferSessions.get(id);
+      (await this.issuerService.vcIssuer.credentialOfferSessions.get(
+        id
+      )) as CredentialOfferSession;
     if (!session) {
       throw new NotFoundException(`Session with id ${id} not found`);
     }

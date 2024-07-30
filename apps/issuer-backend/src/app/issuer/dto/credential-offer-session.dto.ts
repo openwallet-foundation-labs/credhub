@@ -5,6 +5,7 @@ import {
 } from '@sphereon/oid4vci-common';
 
 export class CredentialOfferSession implements ICredentialOfferSession {
+  id: string;
   clientId?: string;
   credentialOffer: AssertedUniformCredentialOffer;
   credentialDataSupplierInput?: unknown;

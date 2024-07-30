@@ -12,6 +12,7 @@
 
 
 export interface CredentialOfferSession { 
+    id: string;
     clientId?: string;
     credentialOffer: object;
     credentialDataSupplierInput?: object;

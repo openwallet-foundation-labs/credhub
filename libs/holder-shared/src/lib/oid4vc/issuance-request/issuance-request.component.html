@@ -10,20 +10,24 @@
     <mat-card-subtitle>{{ issuer[0].description }}</mat-card-subtitle>
   </mat-card-header>
   <img
-    *ngIf="credentials"
-    [src]="credentials[0].display![0].background_image?.url"
-    [alt]="credentials[0].display![0].background_image?.url"
+    *ngIf="
+      credentials &&
+      credentials[0].display &&
+      credentials[0].display[0].background_image
+    "
+    [src]="credentials[0].display[0].background_image.url"
+    [alt]="credentials[0].display[0].background_image.url"
   />
   <!-- instead of just the credential name, we could present the credential with it's attributes. In this case the parse event was already executed and we need a "accept" button to persist it into the database. Because it could be that the holder is denying the credential.-->
   <mat-card-content *ngIf="credentials">
     <p>wants to offer you a credential.</p>
     <mat-list>
-      <mat-list-item>
-        <span matListItemTitle>{{ credentials[0].display![0].name }}</span>
-        <span matListItemLine>{{
-          credentials[0].display![0].description
-        }}</span>
+      @for(credential of credentials; track credential) {
+      <mat-list-item *ngIf="credential.display">
+        <span matListItemTitle>{{ credential.display[0].name }}</span>
+        <span matListItemLine>{{ credential.display[0].description }}</span>
       </mat-list-item>
+      }
     </mat-list>
   </mat-card-content>
   <mat-card-actions fxLayout="row" fxLayoutAlign="space-between center">

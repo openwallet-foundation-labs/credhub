@@ -1,0 +1,51 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start issuer, holder, verifier",
+      "dependsOrder": "parallel",
+      "dependsOn": [
+        "nx run issuer-frontend:serve",
+        "nx run issuer-backend:serve",
+        "nx run holder-app:serve",
+        "nx run holder-backend:serve",
+        "nx run verifier-frontend:serve",
+        "nx run verifier-backend:serve"
+      ]
+    },
+
+    {
+      "label": "nx run issuer-frontend:serve",
+      "type": "shell",
+      "command": "pnpm exec nx run issuer-frontend:serve"
+    },
+    {
+      "label": "nx run issuer-backend:serve",
+      "type": "shell",
+      "command": "pnpm exec nx run issuer-backend:serve"
+    },
+    {
+      "label": "nx run holder-app:serve",
+      "type": "shell",
+      "command": "pnpm exec nx run holder-app:serve"
+    },
+    {
+      "label": "nx run holder-backend:serve",
+      "type": "shell",
+      "command": "pnpm exec nx run holder-backend:serve"
+    },
+
+    {
+      "label": "nx run verifier-frontend:serve",
+      "type": "shell",
+      "command": "pnpm exec nx run verifier-frontend:serve"
+    },
+    {
+      "label": "nx run verifier-backend:serve",
+      "type": "shell",
+      "command": "pnpm exec nx run verifier-backend:serve"
+    }
+  ]
+}

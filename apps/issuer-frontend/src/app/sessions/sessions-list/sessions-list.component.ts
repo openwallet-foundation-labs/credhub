@@ -69,11 +69,9 @@ export class SessionsListComponent implements OnInit, OnDestroy {
   deleteSelected() {
     if (!confirm('Are you sure you want to delete these sessions?')) return;
     for (const session of this.selection.selected) {
-      /* firstValueFrom(
-        this.sessionsApiService.issuerControllerDelete(
-          //session.
-        )
-      ); */
+      firstValueFrom(
+        this.sessionsApiService.issuerControllerDelete(session.id)
+      );
     }
     this.loadSessions();
   }

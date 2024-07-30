@@ -9,16 +9,14 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { CredentialDefinitionV1013 } from './credentialDefinitionV1013';
 import { CredentialsSupportedDisplay } from './credentialsSupportedDisplay';
 
 
 export interface CredentialConfigurationSupportedV1013 { 
-    credential_definition: CredentialDefinitionV1013;
     vct: string;
     id: string;
     claims?: object;
-    format: object;
+    format: string;
     scope?: string;
     cryptographic_binding_methods_supported?: Array<string>;
     credential_signing_alg_values_supported?: Array<string>;
