@@ -4,8 +4,8 @@ import * as Joi from 'joi';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { VaultKeyService } from './vault-key.service';
-import { CryptoService } from '../crypto/crypto.service';
-import { CryptoModule } from '../crypto/crypto.module';
+import { CryptoService } from '../../../../backend/src/lib/crypto/crypto.service';
+import { CryptoModule } from '../../../../backend/src/lib/crypto/crypto.module';
 
 export const KEY_VALIDATION_SCHEMA = {
   KM_TYPE: Joi.string().valid('file', 'vault').default('file'),

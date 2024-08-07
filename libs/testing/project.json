@@ -4,5 +4,6 @@
   "sourceRoot": "libs/testing/src",
   "projectType": "library",
   "tags": [],
+  "// targets": "to see all targets run: nx show project testing --web",
   "targets": {}
 }

@@ -31,15 +31,15 @@ import { importJWK, jwtVerify, KeyLike } from 'jose';
 import { DBRPSessionManager } from './session-manager';
 import { EventEmitter } from 'node:events';
 import { ConfigService } from '@nestjs/config';
-import { KeyService, CryptoService } from '@credhub/relying-party-shared';
-import { ResolverService } from '../resolver/resolver.service';
+import { KeyService } from '@credhub/relying-party-shared';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { TemplatesService } from '../templates/templates.service';
 import { Template } from '../templates/dto/template.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { AuthStateEntity } from './entity/auth-state.entity';
+import { CryptoService, ResolverService } from '@credhub/backend';
 
 @Injectable()
 export class RelyingPartyManagerService {
@@ -52,7 +52,7 @@ export class RelyingPartyManagerService {
   constructor(
     private resolverService: ResolverService,
     private configService: ConfigService,
-    private httpSerivce: HttpService,
+    private httpService: HttpService,
     private cryptoService: CryptoService,
     private templateService: TemplatesService,
     @InjectRepository(AuthStateEntity)
@@ -248,7 +248,7 @@ export class RelyingPartyManagerService {
             header
           );
           //get the verifier based on the algorithm
-          const crypto = this.cryptoService.getCrypto(header.alg as string);
+          const crypto = this.cryptoService.getCrypto(header.alg);
           const verify = await crypto.getVerifier(publicKey);
           return verify(data, signature).catch((err) => {
             console.log(err);
@@ -282,7 +282,7 @@ export class RelyingPartyManagerService {
         const statusListFetcher: (uri: string) => Promise<string> = async (
           uri: string
         ) => {
-          const response = await firstValueFrom(this.httpSerivce.get(uri));
+          const response = await firstValueFrom(this.httpService.get(uri));
           return response.data;
         };
 

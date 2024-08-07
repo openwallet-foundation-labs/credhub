@@ -163,14 +163,14 @@ export class StatusService {
    * @param index
    * @returns
    */
-  getStatus(id: string, index: string) {
+  getStatus(id: string, index: number) {
     return this.statusRepository.findOneBy({ id }).then((list) => {
       if (!list) {
         throw new NotFoundException();
       }
       const decodedList = this.decodeList(list.list);
       const statusList = new List(decodedList, list.bitsPerStatus);
-      return statusList.getStatus(parseInt(index));
+      return statusList.getStatus(index);
     });
   }
 
@@ -196,6 +196,7 @@ export class StatusService {
     listEntry.jwt = jwt;
     listEntry.exp = exp;
     await this.statusRepository.save(listEntry);
+    console.log('Status set');
   }
 
   /**

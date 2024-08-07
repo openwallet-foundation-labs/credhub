@@ -7,4 +7,7 @@ export class Credential {
 
   @Column()
   value: string;
+
+  @Column()
+  sessionId: string;
 }

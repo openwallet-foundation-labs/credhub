@@ -1,3 +1,70 @@
-<a mat-button [routerLink]="['../../']">Back</a>
-<button mat-button color="warn" (click)="delete()">Delete</button>
-<pre>{{ session | json }}</pre>
+<div fxLayout="row" fxLayoutGap="16px" fxLayoutAlign=" start">
+  <mat-card fxFlex="30" *ngIf="session">
+    <mat-card-header>
+      <mat-card-title fxLayout="row" fxLayoutAlign="start center">
+        <button mat-icon-button routerLink="../../">
+          <mat-icon>arrow_back_ios</mat-icon>
+        </button>
+        <span></span>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item>
+          <mat-icon matListItemIcon>schedule</mat-icon>
+          <p matListItemLine>
+            {{ session.session.createdAt | date : 'medium' }}
+          </p>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon>sync</mat-icon>
+          <p matListItemLine>
+            {{ session.session.status }}
+          </p>
+        </mat-list-item>
+      </mat-list>
+      <mat-nav-list>
+        <a mat-list-item (click)="delete()">
+          <mat-icon matListItemIcon>delete</mat-icon>
+          <p matListItemLine>Delete</p>
+        </a>
+      </mat-nav-list>
+    </mat-card-content>
+  </mat-card>
+  <div fxFlex="70">
+    <h3>Credentials</h3>
+    <mat-accordion>
+      @for(entry of credentials; track credentials) {
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ entry.credential.jwt.payload.vct }}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ entry.id }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <p>Status: {{ entry.status }}</p>
+        <mat-list>
+          @for(claim of entry.claims; track claim) {
+          <mat-list-item>
+            <div matListItemLine>{{ claim.key }}</div>
+            <div matListItemTitle>{{ claim.value }}</div>
+          </mat-list-item>
+          }
+        </mat-list>
+        <mat-action-row>
+          <button
+            [disabled]="entry.status === 'revoked'"
+            mat-button
+            color="warn"
+            (click)="revoke(entry.credential.jwt.payload.status.status_list)"
+          >
+            Revoke
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
+      }
+    </mat-accordion>
+  </div>
+</div>

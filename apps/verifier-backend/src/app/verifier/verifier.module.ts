@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RelyingPartyManagerService } from './relying-party-manager.service';
 import { SiopController } from './siop.controller';
-import { ResolverModule } from '../resolver/resolver.module';
+import { ResolverModule } from '../../../../../libs/backend/src/lib/resolver/resolver.module';
 import { HttpModule } from '@nestjs/axios';
 import { TemplatesModule } from '../templates/templates.module';
 import { TypeOrmModule } from '@nestjs/typeorm';

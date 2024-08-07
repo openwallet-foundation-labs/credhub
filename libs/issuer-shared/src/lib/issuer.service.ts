@@ -56,10 +56,11 @@ export class IssuerService {
       this.sessionApiService.issuerControllerGetSession(id)
     ).then(
       (response) => {
-        if (this.statusEvent.value !== response.status) {
-          this.statusEvent.next(response.status);
+        if (this.statusEvent.value !== response.session.status) {
+          this.statusEvent.next(response.session.status);
         }
-        if (response.status === 'CREDENTIAL_ISSUED') clearInterval(this.loop);
+        if (response.session.status === 'CREDENTIAL_ISSUED')
+          clearInterval(this.loop);
       },
       (err) => {
         console.error(err);

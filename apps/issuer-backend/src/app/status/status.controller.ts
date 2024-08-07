@@ -81,7 +81,7 @@ export class StatusController {
   @Public()
   @ApiOperation({ summary: 'Get the status of a specific index' })
   @Get(':id/:index')
-  getStatus(@Param('id') id: string, @Param('index') index: string) {
+  getStatus(@Param('id') id: string, @Param('index') index: number) {
     return this.statusService.getStatus(id, index).then((status) => ({
       status,
     }));

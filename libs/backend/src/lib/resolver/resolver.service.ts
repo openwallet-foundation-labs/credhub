@@ -28,23 +28,30 @@ export class ResolverService {
    * @returns
    */
   async resolvePublicKey(payload: JWTPayload, header: JWK): Promise<JWK> {
+    if (!payload.iss) {
+      throw new Error('Issuer not found');
+    }
+
     if (header.x5c) {
-      const cert = new X509Certificate(Buffer.from(header.x5c[0], 'base64'));
-      //TODO: implement the validation of the certificate chain and also the comparison of the identifier
-      if (cert.subject !== payload.iss) {
+      //TODO: validate the certificate and the chain of trust!
+      const certs = header.x5c.map(
+        (cert) => new X509Certificate(Buffer.from(cert, 'base64'))
+      );
+      const cert = certs[0];
+      if (!cert.subjectAltName?.includes(payload.iss.split('://')[1])) {
         throw new Error('Subject and issuer do not match');
       }
       return cert.publicKey.export({ format: 'jwk' }) as JWK;
     }
     //checl if the key is in the header as jwk
-    if (header.jwk) {
-      return header.jwk as JWK;
+    if (header['jwk']) {
+      return header['jwk'] as JWK;
     }
 
     //check if the issuer is a did
     if (payload.iss.startsWith('did:')) {
       const did = await resolver.resolve(payload.iss);
-      if (!did) {
+      if (!did.didDocument?.verificationMethod) {
         throw new ConflictException('DID not found');
       }
       //TODO: header.kid can be relative or absolute, we need to handle this

@@ -203,7 +203,6 @@ export class DBRPSessionManager implements IRPSessionManager {
       lastUpdated: event.timestamp,
       payload: event.subject.payload,
     });
-    console.log(element);
     await this.authStateRepository.save(element);
   }
 

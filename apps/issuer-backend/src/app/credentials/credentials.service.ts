@@ -21,7 +21,11 @@ export class CredentialsService {
   }
 
   findOne(id: string) {
-    return this.credentialRepository.findOneOrFail({ where: { id } });
+    return this.credentialRepository.findOneByOrFail({ id });
+  }
+
+  getBySessionId(sessionId: string) {
+    return this.credentialRepository.findBy({ sessionId });
   }
 
   remove(id: string) {

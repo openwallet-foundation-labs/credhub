@@ -68,9 +68,9 @@ export class CredentialsShowComponent implements OnInit {
       ] as number;
       if (this.credential.status === CredentialResponse.StatusEnum.revoked) {
         this.status = 'revoked';
-      } else if (expired && new Date(expired) < new Date()) {
+      } else if (expired && new Date(expired * 1000) < new Date()) {
         this.status = 'expired';
-      } else if (created && new Date(created) > new Date()) {
+      } else if (created && new Date(created * 1000) > new Date()) {
         this.status = 'not valid yet';
       }
     }
@@ -103,6 +103,10 @@ export class CredentialsShowComponent implements OnInit {
     return (this.credential.credential as Record<string, unknown>)[
       key
     ] as string;
+  }
+
+  getClaimAsNumber(key: string): number {
+    return this.getClaim(key) as unknown as number;
   }
 
   copyRaw() {

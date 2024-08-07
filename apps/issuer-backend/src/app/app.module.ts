@@ -4,16 +4,17 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import {
   AuthModule,
-  CRYPTO_VALIDATION_SCHEMA,
   KEY_VALIDATION_SCHEMA,
   KeyModule,
   OIDC_VALIDATION_SCHEMA,
+  DB_VALIDATION_SCHEMA,
+  DbModule,
 } from '@credhub/relying-party-shared';
-import { DB_VALIDATION_SCHEMA, DbModule } from '@credhub/relying-party-shared';
 import { CredentialsModule } from './credentials/credentials.module';
 import { StatusModule } from './status/status.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { IssuerModule } from './issuer/issuer.module';
+import { CRYPTO_VALIDATION_SCHEMA } from '@credhub/backend';
 
 @Module({
   imports: [

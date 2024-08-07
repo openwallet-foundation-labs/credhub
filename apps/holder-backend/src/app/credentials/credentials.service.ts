@@ -17,6 +17,12 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { USER_DELETED_EVENT, UserDeletedEvent } from '../auth/auth.service';
 import { Interval } from '@nestjs/schedule';
 import { createHash } from 'crypto';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import { Verifier } from '@sd-jwt/types';
+import { JWK, JWTPayload } from '@sphereon/oid4vci-common';
+import { CryptoService, ResolverService } from '@credhub/backend';
+import { getListFromStatusListJWT } from '@sd-jwt/jwt-status-list';
 
 type DateKey = 'exp' | 'nbf';
 @Injectable()
@@ -25,18 +31,57 @@ export class CredentialsService {
 
   constructor(
     @InjectRepository(Credential)
-    private credentialRepository: Repository<Credential>
+    private credentialRepository: Repository<Credential>,
+    private httpService: HttpService,
+    private resolverService: ResolverService,
+    private cryptoService: CryptoService
   ) {
+    const verifier: Verifier = async (data, signature) => {
+      const decodedVC = await this.instance.decode(`${data}.${signature}`);
+      const payload = decodedVC.jwt?.payload as JWTPayload;
+      const header = decodedVC.jwt?.header as JWK;
+      const publicKey = await this.resolverService.resolvePublicKey(
+        payload,
+        header
+      );
+      //get the verifier based on the algorithm
+      const crypto = this.cryptoService.getCrypto(header.alg);
+      const verify = await crypto.getVerifier(publicKey);
+      return verify(data, signature).catch((err) => {
+        console.log(err);
+        return false;
+      });
+    };
+
+    /**
+     * Fetch the status list from the uri.
+     * @param uri
+     * @returns
+     */
+    const statusListFetcher: (uri: string) => Promise<string> = async (
+      uri: string
+    ) => {
+      const response = await firstValueFrom(this.httpService.get(uri));
+      return response.data;
+    };
+
     this.instance = new SDJwtVcInstance({
       hasher: digest,
-      verifier: () => Promise.resolve(true),
+      statusListFetcher,
+      statusValidator(status) {
+        if (status === 1) {
+          throw new Error('Status is not valid');
+        }
+        return Promise.resolve();
+      },
+      verifier,
     });
   }
 
   /**
    * Start an interval to update the status of the credentials. This is relevant for showing active credentials.
    */
-  @Interval(1000 * 10)
+  @Interval(1000 * 3)
   updateStatusInterval() {
     this.updateStatus();
   }
@@ -134,11 +179,13 @@ export class CredentialsService {
    * Updates the state of a credential. This is relevant for showing active credentials.
    */
   async updateStatus() {
-    //TODO: should we also set the state on expired?
-
     //we are going for all credentials where credentials are not expired. It could happen that the status of a revoked credential will change.
     const credentials = await this.credentialRepository.find({
-      where: { exp: MoreThanOrEqual(Date.now()) },
+      where: {
+        //exp: MoreThanOrEqual(Date.now() / 1000),
+        //only a valid credential has an empty status.
+        status: IsNull(),
+      },
     });
     for (const credential of credentials) {
       await this.instance.verify(credential.value).then(
@@ -150,6 +197,7 @@ export class CredentialsService {
           }
         },
         async (err: Error) => {
+          console.log(err);
           if (err.message.includes('Status is not valid')) {
             //update the status in the db.
             credential.status = CredentialStatus.REVOKED;
