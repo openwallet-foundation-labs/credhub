@@ -1,18 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { CredentialResponse, CredentialsApiService } from '../../api/';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom } from 'rxjs';
 import { MatListModule } from '@angular/material/list';
 import { CredentialsShowComponent } from '../credentials-show/credentials-show.component';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { CredentialsSupportedDisplay } from '@sphereon/oid4vci-common';
-import { RouterLink } from '@angular/router';
+import {
+  ActivatedRoute,
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterModule,
+} from '@angular/router';
 import { FlexLayoutModule } from 'ng-flex-layout';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { CredentialsService } from '../credentials.service';
 
 export interface CredentialList extends CredentialResponse {
   display: CredentialsSupportedDisplay;
@@ -35,6 +43,7 @@ type ShowType = 'all' | 'archived';
     MatButtonModule,
     ReactiveFormsModule,
     MatInputModule,
+    RouterModule,
   ],
   templateUrl: './credentials-list.component.html',
   styleUrl: './credentials-list.component.scss',
@@ -44,14 +53,36 @@ export class CredentialsListComponent implements OnInit {
 
   search: FormControl = new FormControl('');
 
-  render: 'image' | 'card' = 'card';
-
   type: ShowType = 'all';
 
-  constructor(private credentialsApiService: CredentialsApiService) {}
+  credentialShown = false;
+  mobile = false;
+
+  constructor(
+    private credentialsApiService: CredentialsApiService,
+    private route: ActivatedRoute,
+    private router: Router,
+    breakpointObserver: BreakpointObserver,
+    private credentialsService: CredentialsService
+  ) {
+    breakpointObserver
+      .observe('(max-width: 599px)')
+      .subscribe((result) => (this.mobile = result.matches));
+  }
 
   async ngOnInit(): Promise<void> {
     this.loadCredentials();
+    this.credentialShown = this.route.firstChild !== null;
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => (this.credentialShown = this.route.firstChild !== null));
+
+    this.credentialsService.deletedEmitter.subscribe(
+      (credentialId) =>
+        (this.credentials = this.credentials.filter(
+          (credential) => credential.id !== credentialId
+        ))
+    );
   }
 
   /**

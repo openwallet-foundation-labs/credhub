@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { CredentialResponse, CredentialsApiService } from '../../api/';
 import { firstValueFrom } from 'rxjs';
@@ -11,6 +11,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { CredentialsService } from '../credentials.service';
 
 @Component({
   selector: 'lib-credentials-show',
@@ -39,7 +40,8 @@ export class CredentialsShowComponent implements OnInit {
     private credentialsApiService: CredentialsApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private credentialsService: CredentialsService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -121,6 +123,7 @@ export class CredentialsShowComponent implements OnInit {
     await firstValueFrom(
       this.credentialsApiService.credentialsControllerRemove(this.credential.id)
     );
+    this.credentialsService.deletedEmitter.emit(this.credential.id);
     this.router.navigate(['/credentials']);
   }
 }

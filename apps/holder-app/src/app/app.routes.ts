@@ -28,10 +28,12 @@ export const routes: Routes = [
       {
         path: 'credentials',
         component: CredentialsListComponent,
-      },
-      {
-        path: 'credentials/:id',
-        component: CredentialsShowComponent,
+        children: [
+          {
+            path: ':id',
+            component: CredentialsShowComponent,
+          },
+        ],
       },
       {
         path: 'history',
