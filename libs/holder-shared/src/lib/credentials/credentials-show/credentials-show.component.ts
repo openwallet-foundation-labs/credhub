@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { CredentialResponse, CredentialsApiService } from '../../api/';
 import { firstValueFrom } from 'rxjs';

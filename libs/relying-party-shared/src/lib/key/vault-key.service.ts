@@ -5,10 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { importSPKI, exportJWK, JWTHeaderParameters } from 'jose';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayload, Signer } from '@sd-jwt/types';
-import {
-  CryptoService,
-  CryptoType,
-} from '../../../../backend/src/lib/crypto/crypto.service';
+import { CryptoService, CryptoType } from '@credhub/backend';
 
 @Injectable()
 export class VaultKeyService extends KeyService {

@@ -5,6 +5,4 @@ import { EventEmitter, Injectable } from '@angular/core';
 })
 export class CredentialsService {
   public deletedEmitter = new EventEmitter<string>();
-
-  constructor() {}
 }

@@ -12,8 +12,7 @@ import { KeyService } from './key.service';
 import { Injectable } from '@nestjs/common';
 import { Signer } from '@sd-jwt/types';
 import { ConfigService } from '@nestjs/config';
-import { CryptoImplementation } from '../../../../backend/src/lib/crypto/crypto-implementation';
-import { CryptoService } from '../../../../backend/src/lib/crypto/crypto.service';
+import { CryptoImplementation, CryptoService } from '@credhub/backend';
 
 //TODO: implement a vault integration like in the backend
 /**
