@@ -54,11 +54,11 @@ export class Oid4vpService {
 
     //parse the uri
     const parsedAuthReqURI = await op.parseAuthorizationRequestURI(data.url);
-    const verifiedAuthReqWithJWT: VerifiedAuthorizationRequest =
-      await op.verifyAuthorizationRequest(
-        parsedAuthReqURI.requestObjectJwt as string,
-        {}
-      );
+    const verifiedAuthReqWithJWT: VerifiedAuthorizationRequest = await op
+      .verifyAuthorizationRequest(parsedAuthReqURI.requestObjectJwt, {})
+      .catch(() => {
+        throw new ConflictException('Invalid request');
+      });
     const issuer =
       (
         verifiedAuthReqWithJWT.authorizationRequestPayload
@@ -71,6 +71,10 @@ export class Oid4vpService {
     const credentials = (await this.credentialsService.findAll(user)).map(
       (entry) => entry.value
     );
+
+    if (credentials.length === 0) {
+      throw new ConflictException('No matching credentials found');
+    }
     //init the pex instance
     const pex = new PresentationExchange({
       allVerifiableCredentials: credentials,
@@ -82,16 +86,12 @@ export class Oid4vpService {
       await PresentationExchange.findValidPresentationDefinitions(
         verifiedAuthReqWithJWT.authorizationRequestPayload
       );
-    // throws in error in case none was provided
-    if (pds.length === 0) {
-      throw new Error('No matching credentials found');
-    }
 
     await this.sessionRepository.save(
       this.sessionRepository.create({
         id: sessionId,
         // we need to store the JWT, because it serializes an object that can not be stored in the DB
-        requestObjectJwt: parsedAuthReqURI.requestObjectJwt as string,
+        requestObjectJwt: parsedAuthReqURI.requestObjectJwt,
         user,
         pds,
       })
@@ -100,11 +100,7 @@ export class Oid4vpService {
     // select the credentials for the presentation
     const result = await pex
       .selectVerifiableCredentialsForSubmission(pds[0].definition)
-      .catch((err: SelectResults) => {
-        console.log(err);
-        if (err.errors.length > 0) {
-          throw new ConflictException(err.errors);
-        }
+      .catch(() => {
         //instead of throwing an error, we return an empty array. This allows the user to show who sent the request for what.
         return { verifiableCredential: [] };
       });

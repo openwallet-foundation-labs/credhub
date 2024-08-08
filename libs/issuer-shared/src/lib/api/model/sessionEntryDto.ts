@@ -9,11 +9,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Credential } from './credential';
+import { CredentialOfferSessionEntity } from './credentialOfferSessionEntity';
 
 
-export interface Credential { 
-    id: string;
-    value: string;
-    sessionId: string;
+export interface SessionEntryDto { 
+    session: CredentialOfferSessionEntity;
+    credentials: Array<Credential>;
 }
 

@@ -10,11 +10,6 @@ import { AuthGuard } from 'nest-keycloak-connect';
 export class CredentialsController {
   constructor(private readonly credentialsService: CredentialsService) {}
 
-  @Get()
-  findAll() {
-    return this.credentialsService.findAll();
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.credentialsService.findOne(id);

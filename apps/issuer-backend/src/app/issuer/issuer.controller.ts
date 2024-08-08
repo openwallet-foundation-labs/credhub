@@ -15,13 +15,18 @@ import { AuthGuard } from 'nest-keycloak-connect';
 import { SessionResponseDto } from './dto/session-response.dto';
 import { CredentialOfferSession } from './dto/credential-offer-session.dto';
 import { DBStates } from '@credhub/relying-party-shared';
+import { CredentialsService } from '../credentials/credentials.service';
+import { SessionEntryDto } from './dto/session-entry.dto';
 
 @UseGuards(AuthGuard)
 @ApiOAuth2([])
 @ApiTags('sessions')
 @Controller('sessions')
 export class IssuerController {
-  constructor(private issuerService: IssuerService) {}
+  constructor(
+    private issuerService: IssuerService,
+    private credentialsService: CredentialsService
+  ) {}
 
   @ApiOperation({ summary: 'Lists all sessions' })
   @Get()
@@ -34,7 +39,7 @@ export class IssuerController {
 
   @ApiOperation({ summary: 'Returns the status for a session' })
   @Get(':id')
-  async getSession(@Param('id') id: string): Promise<CredentialOfferSession> {
+  async getSession(@Param('id') id: string): Promise<SessionEntryDto> {
     const session =
       (await this.issuerService.vcIssuer.credentialOfferSessions.get(
         id
@@ -42,7 +47,11 @@ export class IssuerController {
     if (!session) {
       throw new NotFoundException(`Session with id ${id} not found`);
     }
-    return session;
+    const credentials = await this.credentialsService.getBySessionId(id);
+    return {
+      session,
+      credentials: credentials,
+    };
   }
 
   @ApiOperation({ summary: 'Creates a new session request' })

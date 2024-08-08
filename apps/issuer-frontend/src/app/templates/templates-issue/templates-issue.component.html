@@ -72,5 +72,8 @@
     <p *ngIf="issuerService.statusEvent.value">
       Status: {{ issuerService.statusEvent.value }}
     </p>
+    <a *ngIf="sessionId" mat-button [routerLink]="'../sessions/' + sessionId"
+      >Go to session entry</a
+    >
   </div>
 </div>

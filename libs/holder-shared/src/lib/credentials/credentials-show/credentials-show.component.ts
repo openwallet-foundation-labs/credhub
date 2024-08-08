@@ -11,6 +11,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { CredentialsService } from '../credentials.service';
 
 @Component({
   selector: 'lib-credentials-show',
@@ -39,7 +40,8 @@ export class CredentialsShowComponent implements OnInit {
     private credentialsApiService: CredentialsApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private credentialsService: CredentialsService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -68,9 +70,9 @@ export class CredentialsShowComponent implements OnInit {
       ] as number;
       if (this.credential.status === CredentialResponse.StatusEnum.revoked) {
         this.status = 'revoked';
-      } else if (expired && new Date(expired) < new Date()) {
+      } else if (expired && new Date(expired * 1000) < new Date()) {
         this.status = 'expired';
-      } else if (created && new Date(created) > new Date()) {
+      } else if (created && new Date(created * 1000) > new Date()) {
         this.status = 'not valid yet';
       }
     }
@@ -105,6 +107,10 @@ export class CredentialsShowComponent implements OnInit {
     ] as string;
   }
 
+  getClaimAsNumber(key: string): number {
+    return this.getClaim(key) as unknown as number;
+  }
+
   copyRaw() {
     navigator.clipboard.writeText(this.credential.value);
     this.snackBar.open('Credential copied to clipboard', 'Close', {
@@ -117,6 +123,7 @@ export class CredentialsShowComponent implements OnInit {
     await firstValueFrom(
       this.credentialsApiService.credentialsControllerRemove(this.credential.id)
     );
+    this.credentialsService.deletedEmitter.emit(this.credential.id);
     this.router.navigate(['/credentials']);
   }
 }

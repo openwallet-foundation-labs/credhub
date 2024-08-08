@@ -16,6 +16,7 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
+      "@credhub/backend": ["libs/backend/src/index.ts"],
       "@credhub/holder-shared": ["libs/holder-shared/src/index.ts"],
       "@credhub/issuer-shared": ["libs/issuer-shared/src/index.ts"],
       "@credhub/relying-party-frontend": [

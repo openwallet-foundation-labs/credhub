@@ -44,6 +44,7 @@ export class TemplatesIssueComponent implements OnInit, OnDestroy {
   pinField = new FormControl('');
   id!: string;
   template!: Template;
+  sessionId?: string;
 
   constructor(
     public issuerService: IssuerService,
@@ -77,6 +78,9 @@ export class TemplatesIssueComponent implements OnInit, OnDestroy {
     const response = await this.issuerService.getUrl(this.id, this.form.value, {
       pin: this.pinRequired.value as boolean,
     });
+
+    this.sessionId = response.id;
+
     this.qrCodeField.setValue(response.uri);
     if (response.userPin) {
       this.pinField.setValue(response.userPin);
@@ -87,6 +91,6 @@ export class TemplatesIssueComponent implements OnInit, OnDestroy {
 
   copyValue(value: string) {
     navigator.clipboard.writeText(value);
-    this.snackBar.open('Copied to clipboard', 'Close', { duration: 2000 });
+    this.snackBar.open('Copied to clipboard');
   }
 }

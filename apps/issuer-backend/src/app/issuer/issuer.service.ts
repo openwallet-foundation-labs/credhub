@@ -30,12 +30,7 @@ import {
 import { IssuerDataService } from './issuer-data.service';
 import { SessionRequestDto } from './dto/session-request.dto';
 import { CredentialsService } from '../credentials/credentials.service';
-import {
-  CryptoImplementation,
-  CryptoService,
-  DBStates,
-  KeyService,
-} from '@credhub/relying-party-shared';
+import { DBStates, KeyService } from '@credhub/relying-party-shared';
 import { IssuerMetadata } from './types';
 import { StatusService } from '../status/status.service';
 import { SessionResponseDto } from './dto/session-response.dto';
@@ -45,7 +40,7 @@ import { Repository } from 'typeorm';
 import { CNonceEntity } from './entities/c-nonce.entity';
 import { URIStateEntity } from './entities/uri-state.entity';
 import { CredentialOfferSessionEntity } from './entities/credential-offer-session.entity';
-
+import { CryptoImplementation, CryptoService } from '@credhub/backend';
 interface CredentialDataSupplierInput {
   credentialSubject: Record<string, unknown>;
   exp: number;
@@ -55,6 +50,8 @@ interface CredentialDataSupplierInput {
 export class IssuerService {
   private express: ExpressSupport;
   vcIssuer: VcIssuer<DIDDocument>;
+
+  sessionMapper: Map<string, string> = new Map();
 
   private crypto: CryptoImplementation;
 
@@ -185,7 +182,7 @@ export class IssuerService {
       };
 
       const credential: SdJwtDecodedVerifiableCredentialPayload = {
-        iat: new Date().getTime(),
+        iat: Math.round(new Date().getTime() / 1000),
         iss: args.credentialOffer.credential_offer.credential_issuer,
         vct: (args.credentialRequest as CredentialRequestSdJwtVc).vct,
         jti: v4(),
@@ -193,8 +190,13 @@ export class IssuerService {
           .credentialSubject,
         //TODO: can be removed when correct type is set in PEX
         status: status as unknown as { idx: number; uri: string },
+        //TODO: validate that the seconds and not milliseconds are used
         exp: args.credentialDataSupplierInput.exp,
+        nbf: args.credentialDataSupplierInput.nbf,
       };
+
+      // map the credential id with the session because we will be not able to get the session id in the sign callback. We are using the pre auth code for now.
+      this.sessionMapper.set(credential.jti as string, args.preAuthorizedCode);
       return Promise.resolve({
         credential,
         format: 'vc+sd-jwt',
@@ -253,12 +255,14 @@ export class IssuerService {
         ),
         { header: { kid: await this.keyService.getKid() } }
       );
+      const sessionId = this.sessionMapper.get(args.credential.jti as string);
+      this.sessionMapper.delete(args.credential.jti as string);
       await this.credentialsService.create({
         value: jwt,
         id: args.credential.jti as string,
+        sessionId,
       });
       return jwt;
-      // return decodeSdJwtVc(jwt, digest) as unknown as Promise<CompactSdJwtVc>;
     };
 
     //create the issuer instance

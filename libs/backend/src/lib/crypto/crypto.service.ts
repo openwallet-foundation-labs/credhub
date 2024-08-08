@@ -14,7 +14,9 @@ export class CryptoService {
     return this.configServie.get('CRYPTO_ALG') as CryptoType;
   }
 
-  getCrypto(alg = this.configServie.get('CRYPTO_ALG')): CryptoImplementation {
+  getCrypto(
+    alg = this.configServie.get<string>('CRYPTO_ALG')
+  ): CryptoImplementation {
     switch (alg) {
       case 'Ed25519':
         return ED25519;

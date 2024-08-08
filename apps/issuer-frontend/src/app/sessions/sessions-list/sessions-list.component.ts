@@ -43,7 +43,6 @@ export class SessionsListComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     await this.loadSessions();
-    //this.interval = setInterval(() => this.loadSessions(), 1000);
   }
 
   private loadSessions() {
@@ -66,13 +65,18 @@ export class SessionsListComponent implements OnInit, OnDestroy {
       : this.dataSource.data.forEach((row) => this.selection.select(row));
   }
 
-  deleteSelected() {
+  async deleteSelected() {
     if (!confirm('Are you sure you want to delete these sessions?')) return;
     for (const session of this.selection.selected) {
-      firstValueFrom(
+      await firstValueFrom(
         this.sessionsApiService.issuerControllerDelete(session.id)
       );
+      //remove the element from the data source
+      const index = this.dataSource.data.indexOf(session);
+      if (index > -1) {
+        this.dataSource.data.splice(index, 1);
+        this.dataSource.data = [...this.dataSource.data];
+      }
     }
-    this.loadSessions();
   }
 }

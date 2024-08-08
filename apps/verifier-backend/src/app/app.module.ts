@@ -5,13 +5,13 @@ import * as Joi from 'joi';
 import { VerifierModule } from './verifier/verifier.module';
 import {
   AuthModule,
-  CRYPTO_VALIDATION_SCHEMA,
   DB_VALIDATION_SCHEMA,
   DbModule,
   KeyModule,
   OIDC_VALIDATION_SCHEMA,
 } from '@credhub/relying-party-shared';
 import { TemplatesModule } from './templates/templates.module';
+import { CRYPTO_VALIDATION_SCHEMA } from '@credhub/backend';
 
 @Module({
   imports: [

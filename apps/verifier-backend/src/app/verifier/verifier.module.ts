@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { RelyingPartyManagerService } from './relying-party-manager.service';
 import { SiopController } from './siop.controller';
-import { ResolverModule } from '../resolver/resolver.module';
 import { HttpModule } from '@nestjs/axios';
 import { TemplatesModule } from '../templates/templates.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthStateEntity } from './entity/auth-state.entity';
+import { ResolverModule } from '@credhub/backend';
 
 @Module({
   imports: [
