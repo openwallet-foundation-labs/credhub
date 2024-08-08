@@ -42,7 +42,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Build keycloak
-        run: cd deploys/keycloak && docker-compose build keycloak
+        run: cd deploys/keycloak && docker compose build keycloak
 
       - name: Add entry to /etc/hosts
         run: echo "127.0.0.1       host.testcontainers.internal" | sudo tee -a /etc/hosts
@@ -56,17 +56,26 @@ jobs:
 #          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload playwright results
-        if: always()
+        if: always() && steps.check_playwright_results.outputs.exists == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: playwright-results
           path: dist/.playwright
           retention-days: 30
 
+      - name: Check if playwright results exist
+        id: check_playwright_results
+        run: echo "exists=$(if [ -d dist/.playwright ]; then echo true; else echo false; fi)" >> $GITHUB_ENV
+
+
       - name: Upload testcontainer logs
-        if: always()
+        if: always() && steps.check_testcontainer_logs.outputs.exists == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: testcontainer-logs
           path: tmp/logs
           retention-days: 30
+
+      - name: Check if testcontainer logs exist
+        id: check_testcontainer_logs
+        run: echo "exists=$(if [ -d tmp/logs ]; then echo true; else echo false; fi)" >> $GITHUB_ENV
