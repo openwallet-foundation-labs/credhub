@@ -5,7 +5,7 @@
         <button mat-icon-button routerLink="../">
           <mat-icon>arrow_back_ios</mat-icon>
         </button>
-        <span>{{ template.schema.id }}</span>
+        <span>{{ template.name }}</span>
       </mat-card-title>
     </mat-card-header>
     <form
@@ -72,7 +72,7 @@
     <p *ngIf="issuerService.statusEvent.value">
       Status: {{ issuerService.statusEvent.value }}
     </p>
-    <a *ngIf="sessionId" mat-button [routerLink]="'../sessions/' + sessionId"
+    <a *ngIf="sessionId" mat-button [routerLink]="'/sessions/' + sessionId"
       >Go to session entry</a
     >
   </div>

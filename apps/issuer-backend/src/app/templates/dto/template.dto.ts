@@ -55,9 +55,6 @@ export class CredentialConfigurationSupportedV1_0_13
   @IsOptional()
   vct: string;
 
-  @IsString()
-  id: string;
-
   @IsOptional()
   @IsObject()
   claims?: IssuerCredentialSubject;
@@ -89,13 +86,17 @@ export class CredentialConfigurationSupportedV1_0_13
 }
 
 export class Template {
+  @IsString()
+  name: string;
+
   @ValidateNested()
   @Type(() => CredentialConfigurationSupportedV1_0_13)
   schema: CredentialConfigurationSupportedV1_0_13;
 
   @IsObject()
-  sd: DisclosureFrame<Record<string, unknown | boolean>>;
+  sd: DisclosureFrame<Record<string, unknown>>;
 
   @IsInt()
+  @IsOptional()
   ttl: number;
 }

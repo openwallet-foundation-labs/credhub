@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Template, TemplatesApiService } from '@credhub/issuer-shared';
+import {
+  Template,
+  TemplateEntity,
+  TemplatesApiService,
+} from '@credhub/issuer-shared';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { FormControl } from '@angular/forms';
@@ -29,9 +33,10 @@ import { SessionsListComponent } from '../../sessions/sessions-list/sessions-lis
   styleUrl: './templates-show.component.scss',
 })
 export class TemplatesShowComponent implements OnInit {
-  template!: Template;
+  template!: TemplateEntity;
 
   control!: FormControl;
+  id?: string | null;
 
   constructor(
     private templatesApiService: TemplatesApiService,
@@ -41,12 +46,12 @@ export class TemplatesShowComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
+    this.id = this.route.snapshot.paramMap.get('id');
+    if (!this.id) {
       return;
     }
     this.template = await firstValueFrom(
-      this.templatesApiService.templatesControllerGetOne(id)
+      this.templatesApiService.templatesControllerGetOne(this.id)
     );
   }
 
@@ -55,9 +60,7 @@ export class TemplatesShowComponent implements OnInit {
       return;
     }
     firstValueFrom(
-      this.templatesApiService.templatesControllerDelete(
-        this.template.schema.id
-      )
+      this.templatesApiService.templatesControllerDelete(this.template.id)
     ).then(() =>
       this.router
         .navigate(['/templates'])

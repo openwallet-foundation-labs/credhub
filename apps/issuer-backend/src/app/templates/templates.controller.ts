@@ -12,6 +12,7 @@ import { ApiTags, ApiOAuth2, ApiOperation } from '@nestjs/swagger';
 import { AuthGuard } from 'nest-keycloak-connect';
 import { Template } from './dto/template.dto';
 import { TemplatesService } from './template.service';
+import { TemplateEntity } from './schemas/temoplate.entity';
 
 @ApiTags('templates')
 @UseGuards(AuthGuard)
@@ -22,10 +23,8 @@ export class TemplatesController {
 
   @ApiOperation({ summary: 'List all templates' })
   @Get()
-  async listAll(): Promise<Template[]> {
-    return Object.values(
-      Object.fromEntries(await this.templatesService.listAll())
-    );
+  async listAll(): Promise<TemplateEntity[]> {
+    return this.templatesService.listAll();
   }
 
   @ApiOperation({ summary: 'Get one template' })

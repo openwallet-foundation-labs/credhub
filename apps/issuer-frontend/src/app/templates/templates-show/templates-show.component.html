@@ -5,7 +5,7 @@
         <button mat-icon-button routerLink="/">
           <mat-icon>arrow_back_ios</mat-icon>
         </button>
-        <span>{{ template.schema.id }}</span>
+        <span>{{ template.name }}</span>
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
@@ -26,5 +26,5 @@
     </mat-card-content>
   </mat-card>
 
-  <app-sessions-list fxFlex="70"></app-sessions-list>
+  <app-sessions-list fxFlex="70" [id]="id" *ngIf="id"></app-sessions-list>
 </div>

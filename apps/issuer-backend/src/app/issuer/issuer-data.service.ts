@@ -30,7 +30,7 @@ export class IssuerDataService {
     this.metadata.credential_issuer = this.configSerivce.get('ISSUER_BASE_URL');
 
     this.metadata.credential_configurations_supported =
-      this.templatesService.getSupported(await this.templatesService.listAll());
+      await this.templatesService.getSupported();
   }
 
   /**
@@ -51,18 +51,23 @@ export class IssuerDataService {
 
   /**
    * Returns the disclosure frame of the credential with the given id, throws an error if the credential is not supported.
-   * @param id
+   * @param vct
    * @returns
    */
-  async getDisclosureFrame(id: string) {
+  async getDisclosureFrame(vct: string) {
     if (this.configSerivce.get('CONFIG_RELOAD')) {
       this.loadConfig();
     }
-    const credential = await this.templatesService.getOne(id);
+    //becuase the vct is stored in a json field, we will need to fetch all elements and then filter
+    const credential = await this.templatesService
+      .listAll()
+      .then((templates) =>
+        templates.find((template) => template.value.schema.vct === vct)
+      );
     if (!credential) {
-      throw new Error(`The credential with the id ${id} is not supported.`);
+      throw new Error(`The credential with the id ${vct} is not supported.`);
     }
-    return credential.sd;
+    return credential.value.sd;
   }
 
   /**

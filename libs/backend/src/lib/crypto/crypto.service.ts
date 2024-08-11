@@ -10,6 +10,10 @@ export type CryptoType = 'ES256' | 'Ed25519';
 export class CryptoService {
   constructor(private configServie: ConfigService) {}
 
+  /**
+   * Return the algorithm that is used for the crypto operations like signing.
+   * @returns
+   */
   getAlg(): CryptoType {
     return this.configServie.get('CRYPTO_ALG') as CryptoType;
   }

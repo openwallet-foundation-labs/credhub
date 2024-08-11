@@ -22,7 +22,6 @@ import { firstValueFrom } from 'rxjs';
 import { Verifier } from '@sd-jwt/types';
 import { JWK, JWTPayload } from '@sphereon/oid4vci-common';
 import { CryptoService, ResolverService } from '@credhub/backend';
-import { getListFromStatusListJWT } from '@sd-jwt/jwt-status-list';
 
 type DateKey = 'exp' | 'nbf';
 @Injectable()

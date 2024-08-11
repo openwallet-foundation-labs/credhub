@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { Template } from './dto/template.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Template as TemplateEntity } from './schemas/temoplate.entity';
+import { TemplateEntity as TemplateEntity } from './schemas/temoplate.entity';
 import { Repository } from 'typeorm';
 import { CredentialConfigurationSupportedV1_0_13 } from '@sphereon/oid4vci-common';
 import { readdirSync, readFileSync } from 'fs';
@@ -9,6 +9,7 @@ import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
+import { CryptoService } from '@credhub/backend';
 
 @Injectable()
 export class TemplatesService {
@@ -16,7 +17,8 @@ export class TemplatesService {
   constructor(
     @InjectRepository(TemplateEntity)
     private templateRepository: Repository<TemplateEntity>,
-    private configSerivce: ConfigService
+    private configSerivce: ConfigService,
+    private cryptoService: CryptoService
   ) {
     this.folder = this.configSerivce.get('CREDENTIALS_FOLDER');
   }
@@ -37,41 +39,55 @@ export class TemplatesService {
         console.error(JSON.stringify(errors, null, 2));
       } else {
         //check if an id is already used
-        await this.getOne(template.schema.id).catch(async () => {
-          await this.create(template);
-        });
+        await this.templateRepository
+          .findOneByOrFail({ name: template.name })
+          .catch(async () => {
+            await this.create(template);
+          });
       }
     }
   }
 
-  getSupported(value: Map<string, Template>) {
+  async getSupported() {
+    const rec: Map<string, Template> = new Map();
+    const elements = await this.templateRepository.find();
+    elements.forEach((element) => rec.set(element.id, element.value));
+
     //iterate over the map and change the value
     const result: Record<string, CredentialConfigurationSupportedV1_0_13> = {};
-    value.forEach((v, k) => {
+    rec.forEach((v, k) => {
+      v.schema.credential_signing_alg_values_supported =
+        this.getSigningAlgValuesSupported();
+      v.schema.cryptographic_binding_methods_supported =
+        this.getCryptographicBindingMethodsSupported();
       result[k] = v.schema;
     });
     return result;
   }
 
+  private getSigningAlgValuesSupported() {
+    // we assume that we are only using one algorithm when issuing credentials
+    return [this.cryptoService.getAlg()];
+  }
+
+  private getCryptographicBindingMethodsSupported() {
+    return ['jwk'];
+  }
+
   async listAll() {
-    const rec: Map<string, Template> = new Map();
-    const elements = await this.templateRepository.find();
-    elements.forEach((element) => rec.set(element.id, element.value));
-    return rec;
+    return this.templateRepository.find();
   }
 
   async getOne(id: string) {
-    return this.templateRepository
-      .findOneByOrFail({ id })
-      .then((res) => res.value);
+    return this.templateRepository.findOneByOrFail({ id });
   }
 
-  async create(data: Template) {
+  async create(value: Template) {
     await this.templateRepository
       .save(
         this.templateRepository.create({
-          id: data.schema.id,
-          value: data,
+          value,
+          name: value.name,
         })
       )
       .catch((err) => {
@@ -80,10 +96,10 @@ export class TemplatesService {
   }
 
   async update(id: string, data: Template) {
-    if (id !== data.schema.id) {
-      throw new ConflictException('Id in path and in data do not match');
-    }
-    await this.templateRepository.update({ id }, { value: data });
+    await this.templateRepository.update(
+      { id },
+      { value: data, name: data.name }
+    );
   }
 
   async delete(id: string) {

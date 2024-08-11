@@ -14,7 +14,6 @@ import { CredentialsSupportedDisplay } from './credentialsSupportedDisplay';
 
 export interface CredentialConfigurationSupportedV1013 { 
     vct: string;
-    id: string;
     claims?: object;
     format: string;
     scope?: string;

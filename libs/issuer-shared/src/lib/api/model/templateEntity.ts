@@ -9,13 +9,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { CredentialConfigurationSupportedV1013 } from './credentialConfigurationSupportedV1013';
+import { Template } from './template';
 
 
-export interface Template { 
+export interface TemplateEntity { 
+    id: string;
     name: string;
-    schema: CredentialConfigurationSupportedV1013;
-    sd: object;
-    ttl: number;
+    value: Template;
 }
 

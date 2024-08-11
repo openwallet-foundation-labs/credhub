@@ -98,9 +98,9 @@ export class IssuerService {
       // we either use the passed exp value or the ttl of the credential. If none is set, the credential will not expire.
       if (values.exp) {
         exp = values.exp;
-      } else if (credential.ttl) {
+      } else if (credential.value.ttl) {
         const expDate = new Date();
-        expDate.setSeconds(expDate.getSeconds() + credential.ttl);
+        expDate.setSeconds(expDate.getSeconds() + credential.value.ttl);
         exp = expDate.getTime();
       }
 
@@ -118,7 +118,7 @@ export class IssuerService {
       }
 
       const response = await this.vcIssuer.createCredentialOfferURI({
-        credential_configuration_ids: [credential.schema.id as string],
+        credential_configuration_ids: [credential.id],
         grants: {
           'urn:ietf:params:oauth:grant-type:pre-authorized_code': {
             'pre-authorized_code': sessionId,
@@ -163,7 +163,7 @@ export class IssuerService {
     // crearre the sd-jwt instance with the required parameters.
     const sdjwt = new SDJwtVcInstance({
       signer: this.keyService.signer,
-      verifier,
+      //verifier,
       signAlg: this.crypto.alg,
       hasher: digest,
       hashAlg: 'SHA-256',

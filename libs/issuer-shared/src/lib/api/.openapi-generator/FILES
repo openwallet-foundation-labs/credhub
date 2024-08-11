@@ -28,5 +28,6 @@ model/sessionRequestDto.ts
 model/sessionResponseDto.ts
 model/statusList.ts
 model/template.ts
+model/templateEntity.ts
 param.ts
 variables.ts

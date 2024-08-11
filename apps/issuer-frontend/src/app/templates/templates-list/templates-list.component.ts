@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Template, TemplatesApiService } from '@credhub/issuer-shared';
+import {
+  Template,
+  TemplateEntity,
+  TemplatesApiService,
+} from '@credhub/issuer-shared';
 import { firstValueFrom } from 'rxjs';
 import { MatListModule } from '@angular/material/list';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCard, MatCardModule } from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-templates-list',
@@ -21,7 +25,7 @@ import { MatCard, MatCardModule } from '@angular/material/card';
   styleUrl: './templates-list.component.scss',
 })
 export class TemplatesListComponent implements OnInit {
-  templates: Template[] = [];
+  templates: TemplateEntity[] = [];
   constructor(private templatesApiService: TemplatesApiService) {}
 
   async ngOnInit(): Promise<void> {
