@@ -118,7 +118,7 @@ export class CredentialsService {
     return this.instance
       .decode(credential)
       .then((vc) =>
-        vc.jwt.payload[key] ? (vc.jwt.payload[key] as number) : undefined
+        vc.jwt.payload[key] ? (vc.jwt.payload[key] as number) * 1000 : undefined
       );
   }
 

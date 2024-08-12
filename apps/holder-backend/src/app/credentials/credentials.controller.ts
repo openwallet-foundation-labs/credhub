@@ -52,7 +52,7 @@ export class CredentialsController {
     );
     return credentials.map((credential) => ({
       id: credential.id,
-      display: credential.metaData.display[0],
+      display: credential.metaData.display?.[0],
       issuer: credential.issuer,
     }));
   }

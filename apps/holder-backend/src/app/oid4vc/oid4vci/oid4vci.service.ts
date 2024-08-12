@@ -136,7 +136,6 @@ export class Oid4vciService {
       const sdjwtvc = await this.sdjwt.decode(
         credentialResponse.credential as string
       );
-      //TODO: also save the reference to the credential metadata. This will allow use to render the credential later. Either save the metadata or save a reference so it can be loaded on demand.
       const credentialEntry = await this.credentialsService.create(
         {
           value: credentialResponse.credential as string,
