@@ -11,24 +11,14 @@
  */
 
 
-export interface AuthRequestStateEntity { 
+export interface AuthStateEntity { 
     correlationId: string;
     uri: string;
     jwt: string;
-    status: AuthRequestStateEntity.StatusEnum;
+    status: object;
     timestamp: number;
     lastUpdated: number;
     error?: object;
+    payload: object;
 }
-export namespace AuthRequestStateEntity {
-    export type StatusEnum = 'created' | 'sent' | 'received' | 'verified' | 'error';
-    export const StatusEnum = {
-        created: 'created' as StatusEnum,
-        sent: 'sent' as StatusEnum,
-        received: 'received' as StatusEnum,
-        verified: 'verified' as StatusEnum,
-        error: 'error' as StatusEnum
-    };
-}
-
 

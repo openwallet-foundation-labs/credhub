@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Template, TemplatesApiService } from '@credhub/verifier-shared';
+import {
+  Template,
+  TemplatesApiService,
+  VerifierService,
+} from '@credhub/verifier-shared';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { FormControl } from '@angular/forms';
@@ -32,22 +36,26 @@ export class TemplatesShowComponent implements OnInit {
   template!: Template;
 
   control!: FormControl;
+  id!: string;
 
   constructor(
     private templatesApiService: TemplatesApiService,
     private route: ActivatedRoute,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public verifierService: VerifierService
   ) {}
 
   async ngOnInit(): Promise<void> {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
-      return;
-    }
+    this.id = this.route.snapshot.paramMap.get('id') as string;
     this.template = await firstValueFrom(
-      this.templatesApiService.templatesControllerGetOne(id)
+      this.templatesApiService.templatesControllerGetOne(this.id)
     );
+  }
+
+  async request() {
+    const id = await this.verifierService.getRequest(this.id as string);
+    this.router.navigate([id], { relativeTo: this.route });
   }
 
   delete() {
@@ -55,9 +63,7 @@ export class TemplatesShowComponent implements OnInit {
       return;
     }
     firstValueFrom(
-      this.templatesApiService.templatesControllerDelete(
-        this.template.request.id
-      )
+      this.templatesApiService.templatesControllerDelete(this.template.id)
     ).then(() =>
       this.router
         .navigate(['/templates'])

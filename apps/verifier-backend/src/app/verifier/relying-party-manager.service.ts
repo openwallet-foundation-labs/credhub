@@ -35,7 +35,7 @@ import { KeyService } from '@credhub/relying-party-shared';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { TemplatesService } from '../templates/templates.service';
-import { Template } from '../templates/dto/template.dto';
+import { TemplateDto } from '../templates/dto/template.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthStateEntity } from './entity/auth-state.entity';
@@ -110,7 +110,9 @@ export class RelyingPartyManagerService {
 
   // create the relying party
   private async buildRP(id: string) {
-    const verifier = await this.templateService.getOne(id);
+    const verifier = await this.templateService
+      .getOne(id)
+      .then((template) => template.value);
     if (!verifier) {
       throw new Error(`The verifier with the id ${id} is not supported.`);
     }
@@ -212,7 +214,7 @@ export class RelyingPartyManagerService {
     return rp.verifier;
   }
 
-  getCall(verifier: Template): PresentationVerificationCallback {
+  getCall(verifier: TemplateDto): PresentationVerificationCallback {
     /**
      * The presentation verification callback. This is called when the verifier needs to verify the presentation. The function can only handle sd-jwt-vc credentials.
      * @param args encoded credential.

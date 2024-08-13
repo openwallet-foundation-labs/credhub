@@ -1,2 +1,64 @@
-<button mat-button color="warn" (click)="delete()">Delete</button>
-<pre>{{ session | json }}</pre>
+<div fxLayout="row" fxLayoutGap="16px" fxLayoutAlign=" start">
+  <mat-card *ngIf="session" fxFlex="30">
+    <mat-card-header>
+      <mat-card-title fxLayout="row" fxLayoutAlign="start center">
+        <a mat-icon-button routerLink="../">
+          <mat-icon>arrow_back_ios</mat-icon>
+        </a>
+        <span>{{ session.uri }}</span>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item>
+          <mat-icon matListItemIcon>schedule</mat-icon>
+          <p matListItemTitle>{{ nbf | date : 'medium' }}</p>
+          <p matListItemLine>Created at</p>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon>schedule</mat-icon>
+          <p matListItemTitle>{{ exp | date : 'medium' }}</p>
+          <p matListItemLine>Expired at</p>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon>sync</mat-icon>
+          <p matListItemTitle>{{ session.status }}</p>
+          <p matListItemLine>Status</p>
+        </mat-list-item>
+      </mat-list>
+      <mat-divider></mat-divider>
+      <mat-nav-list>
+        <a mat-list-item (click)="delete()">
+          <mat-icon matListItemIcon>delete</mat-icon>
+          <p matListItemLine>Delete</p>
+        </a>
+      </mat-nav-list>
+    </mat-card-content>
+  </mat-card>
+
+  <div flex="70">
+    <div *ngIf="qrCodeImage" fxLayout="column" fxLayoutGap="16px">
+      <img [src]="qrCodeImage" alt="QR-Code" />
+      <mat-form-field [appearance]="'outline'">
+        <mat-label>QR-Code Url</mat-label>
+        <input
+          placeholder="QR-Code Url"
+          matInput
+          readonly
+          [formControl]="qrCodeField"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="copyValue(qrCodeField.value!)"
+          *ngIf="qrCodeImage"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+    <div *ngIf="claims">
+      <pre>{{ claims | json }}</pre>
+    </div>
+  </div>
+</div>

@@ -9,11 +9,10 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { TemplateDto } from './templateDto';
 
 
-export interface Template { 
+export interface SiopCreateResponse { 
+    uri: string;
     id: string;
-    value: TemplateDto;
 }
 

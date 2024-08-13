@@ -88,7 +88,7 @@ export class TemplatesEditComponent implements AfterViewInit {
   }
 
   save(): void {
-    const content: Template = JSON.parse(this.editor.getText());
+    const content: Template = this.editor.get();
     firstValueFrom(
       this.templatesApiService.templatesControllerUpdate(
         this.id as string,

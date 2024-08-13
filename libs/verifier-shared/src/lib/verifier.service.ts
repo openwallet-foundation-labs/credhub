@@ -10,10 +10,13 @@ export class VerifierService {
   private loop?: ReturnType<typeof setInterval>;
   statusEvent: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-  constructor(
-    private siopApiService: SiopApiService,
-    private configService: VerifierConfigService
-  ) {}
+  constructor(private siopApiService: SiopApiService) {}
+
+  getRequest(credentialId: string) {
+    return firstValueFrom(
+      this.siopApiService.siopControllerCreateSession(credentialId)
+    ).then((res) => res.id);
+  }
 
   /**
    * Gets the url for a new session from the issuer
@@ -24,16 +27,13 @@ export class VerifierService {
       this.siopApiService.siopControllerCreateSession(credentialId)
     );
     const id = decodeURIComponent(res.uri).split('/').pop() as string;
-    this.loop = setInterval(() => this.getStatus(id), 2000);
+    this.loop = setInterval(() => this.getStatus(credentialId, id), 2000);
     return res.uri;
   }
 
-  async getStatus(id: string) {
+  async getStatus(credentialId: string, id: string) {
     await firstValueFrom(
-      this.siopApiService.siopControllerGetAuthRequestStatus(
-        this.configService.getConfig('credentialId'),
-        id
-      )
+      this.siopApiService.siopControllerGetAuthRequestStatus(credentialId, id)
     ).then(
       (response) => {
         if (this.statusEvent.value !== response.status) {
