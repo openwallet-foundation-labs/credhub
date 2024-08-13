@@ -7,7 +7,7 @@ tmp
 .env
 site
 application.zip
-venv/
+.venv/
 
 # dependencies
 node_modules
