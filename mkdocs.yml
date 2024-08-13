@@ -89,8 +89,7 @@ nav:
     - Intention of this project: intention.md
     - Credential Profile: credential-profile.md
   - Getting Started:
-    - Getting Started: getting-started/index.md
-    - Prerequisites: getting-started/prerequisites.md
+    - Requirements: getting-started/requirements.md
     - Tech Stack: getting-started/tech-stack.md
     - Development: getting-started/development.md
     - Docker: getting-started/docker.md
