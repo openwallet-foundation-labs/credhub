@@ -27,11 +27,14 @@ services:
       - OIDC_REALM=${OIDC_REALM}
       - OIDC_ADMIN_CLIENT_ID=${OIDC_ADMIN_CLIENT_ID}
       - OIDC_ADMIN_CLIENT_SECRET=${OIDC_ADMIN_CLIENT_SECRET}
+      - OIDC_PUBLIC_CLIENT_ID=${OIDC_PUBLIC_CLIENT_ID}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
+      - WEBAUTHN_RP_NAME=${WEBAUTHN_RP_NAME}
+      - WEBAUTHN_RP_ID=${WEBAUTHN_RP_ID}
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
       interval: 30s
