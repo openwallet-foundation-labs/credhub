@@ -12,6 +12,10 @@ services:
       - CREDENTIALS_FOLDER=$CREDENTIALS_FOLDER
       - DB_TYPE=$DB_TYPE
       - DB_NAME=$DB_NAME
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
     volumes:
       - issuer:/home/node/app/data:rw
       - ./config/issuer-backend:/home/node/app/templates

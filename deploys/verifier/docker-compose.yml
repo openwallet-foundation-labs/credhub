@@ -16,6 +16,10 @@ services:
       - KM_FOLDER=$KM_FOLDER
       - DB_TYPE=$DB_TYPE
       - DB_NAME=$DB_NAME
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=${DB_PORT}
+      - DB_HOST=${DB_HOST}
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
       interval: 30s

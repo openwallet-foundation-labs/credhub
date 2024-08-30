@@ -1,14 +1,19 @@
 # Running Docker images
+
 To run the docker compose setup, copy the `.env.example` to `.env` in the root folder. The example file comes with an example configuration that should be changed when used in production.
 
 Most of the services are validating if the required environment variables are set, if not the process will exit with an error message.
 
 ## Building containers
+
 The containers are built via the tasks in each nx app like:
+
 ```bash
 nx run holder-app:container
-```	
+```
+
 To build multiple projects at once, you can use the `run-many` command:
+
 ```bash
 nx run-many --target=container --all
 ```
@@ -16,10 +21,13 @@ nx run-many --target=container --all
 By default the containers are built with the `latest` tag and will not be pushed to the registry. When pushed to the `main` branch of the repo, the github action will push the latest version to the registry.
 
 ## Known limitations
+
 When keycloak and the backend are running in docker, the host has to be set `host.docker.internal`. Otherwise the backend is not able to reach the keycloak instance. Make also sure the frontends are using `host.docker.internal` as the keycloak endpoint. Otherwise the token will have the wrong issuer and the backend will reject the token.
 
 TODO: the usage of vault should be moved into file.
+
 ## Vault
+
 To secure your keys, you are able to use [vault by hashicorp](https://developer.hashicorp.com/vault), otherwise the keys are either stored in the filesystem for the issuer and verifier or in the unencrypted database for the wallet.
 
 Right now it will spin up a vault instance in dev mode and will not persist the keys after a restart. In the `.env` in the root folder, you can set a token you need for authentication.
@@ -27,11 +35,13 @@ Right now it will spin up a vault instance in dev mode and will not persist the 
 ### Using in the cloud wallet
 
 Configure the environment variables in the `.env` to tell the service to use vault:
+
 ```env
 KM_TYPE=vault
 VAULT_URL=http://localhost:8200/v1/transit
 VAULT_TOKEN=root
 ```
+
 The server does not support multiple key management systems in parallel and also no import or export feature. So decide at the beginning which type of key management you want to use.
 
 TODO: we also need key management for the accounts to support multiple keys, because right now we use the user-id for the key reference, so each user is only able to store one key. We need a mapping table for the keys and the user-id.
@@ -63,4 +73,5 @@ Update the docker container like this:
       VAULT_ADDR: http://127.0.0.1:8200
     entrypoint: vault server -config=/vault/config/config.hcl
 ```
+
 Get familiar with the [vault deployment guide](https://developer.hashicorp.com/vault/tutorials/getting-started/getting-started-deploy). This current documentation is not fully covered to run vault in production!

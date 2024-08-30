@@ -8,7 +8,8 @@
     }
   ],
   "scripts": {
-    "sentry-cli": "sentry-cli"
+    "sentry-cli": "sentry-cli",
+    "init": "pnpm exec nx run-many --target=init --all=true"
   },
   "description": "A monorepo including multiple apps for SSI",
   "author": "Mirko Mollik <mirkomollik@gmail.com>",
