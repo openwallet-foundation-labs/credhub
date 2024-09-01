@@ -32,6 +32,8 @@ for folder in "${folders[@]}"; do
 
   if ! check_health; then
     echo "Containers in $folder did not become healthy in time."
+    # print the logs to help debug
+    docker compose logs
     exit 1
   fi
 
