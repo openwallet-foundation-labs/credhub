@@ -1,4 +1,4 @@
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=openwallet-foundation-labs_credhub&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=openwallet-foundation-labs_credhub)
+[![CD](https://github.com/openwallet-foundation-labs/credhub/actions/workflows/cd.yml/badge.svg)](https://github.com/openwallet-foundation-labs/credhub/actions/workflows/cd.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=openwallet-foundation-labs_credhub&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=openwallet-foundation-labs_credhub) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://raw.githubusercontent.com/openwallet-foundation/credo-ts/main/LICENSE) [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](https://www.typescriptlang.org/)
 
 # credhub
 

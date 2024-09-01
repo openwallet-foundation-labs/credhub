@@ -79,7 +79,7 @@ jobs:
       # validate if the .env.example files in the deploys folder are up to date and that the containers can be health checked and started
       - name: Validate deploy environment
         run:
-          cd deploys
+          cd deploys &&
           ./test.sh
 
       - name: Check if testcontainer logs exist
