@@ -49,7 +49,10 @@ export class Request implements PresentationDefinitionV2 {
   @Type(() => InputDescriptor)
   input_descriptors: InputDescriptor[];
 }
-export class Template {
+export class TemplateDto {
+  @IsString()
+  name: string;
+
   @ValidateNested()
   @Type(() => Metadata)
   metadata: Metadata;

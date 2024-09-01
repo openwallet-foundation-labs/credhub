@@ -13,3 +13,4 @@ export * from './sessionRequestDto';
 export * from './sessionResponseDto';
 export * from './statusList';
 export * from './template';
+export * from './templateEntity';

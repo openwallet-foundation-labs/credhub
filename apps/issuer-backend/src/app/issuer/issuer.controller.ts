@@ -6,17 +6,19 @@ import {
   NotFoundException,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { IssuerService } from './issuer.service';
 import { SessionRequestDto } from './dto/session-request.dto';
-import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOAuth2, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'nest-keycloak-connect';
 import { SessionResponseDto } from './dto/session-response.dto';
 import { CredentialOfferSession } from './dto/credential-offer-session.dto';
 import { DBStates } from '@credhub/relying-party-shared';
 import { CredentialsService } from '../credentials/credentials.service';
 import { SessionEntryDto } from './dto/session-entry.dto';
+import { CredentialOfferPayloadV1_0_13 } from '@sphereon/oid4vci-common';
 
 @UseGuards(AuthGuard)
 @ApiOAuth2([])
@@ -29,12 +31,27 @@ export class IssuerController {
   ) {}
 
   @ApiOperation({ summary: 'Lists all sessions' })
+  @ApiQuery({ name: 'configId', required: false })
   @Get()
-  async listAll(): Promise<CredentialOfferSession[]> {
+  async listAll(
+    @Query('configId') configId?: string
+  ): Promise<CredentialOfferSession[]> {
     return (
       this.issuerService.vcIssuer
         .credentialOfferSessions as DBStates<CredentialOfferSession>
-    ).all();
+    )
+      .all()
+      .then((entries) => {
+        if (configId) {
+          return entries.filter((entry) =>
+            (
+              entry.credentialOffer
+                .credential_offer as CredentialOfferPayloadV1_0_13
+            ).credential_configuration_ids.includes(configId)
+          );
+        }
+        return entries;
+      });
   }
 
   @ApiOperation({ summary: 'Returns the status for a session' })
@@ -50,7 +67,7 @@ export class IssuerController {
     const credentials = await this.credentialsService.getBySessionId(id);
     return {
       session,
-      credentials: credentials,
+      credentials,
     };
   }
 

@@ -8,8 +8,8 @@ configuration.ts
 encoder.ts
 git_push.sh
 index.ts
-model/authRequestStateEntity.ts
 model/authResponseRequestDto.ts
+model/authStateEntity.ts
 model/constraints.ts
 model/field.ts
 model/filter.ts
@@ -18,6 +18,8 @@ model/inputDescriptor.ts
 model/metadata.ts
 model/models.ts
 model/request.ts
+model/siopCreateResponse.ts
 model/template.ts
+model/templateDto.ts
 param.ts
 variables.ts

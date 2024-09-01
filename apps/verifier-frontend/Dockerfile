@@ -1,5 +1,8 @@
 FROM docker.io/nginx:stable-alpine
 
+# Install wget
+RUN apk --no-cache add wget
+
 # Copy application files and the startup script with permissions
 COPY dist/apps/verifier-frontend/* /usr/share/nginx/html/
 COPY --chmod=755 apps/verifier-frontend/startup.sh /usr/local/bin/startup.sh

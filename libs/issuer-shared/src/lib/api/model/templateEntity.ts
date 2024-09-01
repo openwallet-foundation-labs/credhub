@@ -9,11 +9,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { TemplateDto } from './templateDto';
+import { Template } from './template';
 
 
-export interface Template { 
+export interface TemplateEntity { 
     id: string;
-    value: TemplateDto;
+    name: string;
+    value: Template;
 }
 

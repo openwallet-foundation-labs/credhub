@@ -5,15 +5,10 @@
         <button mat-icon-button routerLink="../">
           <mat-icon>arrow_back_ios</mat-icon>
         </button>
-        <span>{{ template.request.id }}</span>
+        <span>{{ template.value.name }}</span>
       </mat-card-title>
     </mat-card-header>
-    <form
-      [formGroup]="form"
-      (submit)="generate()"
-      fxLayout="column"
-      fxLayoutGap="16px"
-    >
+    <form (submit)="generate()" fxLayout="column" fxLayoutGap="16px">
       <mat-card-content> </mat-card-content>
       <mat-card-actions align="end">
         <button type="submit" mat-flat-button color="primary">Generate</button>

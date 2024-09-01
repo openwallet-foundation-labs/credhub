@@ -5,7 +5,7 @@ services:
     healthcheck:
       test:
         ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', '$KC_POSTGRES_USER']
-      timeout: 45s
+      timeout: 10s
       interval: 10s
       retries: 10
     volumes:
@@ -53,11 +53,15 @@ services:
     networks:
       - keycloak-net
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:8080/health']
-      interval: 30s
+      test:
+        [
+          'CMD-SHELL',
+          "exec 3<>/dev/tcp/127.0.0.1/8080;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3",
+        ]
+      interval: 10s
       timeout: 10s
       retries: 3
-      start_period: 2m
+      start_period: 10s
 
 networks:
   keycloak-net:

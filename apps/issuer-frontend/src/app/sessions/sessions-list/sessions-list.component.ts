@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   CredentialOfferSession,
@@ -31,6 +31,8 @@ import { SelectionModel } from '@angular/cdk/collections';
   styleUrl: './sessions-list.component.scss',
 })
 export class SessionsListComponent implements OnInit, OnDestroy {
+  @Input() id?: string;
+
   interval!: ReturnType<typeof setInterval>;
   dataSource = new MatTableDataSource<CredentialOfferSession>();
   displayedColumns = ['select', 'correlationId', 'status', 'timestamp'];
@@ -42,13 +44,13 @@ export class SessionsListComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit(): Promise<void> {
-    await this.loadSessions();
+    this.loadSessions();
   }
 
   private loadSessions() {
-    firstValueFrom(this.sessionsApiService.issuerControllerListAll()).then(
-      (sessions) => (this.dataSource.data = sessions)
-    );
+    firstValueFrom(
+      this.sessionsApiService.issuerControllerListAll(this.id)
+    ).then((sessions) => (this.dataSource.data = sessions));
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

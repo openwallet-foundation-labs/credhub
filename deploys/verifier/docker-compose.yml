@@ -16,16 +16,18 @@ services:
       - KM_FOLDER=$KM_FOLDER
       - DB_TYPE=$DB_TYPE
       - DB_NAME=$DB_NAME
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_PORT=${DB_PORT}
-      - DB_HOST=${DB_HOST}
+      - DB_HOST=$DB_HOST
+      - DB_PORT=$DB_PORT
+      - DB_USERNAME=$DB_USERNAME
+      - DB_PASSWORD=$DB_PASSWORD
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
-      interval: 30s
+      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:3000/health']
+      interval: 10s
       timeout: 10s
       retries: 3
-      start_period: 2m
+      start_period: 10s
+    networks:
+      - backend
 
   verifier-frontend:
     image: ghcr.io/openwallet-foundation-labs/credhub/verifier-frontend
@@ -34,9 +36,14 @@ services:
       - OIDC_AUTH_URL=$OIDC_AUTH_URL/realms/$OIDC_REALM
       - OIDC_CLIENT_ID=$FRONTEND_OIDC_CLIENT_ID
       - OIDC_CLIENT_SECRET=$FRONTEND_OIDC_CLIENT_SECRET
-      - CREDENTIAL_ID=$CREDENTIAL_ID
     ports:
       - $FRONTEND_PORT:80
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1/index.html']
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
 
   db:
     restart: unless-stopped
@@ -51,11 +58,14 @@ services:
       POSTGRES_PASSWORD: $DB_PASSWORD
       POSTGRES_DB: $DB_NAME
       POSTGRES_HOST: $DB_HOST
-    ports:
-      - $DB_PORT:5432
     volumes:
       - verifier-db:/var/lib/postgresql/data
+    networks:
+      - backend
 
 volumes:
   verifier:
   verifier-db:
+
+networks:
+  backend:

@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 import { TemplatesListComponent } from './templates/templates-list/templates-list.component';
-import { TemplatesCreateComponent } from './templates/templates-create/templates-create.component';
 import { TemplatesShowComponent } from './templates/templates-show/templates-show.component';
 import { TemplatesIssueComponent } from './templates/templates-issue/templates-issue.component';
 import { TemplatesEditComponent } from './templates/templates-edit/templates-edit.component';
 import { SessionsShowComponent } from './sessions/sessions-show/sessions-show.component';
+import { SessionsListComponent } from './sessions/sessions-list/sessions-list.component';
 
 export const routes: Routes = [
   {
@@ -21,7 +21,7 @@ export const routes: Routes = [
       },
       {
         path: 'new',
-        component: TemplatesCreateComponent,
+        component: TemplatesEditComponent,
       },
       {
         path: ':id',
@@ -35,8 +35,17 @@ export const routes: Routes = [
         path: ':id/issue',
         component: TemplatesIssueComponent,
       },
+    ],
+  },
+  {
+    path: 'sessions',
+    children: [
       {
-        path: ':id/sessions/:sessionId',
+        path: '',
+        component: SessionsListComponent,
+      },
+      {
+        path: ':sessionId',
         component: SessionsShowComponent,
       },
     ],

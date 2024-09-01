@@ -41,9 +41,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # build the docker image for keycloak
+      # build the docker image for keycloak and publish it to the GitHub Container Registry
       - name: Build Keycloak Docker Image
-        run: cd deploys/keycloak && docker compose build keycloak && docker compose push keycloak
+        run: |
+          cd deploys/keycloak &&
+          docker compose pull keycloak &&
+          docker compose build keycloak &&
+          docker compose push keycloak
 
       # add the release, build the container and release it with the information for sentry
       - name: Build and push images

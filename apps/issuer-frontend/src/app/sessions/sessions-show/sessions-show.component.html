@@ -1,13 +1,5 @@
 <div fxLayout="row" fxLayoutGap="16px" fxLayoutAlign=" start">
   <mat-card fxFlex="30" *ngIf="session">
-    <mat-card-header>
-      <mat-card-title fxLayout="row" fxLayoutAlign="start center">
-        <button mat-icon-button routerLink="../../">
-          <mat-icon>arrow_back_ios</mat-icon>
-        </button>
-        <span></span>
-      </mat-card-title>
-    </mat-card-header>
     <mat-card-content>
       <mat-list>
         <mat-list-item>
@@ -53,7 +45,12 @@
           </mat-list-item>
           }
         </mat-list>
-        <mat-action-row>
+        <mat-action-row fxLayout="row" fxLayoutAlign="space-between center">
+          <a
+            mat-button
+            [routerLink]="'/templates/' + entry.credential.jwt.payload.vct"
+            >Template</a
+          >
           <button
             [disabled]="entry.status === 'revoked'"
             mat-button

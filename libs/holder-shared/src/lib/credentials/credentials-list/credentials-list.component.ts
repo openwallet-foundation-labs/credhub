@@ -23,7 +23,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { CredentialsService } from '../credentials.service';
 
 export interface CredentialList extends CredentialResponse {
-  display: CredentialsSupportedDisplay;
+  display?: CredentialsSupportedDisplay;
 }
 
 type ShowType = 'all' | 'archived';
@@ -100,7 +100,7 @@ export class CredentialsListComponent implements OnInit {
         return;
       }
       this.credentials = credentials.filter((credential) => {
-        return credential.display.name
+        return credential.display?.name
           .toLowerCase()
           .includes(value.toLowerCase());
       });

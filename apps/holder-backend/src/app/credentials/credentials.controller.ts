@@ -1,24 +1,15 @@
 import {
-  Body,
   ConflictException,
   Controller,
   Delete,
   Get,
   Param,
-  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import {
-  ApiBody,
-  ApiOAuth2,
-  ApiOperation,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOAuth2, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthGuard, AuthenticatedUser } from 'nest-keycloak-connect';
 import { CredentialsService } from './credentials.service';
-import { CreateCredentialDto } from './dto/create-credential.dto';
 import { CredentialResponse } from './dto/credential-response.dto';
 import { KeycloakUser } from '../auth/user';
 
@@ -28,16 +19,6 @@ import { KeycloakUser } from '../auth/user';
 @Controller('credentials')
 export class CredentialsController {
   constructor(private readonly credentialsService: CredentialsService) {}
-
-  @ApiOperation({ summary: 'store a credential' })
-  @ApiBody({ type: CreateCredentialDto })
-  @Post()
-  create(
-    @Body() createCredentialDto: CreateCredentialDto,
-    @AuthenticatedUser() user: KeycloakUser
-  ) {
-    return this.credentialsService.create(createCredentialDto, user.sub);
-  }
 
   @ApiOperation({ summary: 'get all credentials' })
   @ApiQuery({ name: 'archive', required: false, type: Boolean })
@@ -52,7 +33,7 @@ export class CredentialsController {
     );
     return credentials.map((credential) => ({
       id: credential.id,
-      display: credential.metaData.display[0],
+      display: credential.metaData.display?.[0],
       issuer: credential.issuer,
     }));
   }

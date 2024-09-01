@@ -5,6 +5,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import {
   IssuerService,
   Template,
+  TemplateEntity,
   TemplatesApiService,
 } from '@credhub/issuer-shared';
 import qrcode from 'qrcode';
@@ -43,7 +44,7 @@ export class TemplatesIssueComponent implements OnInit, OnDestroy {
   pinRequired = new FormControl<boolean>(false);
   pinField = new FormControl('');
   id!: string;
-  template!: Template;
+  template!: TemplateEntity;
   sessionId?: string;
 
   constructor(
@@ -55,6 +56,7 @@ export class TemplatesIssueComponent implements OnInit, OnDestroy {
     this.form = new FormGroup({});
   }
   async ngOnInit(): Promise<void> {
+    //TODO: find out if it is expired, this should be realised via the status
     this.id = this.route.snapshot.paramMap.get('id') as string;
     this.template = await firstValueFrom(
       this.templatesApiService.templatesControllerGetOne(this.id)
@@ -67,7 +69,7 @@ export class TemplatesIssueComponent implements OnInit, OnDestroy {
   }
 
   generateForm() {
-    for (const key in this.template.schema.claims) {
+    for (const key in this.template.value.schema.claims) {
       this.form.addControl(key, new FormControl(''));
     }
   }

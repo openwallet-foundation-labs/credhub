@@ -9,11 +9,13 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { TemplateDto } from './templateDto';
+import { Metadata } from './metadata';
+import { Request } from './request';
 
 
-export interface Template { 
-    id: string;
-    value: TemplateDto;
+export interface TemplateDto { 
+    name: string;
+    metadata: Metadata;
+    request: Request;
 }
 

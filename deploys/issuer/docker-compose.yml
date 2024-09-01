@@ -22,22 +22,29 @@ services:
     ports:
       - $BACKEND_PORT:3000
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
-      interval: 30s
+      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:3000/health']
+      interval: 10s
       timeout: 10s
       retries: 3
-      start_period: 2m
+      start_period: 10s
+    networks:
+      - backend
 
   issuer-frontend:
     image: ghcr.io/openwallet-foundation-labs/credhub/issuer-frontend
     environment:
-      - BACKEND_URL=$ISSUER_BASE_URL
+      - BACKEND_URL=$BACKEND_URL
       - OIDC_AUTH_URL=$OIDC_AUTH_URL/realms/$OIDC_REALM
       - OIDC_CLIENT_ID=$FRONTEND_OIDC_CLIENT_ID
       - OIDC_CLIENT_SECRET=$FRONTEND_OIDC_CLIENT_SECRET
-      - CREDENTIAL_ID=$CREDENTIAL_ID
     ports:
       - $FRONTEND_PORT:80
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1/index.html']
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
 
   db:
     restart: unless-stopped
@@ -52,11 +59,13 @@ services:
       POSTGRES_PASSWORD: $DB_PASSWORD
       POSTGRES_DB: $DB_NAME
       POSTGRES_HOST: $DB_HOST
-    ports:
-      - $DB_PORT:5432
     volumes:
       - issuer-db:/var/lib/postgresql/data
-
+    networks:
+      - backend
 volumes:
   issuer:
   issuer-db:
+
+networks:
+  backend:

@@ -5,6 +5,12 @@ services:
       - ./config/config.json:/usr/share/nginx/html/assets/config.json
     ports:
       - $PORT:80
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1/index.html']
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
 
 volumes:
   verifier:

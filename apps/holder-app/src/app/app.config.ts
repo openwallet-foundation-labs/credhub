@@ -5,7 +5,12 @@ import {
   isDevMode,
   ErrorHandler,
 } from '@angular/core';
-import { Router, provideRouter } from '@angular/router';
+import {
+  RouteReuseStrategy,
+  Router,
+  provideRouter,
+  withRouterConfig,
+} from '@angular/router';
 
 import { routes } from './app.routes';
 import {
@@ -27,6 +32,24 @@ import { provideServiceWorker } from '@angular/service-worker';
 import * as Sentry from '@sentry/angular';
 import { environment } from '../environments/environment';
 
+class MyStrategy implements RouteReuseStrategy {
+  shouldDetach() {
+    return false;
+  }
+  store() {
+    return null;
+  }
+  shouldAttach() {
+    return false;
+  }
+  retrieve() {
+    return null;
+  }
+  shouldReuseRoute() {
+    return false;
+  }
+}
+
 Sentry.init({
   dsn: environment.sentryDsn,
   enabled: !isDevMode(),
@@ -45,11 +68,12 @@ Sentry.init({
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(routes, withRouterConfig({ onSameUrlNavigation: 'reload' })),
     provideAnimations(),
     provideOAuthClient(),
     provideHttpClient(withInterceptorsFromDi()),
     importProvidersFrom(ApiModule),
+    { provide: RouteReuseStrategy, useClass: MyStrategy },
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true } },
     {
       provide: APP_INITIALIZER,

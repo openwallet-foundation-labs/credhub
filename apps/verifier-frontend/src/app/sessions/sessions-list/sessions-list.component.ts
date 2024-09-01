@@ -2,10 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import { MatListModule } from '@angular/material/list';
-import {
-  AuthRequestStateEntity,
-  SiopApiService,
-} from '@credhub/verifier-shared';
+import { AuthStateEntity, SiopApiService } from '@credhub/verifier-shared';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -33,9 +30,9 @@ import { MatButtonModule } from '@angular/material/button';
 export class SessionsListComponent implements OnInit, OnDestroy {
   interval!: ReturnType<typeof setInterval>;
   id!: string;
-  dataSource = new MatTableDataSource<AuthRequestStateEntity>();
+  dataSource = new MatTableDataSource<AuthStateEntity>();
   displayedColumns = ['select', 'correlationId', 'status', 'timestamp'];
-  selection = new SelectionModel<AuthRequestStateEntity>(true, []);
+  selection = new SelectionModel<AuthStateEntity>(true, []);
 
   constructor(
     private templatesApiService: SiopApiService,

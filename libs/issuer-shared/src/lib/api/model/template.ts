@@ -13,6 +13,7 @@ import { CredentialConfigurationSupportedV1013 } from './credentialConfiguration
 
 
 export interface Template { 
+    name: string;
     schema: CredentialConfigurationSupportedV1013;
     sd: object;
     ttl: number;

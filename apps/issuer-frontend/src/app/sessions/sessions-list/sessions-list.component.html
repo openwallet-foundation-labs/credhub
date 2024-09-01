@@ -30,7 +30,7 @@
   <ng-container matColumnDef="correlationId">
     <th mat-header-cell *matHeaderCellDef>Correlation ID</th>
     <td mat-cell *matCellDef="let session">
-      <a [routerLink]="'sessions/' + session.id">{{ session.id }}</a>
+      <a [routerLink]="'/sessions/' + session.id">{{ session.id }}</a>
     </td>
   </ng-container>
   <ng-container matColumnDef="status">

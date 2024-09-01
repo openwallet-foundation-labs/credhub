@@ -51,7 +51,6 @@ export class SessionsShowComponent implements OnInit, OnDestroy {
   ) {
     this.sdjwt = new SDJwtVcInstance({
       hasher: digest,
-      hashAlg: 'SHA-256',
     });
   }
   ngOnDestroy(): void {

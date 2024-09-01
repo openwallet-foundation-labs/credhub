@@ -14,9 +14,8 @@ services:
       POSTGRES_PASSWORD: $DB_PASSWORD
       POSTGRES_DB: $DB_NAME
       POSTGRES_HOST: $DB_HOST
-    # publish ports for debugging, not recommended for production
-    ports:
-      - '5432:5432'
+    networks:
+      - backend
 
   holder-backend:
     image: ghcr.io/openwallet-foundation-labs/credhub/holder-backend
@@ -25,9 +24,9 @@ services:
     environment:
       - OIDC_AUTH_URL=${OIDC_AUTH_URL}
       - OIDC_REALM=${OIDC_REALM}
+      - OIDC_PUBLIC_CLIENT_ID=${OIDC_PUBLIC_CLIENT_ID}
       - OIDC_ADMIN_CLIENT_ID=${OIDC_ADMIN_CLIENT_ID}
       - OIDC_ADMIN_CLIENT_SECRET=${OIDC_ADMIN_CLIENT_SECRET}
-      - OIDC_PUBLIC_CLIENT_ID=${OIDC_PUBLIC_CLIENT_ID}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
       - DB_USERNAME=${DB_USERNAME}
@@ -36,11 +35,13 @@ services:
       - WEBAUTHN_RP_NAME=${WEBAUTHN_RP_NAME}
       - WEBAUTHN_RP_ID=${WEBAUTHN_RP_ID}
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
-      interval: 30s
+      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:3000/health']
+      interval: 10s
       timeout: 10s
       retries: 3
-      start_period: 2m
+      start_period: 10s
+    networks:
+      - backend
 
   holder-frontend:
     image: ghcr.io/openwallet-foundation-labs/credhub/holder-app
@@ -51,6 +52,15 @@ services:
       - OIDC_ALLOW_HTTP=${OIDC_ALLOW_HTTP}
     ports:
       - $FRONTEND_PORT:80
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1/index.html']
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
 
 volumes:
   db:
+
+networks:
+  backend:

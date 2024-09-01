@@ -27,6 +27,7 @@ import { v4 } from 'uuid';
 import { AuthResponseRequestDto } from './dto/auth-repsonse-request.dto';
 import { DBRPSessionManager } from './session-manager';
 import { KeyService } from '@credhub/relying-party-shared';
+import { SiopCreateResponse } from './dto/siop-create-response.dto';
 
 @ApiTags('siop')
 @Controller('siop')
@@ -42,7 +43,7 @@ export class SiopController {
   @Roles({ roles: ['realm:verifier'], mode: RoleMatchingMode.ALL })
   @ApiOperation({ summary: 'Create a session' })
   @Post(':id')
-  async createSession(@Param('id') id: string) {
+  async createSession(@Param('id') id: string): Promise<SiopCreateResponse> {
     const instance = await this.relyingPartyManagerService.getOrCreate(id);
     const jwk = await this.keyService.getPublicKey();
 
@@ -67,6 +68,7 @@ export class SiopController {
     });
     return {
       uri: request.encodedUri,
+      id: correlationId,
     };
   }
 
@@ -92,6 +94,61 @@ export class SiopController {
   async getAllAuthRequest(@Param('rp') rp: string) {
     const instance = await this.relyingPartyManagerService.getOrCreate(rp);
     return (instance.rp.sessionManager as DBRPSessionManager).getAllStates();
+  }
+
+  /**
+   * Add the route to get the status of the request
+   */
+  @UseGuards(AuthGuard)
+  @ApiOAuth2([])
+  @ApiOperation({ summary: 'Get the uri of the auth request' })
+  @Get(':rp/auth-request/:correlationId/uri')
+  async getAuthRequestUri(
+    @Param('rp') rp: string,
+    @Param('correlationId') correlationId: string
+  ) {
+    const instance = await this.relyingPartyManagerService.getOrCreate(rp);
+    const request =
+      await instance.rp.sessionManager.getRequestStateByCorrelationId(
+        correlationId
+      );
+    if (!request) {
+      throw new ConflictException('Request not found');
+    }
+    // we build the string by ourself since it can not be done by the library
+    return {
+      uri: `${
+        request.request.payload.scope
+      }://?request_uri=${encodeURIComponent(
+        request.request.payload.response_uri.replace(
+          'auth-response',
+          'auth-request'
+        )
+      )}`,
+    };
+  }
+
+  /**
+   * Add the route to get the status of the request
+   */
+  @UseGuards(AuthGuard)
+  @ApiOAuth2([])
+  @ApiOperation({ summary: 'Get the response of the auth request' })
+  @Get(':rp/auth-request/:correlationId/response')
+  async getAuthRequestResponse(
+    @Param('rp') rp: string,
+    @Param('correlationId') correlationId: string
+  ) {
+    const instance = await this.relyingPartyManagerService.getOrCreate(rp);
+    const response =
+      await instance.rp.sessionManager.getResponseStateByCorrelationId(
+        correlationId
+      );
+    if (!response) {
+      throw new ConflictException('Request not found');
+    }
+    //TODO: instead of decoding the vp_token, we should use the stored credential and return this?
+    return response.response;
   }
 
   /**

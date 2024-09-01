@@ -20,6 +20,8 @@ import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
 import { Template } from '../model/template';
+// @ts-ignore
+import { TemplateDto } from '../model/templateDto';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -94,16 +96,16 @@ export class TemplatesApiService {
 
     /**
      * Create a new template
-     * @param template 
+     * @param templateDto 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public templatesControllerCreate(template: Template, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public templatesControllerCreate(template: Template, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public templatesControllerCreate(template: Template, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public templatesControllerCreate(template: Template, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (template === null || template === undefined) {
-            throw new Error('Required parameter template was null or undefined when calling templatesControllerCreate.');
+    public templatesControllerCreate(templateDto: TemplateDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public templatesControllerCreate(templateDto: TemplateDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public templatesControllerCreate(templateDto: TemplateDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public templatesControllerCreate(templateDto: TemplateDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (templateDto === null || templateDto === undefined) {
+            throw new Error('Required parameter templateDto was null or undefined when calling templatesControllerCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -161,7 +163,7 @@ export class TemplatesApiService {
         return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: template,
+                body: templateDto,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
@@ -383,19 +385,19 @@ export class TemplatesApiService {
     /**
      * Update a template
      * @param id 
-     * @param template 
+     * @param templateDto 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public templatesControllerUpdate(id: string, template: Template, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public templatesControllerUpdate(id: string, template: Template, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public templatesControllerUpdate(id: string, template: Template, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public templatesControllerUpdate(id: string, template: Template, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public templatesControllerUpdate(id: string, templateDto: TemplateDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public templatesControllerUpdate(id: string, templateDto: TemplateDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public templatesControllerUpdate(id: string, templateDto: TemplateDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public templatesControllerUpdate(id: string, templateDto: TemplateDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling templatesControllerUpdate.');
         }
-        if (template === null || template === undefined) {
-            throw new Error('Required parameter template was null or undefined when calling templatesControllerUpdate.');
+        if (templateDto === null || templateDto === undefined) {
+            throw new Error('Required parameter templateDto was null or undefined when calling templatesControllerUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -453,7 +455,7 @@ export class TemplatesApiService {
         return this.httpClient.request<any>('patch', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: template,
+                body: templateDto,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

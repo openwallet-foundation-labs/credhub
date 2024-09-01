@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Template, TemplatesApiService } from '@credhub/verifier-shared';
+import {
+  Template,
+  TemplateDto,
+  TemplatesApiService,
+} from '@credhub/verifier-shared';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import {
-  AbstractControl,
-  FormControl,
-  ReactiveFormsModule,
-  ValidationErrors,
-} from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -16,6 +15,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { FlexLayoutModule } from 'ng-flex-layout';
+import JSONEditor, { JSONEditorOptions } from 'jsoneditor';
+import { schema } from './schema.value';
 
 @Component({
   selector: 'app-templates-edit',
@@ -35,10 +36,14 @@ import { FlexLayoutModule } from 'ng-flex-layout';
   templateUrl: './templates-edit.component.html',
   styleUrl: './templates-edit.component.scss',
 })
-export class TemplatesEditComponent implements OnInit {
-  template!: Template;
+export class TemplatesEditComponent implements AfterViewInit {
+  id?: string | null;
+  template!: TemplateDto;
 
-  control!: FormControl;
+  valid = true;
+  @ViewChild('jsonEditorContainer', { static: false })
+  jsonEditorContainer!: ElementRef;
+  editor!: JSONEditor;
 
   constructor(
     private templatesApiService: TemplatesApiService,
@@ -47,33 +52,42 @@ export class TemplatesEditComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {}
 
-  async ngOnInit(): Promise<void> {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
-      return;
+  async ngAfterViewInit(): Promise<void> {
+    this.id = this.route.snapshot.paramMap.get('id');
+    if (this.id) {
+      this.template = await firstValueFrom(
+        this.templatesApiService.templatesControllerGetOne(this.id)
+      ).then((template) => template.value);
+    } else {
+      //this.template = {};
     }
-    this.template = await firstValueFrom(
-      this.templatesApiService.templatesControllerGetOne(id)
-    );
-    this.control = new FormControl(JSON.stringify(this.template, null, 2), [
-      this.isValidJson,
-    ]);
+
+    //TODO: instead the monaco-editor editor should be used, but it resulted in errors when building (no loader for ttf files). Also it was not clear how to make sure that the validation was working. But it had better auto completion and syntax highlighting.
+    const container = this.jsonEditorContainer.nativeElement;
+    const options: JSONEditorOptions = {
+      schema,
+      mode: 'code',
+      onChange: this.validate.bind(this),
+    };
+    this.editor = new JSONEditor(container, options, this.template);
+    setTimeout(() => this.validate(), 100);
   }
 
-  isValidJson(control: AbstractControl): ValidationErrors | null {
-    try {
-      JSON.parse(control.value);
-    } catch (e) {
-      return { invalidJson: true };
+  private async validate() {
+    const errors = await this.editor.validate();
+    const hasSchemaErrors = errors && errors.length > 0;
+    if (hasSchemaErrors) {
+      this.valid = false;
+      return;
     }
-    return null;
+    this.valid = true;
   }
 
   save(): void {
-    const content: Template = JSON.parse(this.control.value);
+    const content: TemplateDto = this.editor.get();
     firstValueFrom(
       this.templatesApiService.templatesControllerUpdate(
-        content.request.id,
+        this.id as string,
         content
       )
     ).then(() =>

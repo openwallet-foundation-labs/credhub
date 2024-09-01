@@ -22,7 +22,6 @@ import { firstValueFrom } from 'rxjs';
 import { Verifier } from '@sd-jwt/types';
 import { JWK, JWTPayload } from '@sphereon/oid4vci-common';
 import { CryptoService, ResolverService } from '@credhub/backend';
-import { getListFromStatusListJWT } from '@sd-jwt/jwt-status-list';
 
 type DateKey = 'exp' | 'nbf';
 @Injectable()
@@ -119,7 +118,7 @@ export class CredentialsService {
     return this.instance
       .decode(credential)
       .then((vc) =>
-        vc.jwt.payload[key] ? (vc.jwt.payload[key] as number) : undefined
+        vc.jwt.payload[key] ? (vc.jwt.payload[key] as number) * 1000 : undefined
       );
   }
 

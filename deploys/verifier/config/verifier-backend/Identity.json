@@ -1,4 +1,5 @@
 {
+  "name": "Identity",
   "metadata": {
     "clientId": "client",
     "clientName": "Verifier",

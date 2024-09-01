@@ -11,7 +11,8 @@ import {
 import { ApiTags, ApiOAuth2, ApiOperation } from '@nestjs/swagger';
 import { AuthGuard } from 'nest-keycloak-connect';
 import { TemplatesService } from './templates.service';
-import { Template } from './dto/template.dto';
+import { TemplateDto } from './dto/template.dto';
+import { Template } from './schemas/temoplate.entity';
 
 @ApiTags('templates')
 @UseGuards(AuthGuard)
@@ -22,7 +23,7 @@ export class TemplatesController {
 
   @ApiOperation({ summary: 'List all templates' })
   @Get()
-  listAll() {
+  listAll(): Promise<Template[]> {
     return this.templatesService.listAll();
   }
 
@@ -34,13 +35,13 @@ export class TemplatesController {
 
   @ApiOperation({ summary: 'Create a new template' })
   @Post()
-  create(@Body() data: Template) {
+  create(@Body() data: TemplateDto) {
     return this.templatesService.create(data);
   }
 
   @ApiOperation({ summary: 'Update a template' })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() data: Template) {
+  update(@Param('id') id: string, @Body() data: TemplateDto) {
     return this.templatesService.update(id, data);
   }
 

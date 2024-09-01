@@ -37,7 +37,6 @@ import { MatCardModule } from '@angular/material/card';
   styleUrl: './templates-request.component.scss',
 })
 export class TemplatesRequestComponent implements OnInit, OnDestroy {
-  form: FormGroup;
   qrCodeField = new FormControl('');
   qrCodeImage?: string;
   id!: string;
@@ -48,9 +47,7 @@ export class TemplatesRequestComponent implements OnInit, OnDestroy {
     private templatesApiService: TemplatesApiService,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute
-  ) {
-    this.form = new FormGroup({});
-  }
+  ) {}
   async ngOnInit(): Promise<void> {
     this.id = this.route.snapshot.paramMap.get('id') as string;
     this.template = await firstValueFrom(

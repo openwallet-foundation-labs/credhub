@@ -97,12 +97,14 @@ export class IssuerService {
       let exp: number | undefined;
       // we either use the passed exp value or the ttl of the credential. If none is set, the credential will not expire.
       if (values.exp) {
+        //TODO: make sure that the exp is in seconds
         exp = values.exp;
-      } else if (credential.ttl) {
+      } else if (credential.value.ttl) {
         const expDate = new Date();
-        expDate.setSeconds(expDate.getSeconds() + credential.ttl);
+        expDate.setSeconds(expDate.getSeconds() + credential.value.ttl);
         exp = expDate.getTime();
       }
+      exp = exp > 1e10 ? Math.floor(exp / 1000) : exp;
 
       const credentialDataSupplierInput: CredentialDataSupplierInput = {
         credentialSubject: values.credentialSubject,
@@ -118,7 +120,7 @@ export class IssuerService {
       }
 
       const response = await this.vcIssuer.createCredentialOfferURI({
-        credential_configuration_ids: [credential.schema.id as string],
+        credential_configuration_ids: [credential.id],
         grants: {
           'urn:ietf:params:oauth:grant-type:pre-authorized_code': {
             'pre-authorized_code': sessionId,
@@ -156,14 +158,9 @@ export class IssuerService {
   }
 
   async init() {
-    const verifier = await this.crypto.getVerifier(
-      await this.keyService.getPublicKey()
-    );
-
     // crearre the sd-jwt instance with the required parameters.
     const sdjwt = new SDJwtVcInstance({
       signer: this.keyService.signer,
-      verifier,
       signAlg: this.crypto.alg,
       hasher: digest,
       hashAlg: 'SHA-256',
@@ -293,6 +290,7 @@ export class IssuerService {
           accessTokenSignerCallback: signerCallback,
           accessTokenIssuer: this.configService.get<string>('ISSUER_BASE_URL'),
           preAuthorizedCodeExpirationDuration: 1000 * 60 * 10,
+          //TODO: the expiration should be passed to the user so he knows when the token is not valid anymore and avoids using it.
           tokenExpiresIn: 300,
         },
         //TODO: not implemented yet

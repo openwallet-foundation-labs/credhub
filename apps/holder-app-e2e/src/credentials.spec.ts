@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { test, expect, Page } from '@playwright/test';
 import { getConfig, register } from './helpers';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { GlobalConfig } from '../global-setup';
 
 export const username = faker.internet.email();
@@ -48,17 +48,24 @@ async function getAxiosInstance(port: number) {
 
 async function receiveCredential(pin = false) {
   const axios = await getAxiosInstance(config.issuerPort);
+  const templates = await axios
+    .get('/templates')
+    .then((response) => response.data);
+  const credentialId = templates.find(
+    (template: any) => template.name === 'Identity'
+  ).id;
+
   const response = await axios
     .post(`/sessions`, {
       credentialSubject: {
         prename: 'Max',
         surname: 'Mustermann',
       },
-      credentialId: 'Identity',
+      credentialId,
       pin,
     })
-    .catch((e) => {
-      console.log(e);
+    .catch((e: AxiosError) => {
+      console.log(JSON.stringify(e.response?.data, null, 2));
       throw Error('Failed to create session');
     });
   const uri = response.data.uri;
@@ -98,8 +105,13 @@ test('issuance with pin', async () => {
 
 test('verify credential', async () => {
   await receiveCredential();
-  const credentialId = 'Identity';
   const axios = await getAxiosInstance(config.verifierPort);
+  const templates = await axios
+    .get('/templates')
+    .then((response) => response.data);
+  const credentialId = templates.find(
+    (template: any) => template.value.name === 'Identity'
+  ).id;
   let uri = '';
   try {
     const response = await axios.post(`/siop/${credentialId}`);
