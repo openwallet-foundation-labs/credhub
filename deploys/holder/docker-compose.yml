@@ -27,7 +27,6 @@ services:
       - OIDC_PUBLIC_CLIENT_ID=${OIDC_PUBLIC_CLIENT_ID}
       - OIDC_ADMIN_CLIENT_ID=${OIDC_ADMIN_CLIENT_ID}
       - OIDC_ADMIN_CLIENT_SECRET=${OIDC_ADMIN_CLIENT_SECRET}
-      - OIDC_PUBLIC_CLIENT_ID=${OIDC_PUBLIC_CLIENT_ID}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
       - DB_USERNAME=${DB_USERNAME}
@@ -53,6 +52,12 @@ services:
       - OIDC_ALLOW_HTTP=${OIDC_ALLOW_HTTP}
     ports:
       - $FRONTEND_PORT:80
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://127.0.0.1/index.html']
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
 
 volumes:
   db:

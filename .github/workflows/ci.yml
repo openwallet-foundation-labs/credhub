@@ -47,7 +47,7 @@ jobs:
       - name: Add entry to /etc/hosts
         run: echo "127.0.0.1       host.testcontainers.internal" | sudo tee -a /etc/hosts
 
-      - name: Lint, test, build, e2e
+      - name: Lint, test, container, e2e
         run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} pnpm exec nx affected -t lint test container e2e
 # comment out since the current e2e tests do not produce any artifacts
 #      - name: Upload coverage
@@ -75,6 +75,12 @@ jobs:
           name: testcontainer-logs
           path: tmp/logs
           retention-days: 30
+
+      # validate if the .env.example files in the deploys folder are up to date and that the containers can be health checked and started
+      - name: Validate deploy environment
+        run:
+          cd deploys
+          ./test.sh
 
       - name: Check if testcontainer logs exist
         id: check_testcontainer_logs

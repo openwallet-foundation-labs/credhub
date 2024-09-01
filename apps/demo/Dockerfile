@@ -1,4 +1,8 @@
 FROM docker.io/nginx:stable-alpine
+
+# Install wget
+RUN apk --no-cache add wget
+
 COPY dist/apps/demo/* /usr/share/nginx/html/
 RUN echo "server {" > /etc/nginx/conf.d/default.conf && \
     echo "    listen 80;" >> /etc/nginx/conf.d/default.conf && \
