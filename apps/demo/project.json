@@ -98,7 +98,9 @@
         "metadata": {
           "images": ["ghcr.io/openwallet-foundation-labs/credhub/demo"],
           "load": true,
-          "tags": ["latest"]
+          "tags": ["latest"],
+          "cache-from": ["type=gha"],
+          "cache-to": ["type=gha,mode=max"]
         }
       }
     }

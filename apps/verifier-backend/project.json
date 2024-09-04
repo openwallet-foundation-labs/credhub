@@ -38,7 +38,9 @@
             "ghcr.io/openwallet-foundation-labs/credhub/verifier-backend"
           ],
           "load": true,
-          "tags": ["latest"]
+          "tags": ["latest"],
+          "cache-from": ["type=gha"],
+          "cache-to": ["type=gha,mode=max"]
         }
       }
     }
