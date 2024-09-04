@@ -21,7 +21,6 @@
     "appsDir": "apps",
     "libsDir": "libs"
   },
-  "nxCloudAccessToken": "NjQ2NjhiMWUtYjA1Ni00NTRjLWJjMjctMjkzNzA1NmRkMTgxfHJlYWQ=",
   "plugins": [
     {
       "plugin": "@nx/vite/plugin",
