@@ -17,10 +17,7 @@
       "{workspaceRoot}/.github/workflows/cd.yml"
     ]
   },
-  "workspaceLayout": {
-    "appsDir": "apps",
-    "libsDir": "libs"
-  },
+  "workspaceLayout": { "appsDir": "apps", "libsDir": "libs" },
   "plugins": [
     {
       "plugin": "@nx/vite/plugin",
@@ -40,29 +37,17 @@
         "previewTargetName": "preview"
       }
     },
-    {
-      "plugin": "@nx/eslint/plugin",
-      "options": {
-        "targetName": "lint"
-      }
-    },
+    { "plugin": "@nx/eslint/plugin", "options": { "targetName": "lint" } },
     {
       "plugin": "@nx/jest/plugin",
-      "options": {
-        "targetName": "test"
-      },
+      "options": { "targetName": "test" },
       "exclude": [
         "apps/issuer-backend-e2e/**/*",
         "apps/verifier-backend-e2e/**/*",
         "apps/holder-backend-e2e/**/*"
       ]
     },
-    {
-      "plugin": "@nx/playwright/plugin",
-      "options": {
-        "targetName": "e2e"
-      }
-    }
+    { "plugin": "@nx/playwright/plugin", "options": { "targetName": "e2e" } }
   ],
   "targetDefaults": {
     "@angular-devkit/build-angular:application": {
@@ -93,13 +78,8 @@
       "style": "scss",
       "unitTestRunner": "jest"
     },
-    "@nx/angular:library": {
-      "linter": "eslint",
-      "unitTestRunner": "jest"
-    },
-    "@nx/angular:component": {
-      "style": "scss",
-      "skipTests": true
-    }
-  }
+    "@nx/angular:library": { "linter": "eslint", "unitTestRunner": "jest" },
+    "@nx/angular:component": { "style": "scss", "skipTests": true }
+  },
+  "nxCloudAccessToken": "OTRjZWVlYTktMDI5OS00MTUzLWE4YWEtMWEzZDYwZTFkNzc5fHJlYWQ="
 }
